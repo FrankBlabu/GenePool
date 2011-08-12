@@ -7,6 +7,9 @@
 #include "GEPScopeMainWindow.h"
 #include "GEPScopeTools.h"
 
+#include <QtGui/QMenu>
+#include <QtGui/QMenuBar>
+
 #include "ui_gep_scope_main_window.h"
 
 namespace GEP {
@@ -43,14 +46,43 @@ MainWindowContent::~MainWindowContent ()
 /* Constructor */
 MainWindow::MainWindow ()
 : QMainWindow (),
-  _content (0)
+  _content     (0),
+  _run_action  (0),
+  _quit_action (0)
 {
+  QMenu* file_menu = menuBar ()->addMenu ("&File");
+
+  _quit_action = new QAction ("&Quit", file_menu);
+  connect (_quit_action, SIGNAL (triggered ()), SLOT (slotQuit ()));
+  file_menu->addAction (_quit_action);
+
+  QMenu* execute_menu = menuBar ()->addMenu ("&Execute");
+
+  _run_action = new QAction ("&Run", execute_menu);
+  connect (_run_action, SIGNAL (triggered ()), SLOT (slotRun ()));
+  execute_menu->addAction (_run_action);
+
   _content = Tools::addWidgetToParent (new MainWindowContent (centralWidget ()));
 }
 
 /* Destructor */
 MainWindow::~MainWindow ()
 {
+}
+
+/*
+ * Slot: Algorithm execution
+ */
+void MainWindow::slotRun ()
+{
+}
+
+/*
+ * Slot: Application termination
+ */
+void MainWindow::slotQuit ()
+{
+  close ();
 }
 
 }
