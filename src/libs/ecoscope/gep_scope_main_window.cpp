@@ -44,8 +44,9 @@ MainWindowContent::~MainWindowContent ()
 //#**************************************************************************
 
 /* Constructor */
-MainWindow::MainWindow ()
+MainWindow::MainWindow (System::Controller* controller)
 : QMainWindow (),
+  _controller  (controller),
   _content     (0),
   _run_action  (0),
   _quit_action (0)

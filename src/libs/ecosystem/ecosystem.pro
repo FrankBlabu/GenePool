@@ -8,7 +8,7 @@ QT -= gui
 
 TARGET   = ecosystem
 TEMPLATE = lib
-CONFIG  += sharedlib thread
+CONFIG  += staticlib thread
 DESTDIR = $$(HOME)/lib
 
 SOURCES += \

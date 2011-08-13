@@ -26,6 +26,11 @@ public:
 
     void add (const Individual<T>& individual);
 
+    typedef typename QList< Individual<T> >::const_iterator ConstIterator;
+
+    inline ConstIterator begin () const { return _individuals.begin (); }
+    inline ConstIterator end () const { return _individuals.end (); }
+
     Individual<T>& operator[] (uint index);
     const Individual<T>& operator[] (uint index) const;
 

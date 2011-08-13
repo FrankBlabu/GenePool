@@ -12,7 +12,8 @@ CONFIG  += thread
 INCLUDEPATH += ../../libs/ecosystem
 INCLUDEPATH += ../../libs/ecoscope
 
-SOURCES += main.cpp
+SOURCES += \
+    traveling.cpp
 
 HEADERS +=
 

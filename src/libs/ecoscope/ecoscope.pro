@@ -6,7 +6,9 @@
 
 TARGET   = ecoscope
 TEMPLATE = lib
-CONFIG  += sharedlib thread
+CONFIG  += staticlib thread
+INCLUDEPATH += ../ecosystem
+
 DESTDIR = $$(HOME)/lib
 
 SOURCES += \

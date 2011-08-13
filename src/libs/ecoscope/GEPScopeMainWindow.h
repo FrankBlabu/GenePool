@@ -10,6 +10,8 @@
 #include <QtGui/QAction>
 #include <QtGui/QMainWindow>
 
+#include <GEPSystemController.h>
+
 namespace GEP {
 namespace Scope {
 
@@ -23,7 +25,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-  MainWindow ();
+  MainWindow (System::Controller* controller);
   virtual ~MainWindow ();
 
 private slots:
@@ -31,8 +33,9 @@ private slots:
   void slotQuit ();
 
 private:
-  MainWindowContent* _content;
+  System::Controller* _controller;
 
+  MainWindowContent* _content;
   QAction* _run_action;
   QAction* _quit_action;
 };
