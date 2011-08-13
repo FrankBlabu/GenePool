@@ -13,15 +13,6 @@ namespace System {
 // CLASS GEP::System::MutationOperator
 //#**************************************************************************
 
-/* Constructor */
-MutationOperator::MutationOperator ()
-{
-}
-
-/* Destructor */
-MutationOperator::~MutationOperator ()
-{
-}
 
 }
 }

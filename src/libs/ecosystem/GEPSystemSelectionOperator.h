@@ -16,16 +16,15 @@ namespace System {
 /*
  * Base class for selection operators
  */
+template <class T>
 class SelectionOperator : public Operator
 {
 public:
-    SelectionOperator ();
-    virtual ~SelectionOperator ();
+    SelectionOperator () {}
+    virtual ~SelectionOperator () {}
 
-    virtual PopulationPtr compute (PopulationPtr population) = 0;
+    virtual void compute (const Population<T>& source, Population<T>* target) = 0;
 };
-
-typedef boost::shared_ptr<SelectionOperator> SelectionOperatorPtr;
 
 }
 }

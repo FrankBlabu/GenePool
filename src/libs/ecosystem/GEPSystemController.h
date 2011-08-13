@@ -12,9 +12,14 @@
 #include "GEPSystemFitnessOperator.h"
 #include "GEPSystemMutationOperator.h"
 #include "GEPSystemSelectionOperator.h"
+#include "GEPSystemTerminationOperator.h"
 
 namespace GEP {
 namespace System {
+
+//#**************************************************************************
+// CLASS GEP::System::Controller
+//#**************************************************************************
 
 /*
  * Base class for all process controllers
@@ -22,24 +27,120 @@ namespace System {
 class Controller
 {
 public:
-    Controller ();
-    virtual ~Controller ();
+  Controller ();
 
-    PopulationPtr run (PopulationPtr population);
+  virtual bool run () = 0;
+};
 
-    virtual bool isFinished (PopulationPtr population, double fitness, uint step);
 
-    void setCrossoverOperator (CrossoverOperatorPtr crossover_operator);
-    void setFitnessOperator (FitnessOperatorPtr fitness_operator);
-    void setMutationOperator (MutationOperatorPtr mutation_operator);
-    void setSelectionOperator (SelectionOperatorPtr selection_operator);
+//#**************************************************************************
+// CLASS GEP::System::StandardController
+//#**************************************************************************
+
+/*
+ * Standard controller base class
+ */
+template <class T>
+class StandardController : public Controller
+{
+public:
+  StandardController ();
+
+  typedef boost::shared_ptr< CrossoverOperator<T> > CrossoverOperatorPtr;
+  typedef boost::shared_ptr< FitnessOperator<T> > FitnessOperatorPtr;
+  typedef boost::shared_ptr< MutationOperator<T> > MutationOperatorPtr;
+  typedef boost::shared_ptr< SelectionOperator<T> > SelectionOperatorPtr;
+  typedef boost::shared_ptr< TerminationOperator<T> > TerminationOperatorPtr;
+
+  void setCrossoverOperator (CrossoverOperatorPtr crossover_operator);
+  void setFitnessOperator (FitnessOperatorPtr fitness_operator);
+  void setMutationOperator (MutationOperatorPtr mutation_operator);
+  void setSelectionOperator (SelectionOperatorPtr selection_operator);
+  void setTerminationOperator (TerminationOperatorPtr termination_operator);
+
+protected:
+  CrossoverOperatorPtr _crossover_operator;
+  FitnessOperatorPtr _fitness_operator;
+  MutationOperatorPtr _mutation_operator;
+  SelectionOperatorPtr _selection_operator;
+  TerminationOperatorPtr _termination_operator;
+};
+
+/* Constructor */
+template <class T>
+StandardController<T>::StandardController ()
+  : _crossover_operator ()
+{
+}
+
+/* Set crossover operator */
+template <class T>
+void StandardController<T>::setCrossoverOperator (CrossoverOperatorPtr crossover_operator)
+{
+  _crossover_operator = crossover_operator;
+}
+
+/* Set fitness operator */
+template <class T>
+void StandardController<T>::setFitnessOperator (FitnessOperatorPtr fitness_operator)
+{
+  _fitness_operator = fitness_operator;
+}
+
+/* Set mutation operator */
+template <class T>
+void StandardController<T>::setMutationOperator (MutationOperatorPtr mutation_operator)
+{
+  _mutation_operator = mutation_operator;
+}
+
+/* Set selection operator */
+template <class T>
+void StandardController<T>::setSelectionOperator (SelectionOperatorPtr selection_operator)
+{
+  _selection_operator = selection_operator;
+}
+
+/* Set termination operator */
+template <class T>
+void StandardController<T>::setTerminationOperator (TerminationOperatorPtr termination_operator)
+{
+  _termination_operator = termination_operator;
+}
+
+
+//#**************************************************************************
+// CLASS GEP::System::SinglePopulationController
+//#**************************************************************************
+
+/*
+ * Single population standard controller
+ */
+template <class T>
+class SinglePopulationController : public StandardController<T>
+{
+public:
+  SinglePopulationController (const Population<T>& population);
+
+  virtual bool run ();
 
 private:
-    CrossoverOperatorPtr _crossover_operator;
-    FitnessOperatorPtr _fitness_operator;
-    MutationOperatorPtr _mutation_operator;
-    SelectionOperatorPtr _selection_operator;
+  Population<T> _population;
 };
+
+/* Constructor */
+template <class T>
+SinglePopulationController<T>::SinglePopulationController (const Population<T>& population)
+: _population (population)
+{
+}
+
+/* Execute algorithm */
+template <class T>
+bool SinglePopulationController<T>::run ()
+{
+  return true;
+}
 
 }
 }

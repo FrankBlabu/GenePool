@@ -16,16 +16,15 @@ namespace System {
 /*
  * Base class for Mutation operators
  */
+template <class T>
 class MutationOperator : public Operator
 {
 public:
-    MutationOperator ();
-    virtual ~MutationOperator ();
+    MutationOperator () {}
+    virtual ~MutationOperator () {}
 
-    virtual PopulationPtr compute (PopulationPtr population) = 0;
+    virtual void compute (Population<T>& population) = 0;
 };
-
-typedef boost::shared_ptr<MutationOperator> MutationOperatorPtr;
 
 }
 }

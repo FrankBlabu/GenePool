@@ -20,7 +20,8 @@ SOURCES += \
     gep_system_operator.cpp \
     gep_system_population.cpp \
     gep_system_random_number_generator.cpp \
-    gep_system_selection_operator.cpp
+    gep_system_selection_operator.cpp \
+    gep_system_termination_operator.cpp
 
 HEADERS += \
     GEPSystemController.h \
@@ -31,4 +32,5 @@ HEADERS += \
     GEPSystemOperator.h \
     GEPSystemPopulation.h \
     GEPSystemRandomNumberGenerator.h \
-    GEPSystemSelectionOperator.h
+    GEPSystemSelectionOperator.h \
+    GEPSystemTerminationOperator.h

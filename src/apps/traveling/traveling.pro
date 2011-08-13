@@ -12,10 +12,8 @@ CONFIG  += thread
 INCLUDEPATH += ../../libs/ecosystem
 INCLUDEPATH += ../../libs/ecoscope
 
-SOURCES += main.cpp \
-    gep_traveling_individual.cpp
+SOURCES += main.cpp
 
-HEADERS += \
-    GEPTravelingIndividual.h
+HEADERS +=
 
 LIBS += -L$$(HOME)/lib -lecosystem -lecoscope

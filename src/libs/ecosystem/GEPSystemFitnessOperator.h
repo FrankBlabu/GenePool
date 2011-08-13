@@ -16,16 +16,15 @@ namespace System {
 /*
  * Base class for Fitness operators
  */
+template <class T>
 class FitnessOperator : public Operator
 {
 public:
-    FitnessOperator ();
-    virtual ~FitnessOperator ();
+    FitnessOperator () {}
+    virtual ~FitnessOperator () {}
 
-    virtual double compute (PopulationPtr population) = 0;
+    virtual double compute (const Population<T>& population) = 0;
 };
-
-typedef boost::shared_ptr<FitnessOperator> FitnessOperatorPtr;
 
 }
 }

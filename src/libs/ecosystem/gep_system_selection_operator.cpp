@@ -13,15 +13,6 @@ namespace System {
 // CLASS GEP::System::SelectionOperator
 //#**************************************************************************
 
-/* Constructor */
-SelectionOperator::SelectionOperator ()
-{
-}
-
-/* Destructor */
-SelectionOperator::~SelectionOperator ()
-{
-}
 
 }
 }

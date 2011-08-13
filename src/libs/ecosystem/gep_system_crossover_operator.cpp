@@ -13,15 +13,6 @@ namespace System {
 // CLASS GEP::System::CrossoverOperator
 //#**************************************************************************
 
-/* Constructor */
-CrossoverOperator::CrossoverOperator ()
-{
-}
-
-/* Destructor */
-CrossoverOperator::~CrossoverOperator ()
-{
-}
 
 }
 }

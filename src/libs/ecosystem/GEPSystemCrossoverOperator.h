@@ -16,16 +16,15 @@ namespace System {
 /*
  * Base class for Crossover operators
  */
+template <class T>
 class CrossoverOperator : public Operator
 {
 public:
-    CrossoverOperator ();
-    virtual ~CrossoverOperator ();
+    CrossoverOperator () {}
+    virtual ~CrossoverOperator () {}
 
-    virtual PopulationPtr compute (PopulationPtr population) = 0;
+    virtual void compute (Population<T>& population) = 0;
 };
-
-typedef boost::shared_ptr<CrossoverOperator> CrossoverOperatorPtr;
 
 }
 }

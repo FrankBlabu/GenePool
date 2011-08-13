@@ -14,15 +14,5 @@ namespace System {
 //#**************************************************************************
 
 
-/* Constructor */
-FitnessOperator::FitnessOperator ()
-{
-}
-
-/* Destructor */
-FitnessOperator::~FitnessOperator ()
-{
-}
-
 }
 }

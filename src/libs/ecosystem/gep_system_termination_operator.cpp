@@ -1,17 +1,18 @@
 /*
- * gep_system_population.cpp - Population container
+ * gep_system_termination_operator.cpp - Base class for termination operators
  *
  * Frank Cieslok, Aug. 2011
  */
 
-#include "GEPSystemPopulation.h"
+#include "GEPSystemTerminationOperator.h"
 
 namespace GEP {
 namespace System {
 
 //#**************************************************************************
-// CLASS GEP::System::Population
+// CLASS GEP::System::TerminationOperator
 //#**************************************************************************
+
 
 }
 }

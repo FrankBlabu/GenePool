@@ -9,8 +9,7 @@
 
 #include "GEPSystemIndividual.h"
 
-#include <QList>
-#include <boost/shared_ptr.hpp>
+#include <QtCore/QList>
 
 namespace GEP {
 namespace System {
@@ -18,24 +17,57 @@ namespace System {
 /*
  * Population container
  */
+template<class T>
 class Population
 {
 public:
     Population ();
-    ~Population ();
+    Population (const Population<T>& toCopy);
 
-    void compute ();
+    void add (const Individual<T>& individual);
 
-    void add (IndividualPtr individual);
-
-private:
-    void computeFitness (IndividualPtr individual);
+    Individual<T>& operator[] (uint index);
+    const Individual<T>& operator[] (uint index) const;
 
 private:
-    QList<IndividualPtr> _individuals;
+    QList< Individual<T> > _individuals;
 };
 
-typedef boost::shared_ptr<Population> PopulationPtr;
+/* Constructor */
+template <class T>
+Population<T>::Population ()
+{
+}
+
+/* Copy constructor */
+template <class T>
+Population<T>::Population (const Population<T>& toCopy)
+  : _individuals (toCopy._individuals)
+{
+}
+
+/* Add individual to population */
+template <class T>
+void Population<T>::add (const Individual<T>& individual)
+{
+  _individuals.append (individual);
+}
+
+/* Access operator */
+template <class T>
+Individual<T>& Population<T>::operator[] (uint index)
+{
+  Q_ASSERT (index < _individuals.size ());
+  return _individuals[index];
+}
+
+/* Access operator */
+template <class T>
+const Individual<T>& Population<T>::operator[] (uint index) const
+{
+  Q_ASSERT (index < _individuals.size ());
+  return _individuals[index];
+}
 
 }
 }
