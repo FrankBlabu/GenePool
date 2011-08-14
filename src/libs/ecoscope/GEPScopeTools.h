@@ -8,6 +8,7 @@
 #define __GEP_SCOPE_TOOLS_H__
 
 #include <QtGui/QBoxLayout>
+#include <QDebug>
 
 namespace GEP {
 namespace Scope {

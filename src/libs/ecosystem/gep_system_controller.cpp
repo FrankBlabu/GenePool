@@ -18,6 +18,10 @@ Controller::Controller ()
 {
 }
 
+/* Init controller for a new run */
+void Controller::initialize ()
+{
+}
 
 }
 }

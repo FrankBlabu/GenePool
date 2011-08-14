@@ -29,7 +29,10 @@ class Controller
 public:
   Controller ();
 
-  virtual bool run () = 0;
+  virtual uint getStepCounter () const = 0;
+
+  virtual void initialize ();
+  virtual bool executeStep () = 0;
 };
 
 
@@ -69,7 +72,11 @@ protected:
 /* Constructor */
 template <class T>
 StandardController<T>::StandardController ()
-  : _crossover_operator ()
+  : _crossover_operator   (),
+    _fitness_operator     (),
+    _mutation_operator    (),
+    _selection_operator   (),
+    _termination_operator ()
 {
 }
 
@@ -122,24 +129,54 @@ class SinglePopulationController : public StandardController<T>
 public:
   SinglePopulationController (const Population<T>& population);
 
-  virtual bool run ();
+  virtual uint getStepCounter () const;
+
+  virtual void initialize ();
+  virtual bool executeStep ();
 
 private:
   Population<T> _population;
+
+  uint _step_counter;
 };
 
 /* Constructor */
 template <class T>
 SinglePopulationController<T>::SinglePopulationController (const Population<T>& population)
-: _population (population)
+  : _population   (population),
+    _step_counter (0)
 {
+}
+
+/* Returns current execution step */
+template<class T>
+uint SinglePopulationController<T>::getStepCounter () const
+{
+  return _step_counter;
+}
+
+/* Initialize algorithm */
+template <class T>
+void SinglePopulationController<T>::initialize ()
+{
+#if 0
+  Q_ASSERT (StandardController<T>::_crossover_operator != 0);
+#endif
+  Q_ASSERT (StandardController<T>::_fitness_operator != 0);
+#if 0
+  Q_ASSERT (StandardController<T>::_mutation_operator != 0);
+  Q_ASSERT (StandardController<T>::_selection_operator != 0);
+#endif
+  Q_ASSERT (StandardController<T>::_termination_operator != 0);
+
+  _step_counter = 0;
 }
 
 /* Execute algorithm */
 template <class T>
-bool SinglePopulationController<T>::run ()
+bool SinglePopulationController<T>::executeStep ()
 {
-  return true;
+  return StandardController<T>::_termination_operator->compute (_population, ++_step_counter);
 }
 
 }

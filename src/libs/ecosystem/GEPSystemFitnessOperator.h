@@ -29,6 +29,9 @@ public:
 
     virtual void initialize (const Population<T>& population);
     virtual double compute (const Individual<T>& individual) = 0;
+
+protected:
+    virtual double getFitness (const Individual<T>& individual) const = 0;
 };
 
 /* Initialite fitness computation for a population */
@@ -72,7 +75,7 @@ LinearStaticScaledFitnessOperator<T>::LinearStaticScaledFitnessOperator (double 
 template <class T>
 double LinearStaticScaledFitnessOperator<T>::compute (const Individual<T>& individual)
 {
-  return individual.getFitness () * _scale + _offset;
+return individual.getFitness () * _scale + _offset;
 }
 
 
@@ -81,7 +84,7 @@ double LinearStaticScaledFitnessOperator<T>::compute (const Individual<T>& indiv
 //#**************************************************************************
 
 /*
- * Linear scaled fitness operator
+ * Linear dynamic scaled fitness operator
  */
 template <class T>
 class LinearDynamicScaledFitnessOperator : public FitnessOperator<T>
@@ -95,7 +98,6 @@ public:
 
 private:
   double _scale;
-
   double _minimum_fitness;
 };
 
@@ -116,7 +118,7 @@ void LinearDynamicScaledFitnessOperator<T>::initialize (const Population<T>& pop
   for (typename Population<T>::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const Individual<T>& individual = *i;
-      _minimum_fitness = std::min (_minimum_fitness, individual.getFitness ());
+      _minimum_fitness = std::min (_minimum_fitness, getFitness (individual));
     }
 }
 
@@ -125,7 +127,7 @@ void LinearDynamicScaledFitnessOperator<T>::initialize (const Population<T>& pop
 template <class T>
 double LinearDynamicScaledFitnessOperator<T>::compute (const Individual<T>& individual)
 {
-  return individual.getFitness () * _scale - _minimum_fitness;
+  return getFitness (individual) * _scale - _minimum_fitness;
 }
 
 }

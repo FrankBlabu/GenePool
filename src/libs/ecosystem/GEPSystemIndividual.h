@@ -23,10 +23,10 @@ template <class T>
 class Individual
 {
 public:
-    Individual ();
+    Individual (const QList<T>& genes);
     Individual (const Individual<T>& toCopy);
 
-    double getFitness () const;
+    uint getNumberOfGenes () const;
 
     T& operator[] (uint index);
     const T& operator[] (uint index) const;
@@ -38,8 +38,8 @@ protected:
 
 /* Constructor */
 template <class T>
-Individual<T>::Individual ()
-  : _genes ()
+Individual<T>::Individual (const QList<T>& genes)
+  : _genes (genes)
 {
 }
 
@@ -50,12 +50,11 @@ Individual<T>::Individual (const Individual<T>& toCopy)
 {
 }
 
-/* Return the current fitness of this individual */
+/* Return number of genes in this individual */
 template <class T>
-double Individual<T>::getFitness () const
+uint Individual<T>::getNumberOfGenes () const
 {
-  qFatal ("Fitness function not implemented");
-  return 0.0;
+  return _genes.size ();
 }
 
 /* Access operator */
@@ -70,7 +69,7 @@ T& Individual<T>::operator[] (uint index)
 template <class T>
 const T& Individual<T>::operator[] (uint index) const
 {
-  Q_ASSERT (index < _genes.size ());
+  Q_ASSERT (index < static_cast<uint> (_genes.size ()));
   return _genes[index];
 }
 

@@ -7,8 +7,14 @@
 #include "GEPScopeMainWindow.h"
 #include "GEPScopeTools.h"
 
+#include <iostream>
+
+#include <QDebug>
+
+#include <QtCore/QTime>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
+#include <QtGui/QStatusBar>
 
 #include "ui_gep_scope_main_window.h"
 
@@ -63,7 +69,8 @@ MainWindow::MainWindow (System::Controller* controller)
   connect (_run_action, SIGNAL (triggered ()), SLOT (slotRun ()));
   execute_menu->addAction (_run_action);
 
-  _content = Tools::addWidgetToParent (new MainWindowContent (centralWidget ()));
+  _content = new MainWindowContent (this);
+  setCentralWidget (_content);
 }
 
 /* Destructor */
@@ -76,6 +83,31 @@ MainWindow::~MainWindow ()
  */
 void MainWindow::slotRun ()
 {
+  _controller->initialize ();
+
+  QTime time = QTime::currentTime ();
+  statusBar ()->showMessage ("Starting...");
+
+  qDebug () << "1";
+
+  for (uint i=0; !_controller->executeStep  (); ++i)
+    {
+      qDebug () << "2";
+
+      if (time.elapsed () >= 1000)
+        {
+          qDebug () << "3";
+
+          statusBar ()->showMessage (QString ("Executing step %1").arg (_controller->getStepCounter ()));
+
+          QApplication::processEvents ();
+          time.restart ();
+        }
+    }
+
+  qDebug () << "4";
+
+  statusBar ()->clearMessage ();
 }
 
 /*
