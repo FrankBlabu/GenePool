@@ -165,8 +165,8 @@ void SinglePopulationController<T>::initialize ()
   Q_ASSERT (StandardController<T>::_fitness_operator != 0);
 #if 0
   Q_ASSERT (StandardController<T>::_mutation_operator != 0);
-  Q_ASSERT (StandardController<T>::_selection_operator != 0);
 #endif
+  Q_ASSERT (StandardController<T>::_selection_operator != 0);
   Q_ASSERT (StandardController<T>::_termination_operator != 0);
 
   _step_counter = 0;

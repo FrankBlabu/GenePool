@@ -7,52 +7,61 @@
 #ifndef __GEP_SYSTEM_INDIVIDUAL_H__
 #define __GEP_SYSTEM_INDIVIDUAL_H__
 
-#include <QtGlobal>
-#include <QtCore/QList>
+#include "GEPSystemObject.h"
 
+#include <limits>
+#include <vector>
 #include <boost/shared_ptr.hpp>
+
+#include <QtGlobal>
+#include <QtCore/QMutex>
+
 
 namespace GEP {
 namespace System {
 
+//#**************************************************************************
+// CLASS GEP::System::Individual
+//#**************************************************************************
 
 /*
  * Base class for single individuals
  */
 template <class T>
-class Individual
+class Individual : public Object
 {
 public:
-    Individual (const QList<T>& genes);
+    Individual (const std::vector<T>& genes);
     Individual (const Individual<T>& toCopy);
 
-    uint getNumberOfGenes () const;
+    uint getSize () const;
 
     T& operator[] (uint index);
     const T& operator[] (uint index) const;
 
 protected:
-    QList<T> _genes;
+    std::vector<T> _genes;
 };
-
 
 /* Constructor */
 template <class T>
-Individual<T>::Individual (const QList<T>& genes)
-  : _genes (genes)
+Individual<T>::Individual (const std::vector<T>& genes)
+  : Object (),
+    _genes (genes)
 {
 }
 
 /* Copy constructor */
 template <class T>
 Individual<T>::Individual (const Individual<T>& toCopy)
-  : _genes (toCopy._genes)
+  : Object (),
+    _genes (toCopy._genes)
 {
 }
 
 /* Return number of genes in this individual */
 template <class T>
-uint Individual<T>::getNumberOfGenes () const
+uint Individual<T>::getSize () const
 {
   return _genes.size ();
 }

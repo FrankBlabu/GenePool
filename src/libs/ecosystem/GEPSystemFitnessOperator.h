@@ -28,7 +28,7 @@ public:
     virtual ~FitnessOperator () {}
 
     virtual void initialize (const Population<T>& population);
-    virtual double compute (const Individual<T>& individual) = 0;
+    virtual double compute (const Individual<T>& individual) const = 0;
 
 protected:
     virtual double getFitness (const Individual<T>& individual) const = 0;
@@ -40,7 +40,6 @@ void FitnessOperator<T>::initialize (const Population<T>& population)
 {
   Q_UNUSED (population);
 }
-
 
 //#**************************************************************************
 // CLASS GEP::System::LinearStaticScaledFitnessOperator
@@ -56,7 +55,7 @@ public:
   LinearStaticScaledFitnessOperator (double offset, double scale);
   virtual ~LinearStaticScaledFitnessOperator () {}
 
-  virtual double compute (const Individual<T>& individual);
+  virtual double compute (const Individual<T>& individual) const;
 
 private:
   double _offset;
@@ -73,7 +72,7 @@ LinearStaticScaledFitnessOperator<T>::LinearStaticScaledFitnessOperator (double 
 
 /* Compute fitness for a population */
 template <class T>
-double LinearStaticScaledFitnessOperator<T>::compute (const Individual<T>& individual)
+double LinearStaticScaledFitnessOperator<T>::compute (const Individual<T>& individual) const
 {
 return individual.getFitness () * _scale + _offset;
 }
@@ -94,7 +93,7 @@ public:
   virtual ~LinearDynamicScaledFitnessOperator () {}
 
   virtual void initialize (const Population<T>& population);
-  virtual double compute (const Individual<T>& individual);
+  virtual double compute (const Individual<T>& individual) const;
 
 private:
   double _scale;
@@ -125,7 +124,7 @@ void LinearDynamicScaledFitnessOperator<T>::initialize (const Population<T>& pop
 
 /* Compute fitness for a population */
 template <class T>
-double LinearDynamicScaledFitnessOperator<T>::compute (const Individual<T>& individual)
+double LinearDynamicScaledFitnessOperator<T>::compute (const Individual<T>& individual) const
 {
   return getFitness (individual) * _scale - _minimum_fitness;
 }

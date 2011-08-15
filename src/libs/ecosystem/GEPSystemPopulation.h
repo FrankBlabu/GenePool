@@ -14,6 +14,10 @@
 namespace GEP {
 namespace System {
 
+//#**************************************************************************
+// CLASS GEP::System::Population
+//#**************************************************************************
+
 /*
  * Population container
  */
@@ -30,6 +34,8 @@ public:
 
     inline ConstIterator begin () const { return _individuals.begin (); }
     inline ConstIterator end () const { return _individuals.end (); }
+
+    inline uint getSize () const { return _individuals.size (); }
 
     Individual<T>& operator[] (uint index);
     const Individual<T>& operator[] (uint index) const;
@@ -70,9 +76,10 @@ Individual<T>& Population<T>::operator[] (uint index)
 template <class T>
 const Individual<T>& Population<T>::operator[] (uint index) const
 {
-  Q_ASSERT (index < _individuals.size ());
+  Q_ASSERT (index < static_cast<uint> (_individuals.size ()));
   return _individuals[index];
 }
+
 
 }
 }

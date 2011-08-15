@@ -11,6 +11,7 @@
 #include <GEPSystemIndividual.h>
 #include <GEPSystemFitnessOperator.h>
 #include <GEPSystemRandomNumberGenerator.h>
+#include <GEPSystemSelectionOperator.h>
 #include <GEPScopeMainWindow.h>
 
 namespace {
@@ -171,7 +172,7 @@ double TravelingFitnessOperator<T>::getFitness (const GEP::System::Individual<T>
 {
   double fitness = 0.0;
 
-  for (uint i=0; i + 1 < individual.getNumberOfGenes (); ++i)
+  for (uint i=0; i + 1 < individual.getSize (); ++i)
     fitness += getDistance (individual[i], individual[i + 1]);
 
   return _bias - fitness;
@@ -203,7 +204,7 @@ int main(int argc, char *argv[])
     World world (random_number_generator, NUMBER_OF_CITIES);
     GEP::System::Population<uint> population;
 
-    QList<uint> sequence;
+    std::vector<uint> sequence;
     for (uint i=0; i < NUMBER_OF_CITIES; ++i)
       sequence.push_back (i);
 
@@ -217,8 +218,14 @@ int main(int argc, char *argv[])
     // Setup controller
     //
     GEP::System::SinglePopulationController<uint> controller (population);
-    controller.setFitnessOperator (boost::shared_ptr< GEP::System::FitnessOperator<uint> > (new TravelingFitnessOperator<uint> (&world)));
-    controller.setTerminationOperator (boost::shared_ptr< GEP::System::TerminationOperator<uint> > (new GEP::System::FixedStepTerminationOperator<uint> (100000)));
+
+    boost::shared_ptr< GEP::System::FitnessOperator<uint> > fitness_operator (new TravelingFitnessOperator<uint> (&world));
+    boost::shared_ptr< GEP::System::SelectionOperator<uint> > selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator<uint> (fitness_operator));
+    boost::shared_ptr< GEP::System::TerminationOperator<uint> > termination_operator (new GEP::System::FixedStepTerminationOperator<uint> (100000));
+
+    controller.setFitnessOperator (fitness_operator);
+    controller.setSelectionOperator (selection_operator);
+    controller.setTerminationOperator (termination_operator);
 
     //
     // Show main window and start computation
