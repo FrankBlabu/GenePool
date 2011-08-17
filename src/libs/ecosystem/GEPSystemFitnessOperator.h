@@ -21,18 +21,22 @@ namespace System {
  * Base class for Fitness operators
  */
 template <class T>
-class FitnessOperator : public Operator
+class FitnessOperator : public Operator<T>
 {
 public:
-    FitnessOperator () {}
+    FitnessOperator (World<T>* world);
     virtual ~FitnessOperator () {}
 
     virtual void initialize (const Population<T>& population);
     virtual double compute (const Individual<T>& individual) const = 0;
-
-protected:
-    virtual double getFitness (const Individual<T>& individual) const = 0;
 };
+
+/* Constructor */
+template <class T>
+FitnessOperator<T>::FitnessOperator (World<T>* world)
+  : Operator<T> (world)
+{
+}
 
 /* Initialite fitness computation for a population */
 template <class T>
@@ -52,7 +56,7 @@ template <class T>
 class LinearStaticScaledFitnessOperator : public FitnessOperator<T>
 {
 public:
-  LinearStaticScaledFitnessOperator (double offset, double scale);
+  LinearStaticScaledFitnessOperator (World<T>* world, double offset, double scale);
   virtual ~LinearStaticScaledFitnessOperator () {}
 
   virtual double compute (const Individual<T>& individual) const;
@@ -64,9 +68,10 @@ private:
 
 /* Constructor */
 template <class T>
-LinearStaticScaledFitnessOperator<T>::LinearStaticScaledFitnessOperator (double offset, double scale)
-  : _offset (offset),
-    _scale  (scale)
+LinearStaticScaledFitnessOperator<T>::LinearStaticScaledFitnessOperator (World<T>* world, double offset, double scale)
+  : FitnessOperator<T> (world),
+    _offset            (offset),
+    _scale             (scale)
 {
 }
 
@@ -74,7 +79,7 @@ LinearStaticScaledFitnessOperator<T>::LinearStaticScaledFitnessOperator (double 
 template <class T>
 double LinearStaticScaledFitnessOperator<T>::compute (const Individual<T>& individual) const
 {
-return individual.getFitness () * _scale + _offset;
+  return Operator<T>::_world->getFitness () * _scale + _offset;
 }
 
 
@@ -89,7 +94,7 @@ template <class T>
 class LinearDynamicScaledFitnessOperator : public FitnessOperator<T>
 {
 public:
-  LinearDynamicScaledFitnessOperator (double scale);
+  LinearDynamicScaledFitnessOperator (World<T>* world, double scale);
   virtual ~LinearDynamicScaledFitnessOperator () {}
 
   virtual void initialize (const Population<T>& population);
@@ -102,9 +107,10 @@ private:
 
 /* Constructor */
 template <class T>
-LinearDynamicScaledFitnessOperator<T>::LinearDynamicScaledFitnessOperator (double scale)
-  : _scale           (scale),
-    _minimum_fitness (0.0)
+LinearDynamicScaledFitnessOperator<T>::LinearDynamicScaledFitnessOperator (World<T>* world, double scale)
+  : FitnessOperator<T> (world),
+    _scale             (scale),
+    _minimum_fitness   (0.0)
 {
 }
 
@@ -117,7 +123,7 @@ void LinearDynamicScaledFitnessOperator<T>::initialize (const Population<T>& pop
   for (typename Population<T>::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const Individual<T>& individual = *i;
-      _minimum_fitness = std::min (_minimum_fitness, getFitness (individual));
+      _minimum_fitness = std::min (_minimum_fitness, Operator<T>::_world->getFitness (individual));
     }
 }
 
@@ -126,7 +132,7 @@ void LinearDynamicScaledFitnessOperator<T>::initialize (const Population<T>& pop
 template <class T>
 double LinearDynamicScaledFitnessOperator<T>::compute (const Individual<T>& individual) const
 {
-  return getFitness (individual) * _scale - _minimum_fitness;
+  return Operator<T>::_world->getFitness (individual) * _scale - _minimum_fitness;
 }
 
 }

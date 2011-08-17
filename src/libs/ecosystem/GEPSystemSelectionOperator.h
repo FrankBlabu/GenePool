@@ -28,13 +28,13 @@ namespace System {
  * Base class for selection operators
  */
 template <class T>
-class SelectionOperator : public Operator
+class SelectionOperator : public Operator<T>
 {
 public:
   typedef boost::shared_ptr< FitnessOperator<T> > FitnessOperatorPtr;
 
 public:
-    SelectionOperator (FitnessOperatorPtr fitness_operator);
+    SelectionOperator (World<T>* world, FitnessOperatorPtr fitness_operator);
     virtual ~SelectionOperator ();
 
     virtual void compute (const Population<T>& source, Population<T>* target) const = 0;
@@ -45,8 +45,9 @@ protected:
 
 /* Constructor */
 template <class T>
-SelectionOperator<T>::SelectionOperator (FitnessOperatorPtr fitness_operator)
-  : _fitness_operator (fitness_operator)
+SelectionOperator<T>::SelectionOperator (World<T>* world, FitnessOperatorPtr fitness_operator)
+  : Operator<T>       (world),
+    _fitness_operator (fitness_operator)
 {
 }
 
@@ -68,7 +69,7 @@ template <class T>
 class RemainderStochasticSamplingSelectionOperator : public SelectionOperator<T>
 {
 public:
-    RemainderStochasticSamplingSelectionOperator (typename SelectionOperator<T>::FitnessOperatorPtr fitness_operator);
+    RemainderStochasticSamplingSelectionOperator (World<T>* world, typename SelectionOperator<T>::FitnessOperatorPtr fitness_operator);
     virtual ~RemainderStochasticSamplingSelectionOperator ();
 
     virtual void compute (const Population<T>& source, Population<T>* target) const;
@@ -76,8 +77,8 @@ public:
 
 /* Constructor */
 template <class T>
-RemainderStochasticSamplingSelectionOperator<T>::RemainderStochasticSamplingSelectionOperator (typename SelectionOperator<T>::FitnessOperatorPtr fitness_operator)
-  : SelectionOperator<T> (fitness_operator)
+RemainderStochasticSamplingSelectionOperator<T>::RemainderStochasticSamplingSelectionOperator (World<T>* world, typename SelectionOperator<T>::FitnessOperatorPtr fitness_operator)
+  : SelectionOperator<T> (world, fitness_operator)
 {
 }
 
@@ -137,7 +138,7 @@ void RemainderStochasticSamplingSelectionOperator<T>::compute (const Population<
 
   while (source.getSize () > target->getSize ())
     {
-      double value = Operator::getRandom ();
+      double value = Operator<T>::_world->getRandom ();
 
       double sum = 0.0;
       bool found = false;

@@ -24,7 +24,8 @@ SOURCES += \
     gep_system_termination_operator.cpp \
     gep_system_object.cpp \
     gep_system_population_fitness_index.cpp \
-    gep_system_debug.cpp
+    gep_system_debug.cpp \
+    gep_system_world.cpp
 
 HEADERS += \
     GEPSystemController.h \
@@ -39,4 +40,5 @@ HEADERS += \
     GEPSystemTerminationOperator.h \
     GEPSystemObject.h \
     GEPSystemPopulationFitnessIndex.h \
-    GEPSystemDebug.h
+    GEPSystemDebug.h \
+    GEPSystemWorld.h

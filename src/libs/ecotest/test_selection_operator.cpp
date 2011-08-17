@@ -18,13 +18,13 @@ void TestMain::testSelectionOperator ()
   QBENCHMARK {
     for (uint i=0; i < 1000; ++i)
       {
+        TestWorld world;
         TestPopulation population = generatePopulation ();
 
         boost::shared_ptr< GEP::System::FitnessOperator<uint> > fitness_operator
-            (new RandomFitnessOperator<uint> (population));
+            (new RandomFitnessOperator<uint> (&world, population));
 
-        GEP::System::RemainderStochasticSamplingSelectionOperator<uint> selection_operator (fitness_operator);
-        selection_operator.setRandomNumberGenerator (_random_number_generator);
+        GEP::System::RemainderStochasticSamplingSelectionOperator<uint> selection_operator (&world, fitness_operator);
 
         TestPopulation selected;
         selection_operator.compute (population, &selected);

@@ -14,8 +14,6 @@
 #include <GEPSystemSelectionOperator.h>
 #include <GEPScopeMainWindow.h>
 
-namespace {
-
 //#**************************************************************************
 // Computation parameters
 //#**************************************************************************
@@ -41,7 +39,7 @@ const uint POPULATION_SIZE = 100;
 class ShuffleComparator
 {
 public:
-  ShuffleComparator (GEP::System::RandomNumberGeneratorPtr random_number_generator, uint size);
+  ShuffleComparator (uint size);
 
   bool operator () (uint value1, uint value2) const;
 
@@ -50,10 +48,12 @@ private:
 };
 
 /* Constructor */
-ShuffleComparator::ShuffleComparator (GEP::System::RandomNumberGeneratorPtr random_number_generator, uint size)
+ShuffleComparator::ShuffleComparator (uint size)
 {
+    GEP::System::MersenneTwisterRandomNumberGenerator random_number_generator;
+
   for (uint i=0; i < size; ++i)
-    _order.insert (i, random_number_generator->generate ());
+    _order.insert (i, random_number_generator.generate ());
 }
 
 /* Compare operator */
@@ -67,47 +67,6 @@ bool ShuffleComparator::operator () (uint value1, uint value2) const
 
 
 //#**************************************************************************
-// CLASS World
-//#**************************************************************************
-
-/*
- * World layout
- */
-class World
-{
-public:
-  World (GEP::System::RandomNumberGeneratorPtr random_number_generator, uint number_of_cities);
-
-  uint getSize () const;
-
-  const QPointF& operator[] (uint index) const;
-
-private:
-  std::vector<QPointF> _cities;
-};
-
-/* Constructor */
-World::World (GEP::System::RandomNumberGeneratorPtr random_number_generator, uint number_of_cities)
-{
-  for (uint i=0; i < number_of_cities; ++i)
-    _cities.push_back (QPointF (random_number_generator->generate (), random_number_generator->generate ()));
-}
-
-/* Return number of cities */
-uint World::getSize () const
-{
-  return _cities.size ();
-}
-
-/* Return city coordinate */
-const QPointF& World::operator[] (uint index) const
-{
-  Q_ASSERT (index < _cities.size ());
-  return _cities[index];
-}
-
-
-//#**************************************************************************
 // CLASS TravelingIndividual
 //#**************************************************************************
 
@@ -116,75 +75,84 @@ const QPointF& World::operator[] (uint index) const
  */
 typedef GEP::System::Individual<uint> TravelingIndividual;
 
+
 //#**************************************************************************
-// CLASS TravelingFitnessOperator
+// CLASS World
 //#**************************************************************************
 
 /*
- * Fitness function operator for a TravelingIndividual
+ * World layout
  */
-template <class T>
-class TravelingFitnessOperator : public GEP::System::LinearDynamicScaledFitnessOperator<T>
+class TravelingWorld : public GEP::System::World<uint>
 {
 public:
-  TravelingFitnessOperator (const World* world);
-  virtual ~TravelingFitnessOperator ();
+  TravelingWorld (uint number_of_cities);
 
-protected:
-  virtual double getFitness (const GEP::System::Individual<T>& individual) const;
+  uint getSize () const;
+  const QPointF& operator[] (uint index) const;
+
+  virtual double getFitness (const TravelingIndividual& individual);
 
 private:
   double getDistance (uint city1, uint city2) const;
 
 private:
-  const World* _world;
-  double _bias;
+  std::vector<QPointF> _cities;
+  double _fitness_bias;
 };
 
 /* Constructor */
-template <class T>
-TravelingFitnessOperator<T>::TravelingFitnessOperator (const World* world)
-  : GEP::System::LinearDynamicScaledFitnessOperator<T> (1.05),
-    _world (world),
-    _bias  (0.0)
+TravelingWorld::TravelingWorld (uint number_of_cities)
+  : GEP::System::World<uint> (GEP::System::RandomNumberGeneratorPtr (new GEP::System::MersenneTwisterRandomNumberGenerator ())),
+    _fitness_bias (0.0)
 {
+  //
+  // Randomly place cities
+  //
+  for (uint i=0; i < number_of_cities; ++i)
+    _cities.push_back (QPointF (GEP::System::World<uint>::getRandom (), GEP::System::World<uint>::getRandom ()));
+
   //
   // Compute largest city distance to get a fitness bias
   //
   double max_distance = 0.0;
 
-  for (uint i=0; i < _world->getSize (); ++i)
-    for (uint j=i+1; j < _world->getSize (); ++j)
+  for (uint i=0; i < _cities.size (); ++i)
+    for (uint j=i+1; j < _cities.size (); ++j)
       max_distance = std::max (max_distance, getDistance (i, j));
 
-  _bias = _world->getSize () * max_distance;
+  _fitness_bias = _cities.size () * max_distance;
+
 }
 
-/* Destructor */
-template <class T>
-TravelingFitnessOperator<T>::~TravelingFitnessOperator ()
+/* Return number of cities */
+uint TravelingWorld::getSize () const
 {
+  return _cities.size ();
 }
 
-/* Compute fitness for a single individual */
-template <class T>
-double TravelingFitnessOperator<T>::getFitness (const GEP::System::Individual<T>& individual) const
+/* Return city coordinate */
+const QPointF& TravelingWorld::operator[] (uint index) const
+{
+  Q_ASSERT (index < _cities.size ());
+  return _cities[index];
+}
+
+/* Compute fitness of a single individual */
+double TravelingWorld::getFitness (const TravelingIndividual& individual)
 {
   double fitness = 0.0;
 
   for (uint i=0; i + 1 < individual.getSize (); ++i)
     fitness += getDistance (individual[i], individual[i + 1]);
 
-  return _bias - fitness;
+  return _fitness_bias - fitness;
 }
 
 /* Compute distance between two cities */
-template <class T>
-double TravelingFitnessOperator<T>::getDistance (uint city1, uint city2) const
+double TravelingWorld::getDistance (uint city1, uint city2) const
 {
-  return ((*_world)[city2] - (*_world)[city1]).manhattanLength ();
-}
-
+  return (_cities[city2] - _cities[city1]).manhattanLength ();
 }
 
 
@@ -196,12 +164,10 @@ int main(int argc, char *argv[])
 {
     QApplication app (argc, argv);
 
-    GEP::System::RandomNumberGeneratorPtr random_number_generator (new GEP::System::MersenneTwisterRandomNumberGenerator ());
-
     //
     // Create world
     //
-    World world (random_number_generator, NUMBER_OF_CITIES);
+    TravelingWorld world (NUMBER_OF_CITIES);
     GEP::System::Population<uint> population;
 
     std::vector<uint> sequence;
@@ -210,7 +176,7 @@ int main(int argc, char *argv[])
 
     for (uint i=0; i < POPULATION_SIZE; ++i)
       {
-        std::sort (sequence.begin (), sequence.end (), ShuffleComparator (random_number_generator, POPULATION_SIZE));
+        std::sort (sequence.begin (), sequence.end (), ShuffleComparator (POPULATION_SIZE));
         population.add (TravelingIndividual (sequence));
       }
 
@@ -219,9 +185,9 @@ int main(int argc, char *argv[])
     //
     GEP::System::SinglePopulationController<uint> controller (population);
 
-    boost::shared_ptr< GEP::System::FitnessOperator<uint> > fitness_operator (new TravelingFitnessOperator<uint> (&world));
-    boost::shared_ptr< GEP::System::SelectionOperator<uint> > selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator<uint> (fitness_operator));
-    boost::shared_ptr< GEP::System::TerminationOperator<uint> > termination_operator (new GEP::System::FixedStepTerminationOperator<uint> (100000));
+    boost::shared_ptr< GEP::System::FitnessOperator<uint> > fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator<uint> (&world, 1.05));
+    boost::shared_ptr< GEP::System::SelectionOperator<uint> > selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator<uint> (&world, fitness_operator));
+    boost::shared_ptr< GEP::System::TerminationOperator<uint> > termination_operator (new GEP::System::FixedStepTerminationOperator<uint> (&world, 100000));
 
     controller.setFitnessOperator (fitness_operator);
     controller.setSelectionOperator (selection_operator);

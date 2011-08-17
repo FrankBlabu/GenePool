@@ -52,6 +52,31 @@ bool ShuffleComparator::operator () (uint value1, uint value2) const
   return _order[value1] < _order[value2];
 }
 
+
+//#**************************************************************************
+// CLASS TestWorld
+//#**************************************************************************
+
+/* Constructor */
+TestWorld::TestWorld ()
+  : GEP::System::World<uint> (GEP::System::RandomNumberGeneratorPtr (new GEP::System::MersenneTwisterRandomNumberGenerator))
+{
+}
+
+/* Destructor */
+TestWorld::~TestWorld ()
+{
+}
+
+/* Get random number */
+double TestWorld::getFitness (const GEP::System::Individual<uint>& individual)
+{
+  Q_UNUSED (individual);
+
+  return GEP::System::World<uint>::getRandom () * 100.0;
+}
+
+
 //#**************************************************************************
 // CLASS TestMain
 //#**************************************************************************

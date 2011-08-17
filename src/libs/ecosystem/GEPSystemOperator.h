@@ -7,7 +7,7 @@
 #ifndef __GEP_SYSTEM_OPERATOR_H__
 #define __GEP_SYSTEM_OPERATOR_H__
 
-#include "GEPSystemRandomNumberGenerator.h"
+#include "GEPSystemWorld.h"
 
 namespace GEP {
 namespace System {
@@ -15,20 +15,22 @@ namespace System {
 /*
  * Base class for all operator classes
  */
+template <class T>
 class Operator
 {
 public:
-    Operator ();
-    virtual ~Operator ();
-
-    void setRandomNumberGenerator (RandomNumberGeneratorPtr random_number_generator);
+    Operator (World<T>* world);
 
 protected:
-    double getRandom () const;
-
-private:
-    RandomNumberGeneratorPtr _random_number_generator;
+    World<T>* _world;
 };
+
+/* Constructor */
+template <class T>
+Operator<T>::Operator (World<T>* world)
+  : _world (world)
+{
+}
 
 }
 }

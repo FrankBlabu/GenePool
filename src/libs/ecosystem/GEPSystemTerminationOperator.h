@@ -21,15 +21,21 @@ namespace System {
  * Base class for termination operators
  */
 template <class T>
-class TerminationOperator : public Operator
+class TerminationOperator : public Operator<T>
 {
 public:
-    TerminationOperator () {}
+    TerminationOperator (World<T>* world);
     virtual ~TerminationOperator () {}
 
     virtual bool compute (const Population<T>& population, uint step) = 0;
 };
 
+/* Constructor */
+template <class T>
+TerminationOperator<T>::TerminationOperator (World<T>* world)
+: Operator<T> (world)
+{
+}
 
 //#**************************************************************************
 // CLASS GEP::System::FixedStepTerminationOperator
@@ -42,7 +48,7 @@ template <class T>
 class FixedStepTerminationOperator : public TerminationOperator<T>
 {
 public:
-    FixedStepTerminationOperator (uint steps);
+    FixedStepTerminationOperator (World<T>* world, uint steps);
     virtual ~FixedStepTerminationOperator ();
 
     virtual bool compute (const Population<T>& population, uint step);
@@ -53,8 +59,9 @@ private:
 
 /* Constructor */
 template <class T>
-FixedStepTerminationOperator<T>::FixedStepTerminationOperator (uint steps)
-  : _steps (steps)
+FixedStepTerminationOperator<T>::FixedStepTerminationOperator (World<T>* world, uint steps)
+  : TerminationOperator<T> (world),
+    _steps                 (steps)
 {
 }
 

@@ -32,13 +32,10 @@ template <class T>
 class RandomFitnessOperator : public GEP::System::FitnessOperator<T>
 {
 public:
-    RandomFitnessOperator (const GEP::System::Population<T>& population);
+    RandomFitnessOperator (GEP::System::World<T>* world, const GEP::System::Population<T>& population);
     virtual ~RandomFitnessOperator () {}
 
     virtual double compute (const GEP::System::Individual<T>& individual) const;
-
-protected:
-    virtual double getFitness (const GEP::System::Individual<T>& individual) const;
 
 private:
     typedef std::map<GEP::System::Object::Id, double> FitnessMap;
@@ -47,14 +44,13 @@ private:
 
 /* Constructor */
 template<class T>
-RandomFitnessOperator<T>::RandomFitnessOperator (const GEP::System::Population<T>& population)
+RandomFitnessOperator<T>::RandomFitnessOperator (GEP::System::World<T>* world, const GEP::System::Population<T>& population)
+  : GEP::System::FitnessOperator<T> (world)
 {
-  GEP::System::MersenneTwisterRandomNumberGenerator _random_number_generator;
-
   for (typename GEP::System::Population<T>::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const GEP::System::Individual<T>& individual = *i;
-      _fitness_map.insert (std::make_pair (individual.getId (), _random_number_generator.generate ()));
+      _fitness_map.insert (std::make_pair (individual.getId (), GEP::System::Operator<T>::_world->getRandom ()));
     }
 }
 
@@ -62,19 +58,28 @@ RandomFitnessOperator<T>::RandomFitnessOperator (const GEP::System::Population<T
 template <class T>
 double RandomFitnessOperator<T>::compute (const GEP::System::Individual<T>& individual) const
 {
-  return getFitness (individual);
-}
-
-/* Return individuals fitness */
-template <class T>
-double RandomFitnessOperator<T>::getFitness (const GEP::System::Individual<T>& individual) const
-{
   FitnessMap::const_iterator pos = _fitness_map.find (individual.getId ());
   Q_ASSERT (pos != _fitness_map.end ());
 
   return pos->second;
 }
 
+
+//#**************************************************************************
+// CLASS TestWorld
+//#**************************************************************************
+
+/*
+ * World information
+ */
+class TestWorld : public GEP::System::World<uint>
+{
+public:
+    TestWorld ();
+    virtual ~TestWorld ();
+
+    virtual double getFitness (const GEP::System::Individual<uint>& individual);
+};
 
 //#**************************************************************************
 // CLASS TestMain

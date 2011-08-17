@@ -21,8 +21,7 @@ namespace System {
 //#**************************************************************************
 // CLASS GEP::System::PopulationFitnessIndexComparator
 //#**************************************************************************
-
-namespace {
+ namespace {
 
 /*
  * Comparator class for sorting a population according to the individual fitness

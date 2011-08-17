@@ -1,20 +1,17 @@
 /*
- * gep_system_operator.cpp - Base class for all operator classes
+ * gep_system_world.cpp - World information
  *
  * Frank Cieslok, Aug. 2011
  */
 
-#include "GEPSystemOperator.h"
-
-#include <QtGlobal>
+#include "GEPSystemWorld.h"
 
 namespace GEP {
 namespace System {
 
 //#**************************************************************************
-// CLASS GEP::System::Operator
+// CLASS GEP::System::World
 //#**************************************************************************
-
 
 }
 }

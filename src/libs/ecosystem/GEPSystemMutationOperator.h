@@ -17,14 +17,21 @@ namespace System {
  * Base class for Mutation operators
  */
 template <class T>
-class MutationOperator : public Operator
+class MutationOperator : public Operator<T>
 {
 public:
-    MutationOperator () {}
+    MutationOperator (const World<T>* world);
     virtual ~MutationOperator () {}
 
     virtual void compute (Population<T>& population) = 0;
 };
+
+/* Constructor */
+template <class T>
+MutationOperator<T>::MutationOperator (const World<T>* world)
+  : Operator<T> (world)
+{
+}
 
 }
 }
