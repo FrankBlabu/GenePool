@@ -7,91 +7,42 @@
 #ifndef __GEP_SYSTEM_DEBUG_H__
 #define __GEP_SYSTEM_DEBUG_H__
 
-#include "GEPSystemFitnessOperator.h"
 #include "GEPSystemIndividual.h"
 #include "GEPSystemPopulation.h"
 
 #include <QtDebug>
-#include <QtCore/QString>
-#include <QtCore/QTextStream>
 
 namespace GEP {
 namespace System {
-
-namespace Debug {
-
-typedef std::map<Object::Id, double> FitnessMap;
 
 /*
  * Print single individual
  */
 template <class T>
-void print (const Individual<T>& individual, double fitness)
+QDebug operator<< (QDebug out, const Individual<T>& individual)
 {
-  QString text;
-  QTextStream out (&text);
-
-  out << "Individual { [";
-
-  QString separator = "";
+  QVector<T> alleles;
   for (uint i=0; i < individual.getSize (); ++i)
-    {
-      out << separator << individual[i];
-      separator = ", ";
-    }
+    alleles.push_back (individual[i]);
 
-  out << "], " << fitness << " }";
-
-  qDebug () << text;
-}
-
-template <class T>
-void print (const Individual<T>& individual, const FitnessMap& fitness_map)
-{
-  FitnessMap::const_iterator pos = fitness_map.find (individual.getId ());
-  if (pos != fitness_map.end ())
-    print (individual, pos->second);
-  else
-    print (individual, 0.0);
-}
-
-template <class T>
-void print (const Individual<T>& individual, boost::shared_ptr< FitnessOperator<T> > fitness_operator)
-{
-  print (individual, fitness_operator->compute (individual));
+  out.nospace () << "Individual {" << alleles << "}";
+  return out.space();
 }
 
 /*
  * Print population
  */
 template <class T>
-void print (const Population<T>& population, const FitnessMap& fitness_map)
+QDebug operator<< (QDebug out, const Population<T>& population)
 {
-  qDebug () << "Population {";
+  out << "Population {\n";
 
   for (typename Population<T>::ConstIterator i = population.begin (); i != population.end (); ++i)
-    {
-      const Individual<T>& individual = *i;
-      print (individual, fitness_map);
-    }
+    out << *i << "\n";
 
-  qDebug () << "}";
-}
+  out << "}\n";
 
-template <class T>
-void print (const Population<T>& population, boost::shared_ptr< FitnessOperator<T> > fitness_operator)
-{
-  qDebug () << "Population {";
-
-  for (typename Population<T>::ConstIterator i = population.begin (); i != population.end (); ++i)
-    {
-      const Individual<T>& individual = *i;
-      print (individual, fitness_operator);
-    }
-
-  qDebug () << "}";
-}
-
+  return out;
 }
 
 }

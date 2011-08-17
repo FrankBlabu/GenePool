@@ -12,6 +12,7 @@
 #include <GEPSystemFitnessOperator.h>
 #include <GEPSystemRandomNumberGenerator.h>
 #include <GEPSystemSelectionOperator.h>
+#include <GEPSystemShuffleComparator.h>
 #include <GEPScopeMainWindow.h>
 
 //#**************************************************************************
@@ -27,43 +28,6 @@ const uint NUMBER_OF_CITIES = 20;
 // Number of individuals in initial population
 //
 const uint POPULATION_SIZE = 100;
-
-
-//#**************************************************************************
-// CLASS ShuffleComparator
-//#**************************************************************************
-
-/*
- * Comparator class for shuffling a sequence
- */
-class ShuffleComparator
-{
-public:
-  ShuffleComparator (uint size);
-
-  bool operator () (uint value1, uint value2) const;
-
-private:
-  QMap<uint, double> _order;
-};
-
-/* Constructor */
-ShuffleComparator::ShuffleComparator (uint size)
-{
-    GEP::System::MersenneTwisterRandomNumberGenerator random_number_generator;
-
-  for (uint i=0; i < size; ++i)
-    _order.insert (i, random_number_generator.generate ());
-}
-
-/* Compare operator */
-bool ShuffleComparator::operator () (uint value1, uint value2) const
-{
-  Q_ASSERT (value1 < static_cast<uint> (_order.size ()));
-  Q_ASSERT (value2 < static_cast<uint> (_order.size ()));
-
-  return _order[value1] < _order[value2];
-}
 
 
 //#**************************************************************************
@@ -176,7 +140,7 @@ int main(int argc, char *argv[])
 
     for (uint i=0; i < POPULATION_SIZE; ++i)
       {
-        std::sort (sequence.begin (), sequence.end (), ShuffleComparator (POPULATION_SIZE));
+        std::sort (sequence.begin (), sequence.end (), GEP::System::ShuffleComparator<uint> ());
         population.add (TravelingIndividual (sequence));
       }
 

@@ -96,15 +96,13 @@ public:
     TestMain ();
 
 private:
-    TestPopulation generatePopulation ();
+    TestPopulation generatePopulation (uint population_size, uint individual_size);
 
 private slots:
     void testRandomNumberGenerator ();
-    void testPopulationFitnessIndex ();
     void testSelectionOperator ();
-
-private:
-    boost::shared_ptr<GEP::System::RandomNumberGenerator> _random_number_generator;
+    void testPopulationFitnessIndex ();
+    void testCrossoverOperator ();
 };
 
 #endif

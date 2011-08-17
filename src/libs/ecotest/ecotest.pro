@@ -14,7 +14,8 @@ INCLUDEPATH += ../ecoscope
 SOURCES += test_main.cpp \
     test_random_number_generator.cpp \
     test_population_fitness_index.cpp \
-    test_selection_operator.cpp
+    test_selection_operator.cpp \
+    test_crossover_operator.cpp
 
 HEADERS += \
     TestMain.h

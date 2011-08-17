@@ -4,53 +4,12 @@
  * Frank Cieslok, Aug. 2011
  */
 
+#include "GEPSystemShuffleComparator.h"
+
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
 #include "TestMain.h"
-
-//#**************************************************************************
-// Configuration
-//#**************************************************************************
-
-namespace {
-const uint NUMBER_OF_INDIVIDUALS = 10;
-const uint INDIVIDUAL_SIZE = 10;
-}
-
-//#**************************************************************************
-// CLASS ShuffleComparator
-//#**************************************************************************
-
-/*
- * Comparator class for shuffling a sequence
- */
-class ShuffleComparator
-{
-public:
-  ShuffleComparator (GEP::System::RandomNumberGeneratorPtr random_number_generator, uint size);
-
-  bool operator () (uint value1, uint value2) const;
-
-private:
-  QMap<uint, double> _order;
-};
-
-/* Constructor */
-ShuffleComparator::ShuffleComparator (GEP::System::RandomNumberGeneratorPtr random_number_generator, uint size)
-{
-  for (uint i=0; i < size; ++i)
-    _order.insert (i, random_number_generator->generate ());
-}
-
-/* Compare operator */
-bool ShuffleComparator::operator () (uint value1, uint value2) const
-{
-  Q_ASSERT (value1 < static_cast<uint> (_order.size ()));
-  Q_ASSERT (value2 < static_cast<uint> (_order.size ()));
-
-  return _order[value1] < _order[value2];
-}
 
 
 //#**************************************************************************
@@ -83,22 +42,21 @@ double TestWorld::getFitness (const GEP::System::Individual<uint>& individual)
 
 /* Constructor */
 TestMain::TestMain ()
-  : _random_number_generator (new GEP::System::MersenneTwisterRandomNumberGenerator ())
 {
 }
 
 /* Generate test population */
-TestPopulation TestMain::generatePopulation ()
+TestPopulation TestMain::generatePopulation (uint population_size, uint individual_size)
 {
   TestPopulation population;
 
-  for (uint i=0; i < NUMBER_OF_INDIVIDUALS; ++i)
+  for (uint i=0; i < population_size; ++i)
     {
       std::vector<uint> genes;
-      for (uint j=0; j < INDIVIDUAL_SIZE; ++j)
+      for (uint j=0; j < individual_size; ++j)
         genes.push_back (j);
 
-      std::sort (genes.begin (), genes.end (), ShuffleComparator (_random_number_generator, genes.size ()));
+      std::sort (genes.begin (), genes.end (), GEP::System::ShuffleComparator<uint> ());
 
       population.add (TestIndividual (genes));
     }

@@ -19,7 +19,7 @@ void TestMain::testSelectionOperator ()
     for (uint i=0; i < 1000; ++i)
       {
         TestWorld world;
-        TestPopulation population = generatePopulation ();
+        TestPopulation population = generatePopulation (10, 10);
 
         boost::shared_ptr< GEP::System::FitnessOperator<uint> > fitness_operator
             (new RandomFitnessOperator<uint> (&world, population));

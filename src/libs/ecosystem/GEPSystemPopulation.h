@@ -68,7 +68,7 @@ void Population<T>::add (const Individual<T>& individual)
 template <class T>
 Individual<T>& Population<T>::operator[] (uint index)
 {
-  Q_ASSERT (index < _individuals.size ());
+  Q_ASSERT (index < static_cast<uint> (_individuals.size ()));
   return _individuals[index];
 }
 

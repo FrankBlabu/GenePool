@@ -77,8 +77,10 @@ MersenneTwisterRandomNumberGenerator::MersenneTwisterRandomNumberGenerator ()
 /* Destructor */
 MersenneTwisterRandomNumberGenerator::~MersenneTwisterRandomNumberGenerator ()
 {
+#if 0
   delete _imp;
   _imp = 0;
+#endif
 }
 
 /* Generate new random number in interval [0:1] */
