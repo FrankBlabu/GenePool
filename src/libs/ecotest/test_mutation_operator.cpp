@@ -1,12 +1,12 @@
 /*
- * test_crossover_operator.cpp - Test for the crossover operator
+ * test_mutation_operator.cpp - Test for the mutation operator
  *
  * Frank Cieslok, Aug. 2011
  */
 
 #include "TestMain.h"
 
-#include <GEPSystemCrossoverOperator.h>
+#include <GEPSystemMutationOperator.h>
 
 /*
  * Test configuration
@@ -21,23 +21,23 @@ namespace {
 /*
  * Test crossover operators
  */
-void TestMain::testCrossoverOperator ()
+void TestMain::testMutationOperator ()
 {
   for (uint i=0; i < NUMBER_OF_RUNS; ++i)
     {
       TestWorld world;
       TestPopulation population = generatePopulation (POPULATION_SIZE, INDIVIDUAL_SIZE);
 
-      GEP::System::PartiallyMatchedCrossoverOperator<uint> crossover_operator (&world);
+      GEP::System::SwappingMutationOperator<uint> mutation_operator (&world, 1.0 / INDIVIDUAL_SIZE);
 
-      TestPopulation crossed = population;
-      crossover_operator.compute (crossed);
+      TestPopulation mutated = population;
+      mutation_operator.compute (mutated);
 
       uint expected = 0;
       for (uint j=0; j < INDIVIDUAL_SIZE; ++j)
         expected += j;
 
-      for (TestPopulation::ConstIterator j = crossed.begin (); j != crossed.end (); ++j)
+      for (TestPopulation::ConstIterator j = mutated.begin (); j != mutated.end (); ++j)
         {
           const TestIndividual& individual = *j;
 
@@ -48,7 +48,7 @@ void TestMain::testCrossoverOperator ()
           QCOMPARE (sum, expected);
         }
 
-      QCOMPARE (population.getSize (), crossed.getSize ());
+      QCOMPARE (population.getSize (), mutated.getSize ());
     }
 }
 

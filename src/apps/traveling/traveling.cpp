@@ -10,6 +10,7 @@
 #include <GEPSystemController.h>
 #include <GEPSystemIndividual.h>
 #include <GEPSystemFitnessOperator.h>
+#include <GEPSystemMutationOperator.h>
 #include <GEPSystemRandomNumberGenerator.h>
 #include <GEPSystemSelectionOperator.h>
 #include <GEPSystemShuffleComparator.h>
@@ -151,10 +152,14 @@ int main(int argc, char *argv[])
 
     boost::shared_ptr< GEP::System::FitnessOperator<uint> > fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator<uint> (&world, 1.05));
     boost::shared_ptr< GEP::System::SelectionOperator<uint> > selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator<uint> (&world, fitness_operator));
+    boost::shared_ptr< GEP::System::CrossoverOperator<uint> > crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator<uint> (&world));
+    boost::shared_ptr< GEP::System::MutationOperator<uint> > mutation_operator (new GEP::System::SwappingMutationOperator<uint> (&world, 1.0 / NUMBER_OF_CITIES));
     boost::shared_ptr< GEP::System::TerminationOperator<uint> > termination_operator (new GEP::System::FixedStepTerminationOperator<uint> (&world, 100000));
 
     controller.setFitnessOperator (fitness_operator);
     controller.setSelectionOperator (selection_operator);
+    controller.setCrossoverOperator (crossover_operator);
+    controller.setMutationOperator (mutation_operator);
     controller.setTerminationOperator (termination_operator);
 
     //

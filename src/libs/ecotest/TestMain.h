@@ -103,6 +103,7 @@ private slots:
     void testSelectionOperator ();
     void testPopulationFitnessIndex ();
     void testCrossoverOperator ();
+    void testMutationOperator ();
 };
 
 #endif
