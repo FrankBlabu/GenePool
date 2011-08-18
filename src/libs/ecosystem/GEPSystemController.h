@@ -7,6 +7,8 @@
 #ifndef __GEP_SYSTEM_CONTROLLER_H__
 #define __GEP_SYSTEM_CONTROLLER_H__
 
+#include <QtCore/QSharedPointer>
+
 #include "GEPSystemPopulation.h"
 #include "GEPSystemCrossoverOperator.h"
 #include "GEPSystemFitnessOperator.h"
@@ -29,7 +31,11 @@ class Controller
 public:
   Controller ();
 
-  virtual uint getStepCounter () const = 0;
+  struct FitnessType { enum Type_t { MINIMUM, MAXIMUM, AVERAGE }; };
+  typedef FitnessType::Type_t FitnessType_t;
+
+  virtual double getCurrentFitness (FitnessType_t type) const = 0;
+  virtual uint getCurrentStep () const = 0;
 
   virtual void initialize ();
   virtual bool executeStep () = 0;
@@ -49,11 +55,11 @@ class StandardController : public Controller
 public:
   StandardController ();
 
-  typedef boost::shared_ptr< CrossoverOperator<T> > CrossoverOperatorPtr;
-  typedef boost::shared_ptr< FitnessOperator<T> > FitnessOperatorPtr;
-  typedef boost::shared_ptr< MutationOperator<T> > MutationOperatorPtr;
-  typedef boost::shared_ptr< SelectionOperator<T> > SelectionOperatorPtr;
-  typedef boost::shared_ptr< TerminationOperator<T> > TerminationOperatorPtr;
+  typedef QSharedPointer< CrossoverOperator<T> > CrossoverOperatorPtr;
+  typedef QSharedPointer< FitnessOperator<T> > FitnessOperatorPtr;
+  typedef QSharedPointer< MutationOperator<T> > MutationOperatorPtr;
+  typedef QSharedPointer< SelectionOperator<T> > SelectionOperatorPtr;
+  typedef QSharedPointer< TerminationOperator<T> > TerminationOperatorPtr;
 
   void setCrossoverOperator (CrossoverOperatorPtr crossover_operator);
   void setFitnessOperator (FitnessOperatorPtr fitness_operator);
@@ -129,7 +135,8 @@ class SinglePopulationController : public StandardController<T>
 public:
   SinglePopulationController (const Population<T>& population);
 
-  virtual uint getStepCounter () const;
+  virtual double getCurrentFitness (Controller::FitnessType_t type) const;
+  virtual uint getCurrentStep () const;
 
   virtual void initialize ();
   virtual bool executeStep ();
@@ -137,46 +144,99 @@ public:
 private:
   Population<T> _population;
 
-  uint _step_counter;
+  uint _current_step;
+
+  double _minimum_fitness;
+  double _maximum_fitness;
+  double _average_fitness;
 };
 
 /* Constructor */
 template <class T>
 SinglePopulationController<T>::SinglePopulationController (const Population<T>& population)
-  : _population   (population),
-    _step_counter (0)
+  : _population      (population),
+    _current_step    (0),
+    _minimum_fitness (0.0),
+    _maximum_fitness (0.0),
+    _average_fitness (0.0)
 {
 }
 
 /* Returns current execution step */
 template<class T>
-uint SinglePopulationController<T>::getStepCounter () const
+uint SinglePopulationController<T>::getCurrentStep () const
 {
-  return _step_counter;
+  return _current_step;
+}
+
+/* Returns current fitness value */
+template <class T>
+double SinglePopulationController<T>::getCurrentFitness (Controller::FitnessType_t type) const
+{
+  double fitness = 0.0;
+
+  switch (type)
+    {
+    case Controller::FitnessType::MINIMUM:
+      fitness = _minimum_fitness;
+      break;
+    case Controller::FitnessType::MAXIMUM:
+      fitness = _maximum_fitness;
+      break;
+    case Controller::FitnessType::AVERAGE:
+      fitness = _average_fitness;
+      break;
+    }
+
+  return fitness;
 }
 
 /* Initialize algorithm */
 template <class T>
 void SinglePopulationController<T>::initialize ()
 {
-#if 0
-  Q_ASSERT (StandardController<T>::_crossover_operator != 0);
-#endif
   Q_ASSERT (StandardController<T>::_fitness_operator != 0);
-#if 0
-  Q_ASSERT (StandardController<T>::_mutation_operator != 0);
-#endif
   Q_ASSERT (StandardController<T>::_selection_operator != 0);
+  Q_ASSERT (StandardController<T>::_crossover_operator != 0);
+  Q_ASSERT (StandardController<T>::_mutation_operator != 0);
   Q_ASSERT (StandardController<T>::_termination_operator != 0);
 
-  _step_counter = 0;
+  _current_step = 0;
+  StandardController<T>::_fitness_operator->initialize (_population);
 }
 
 /* Execute algorithm */
 template <class T>
 bool SinglePopulationController<T>::executeStep ()
 {
-  return StandardController<T>::_termination_operator->compute (_population, ++_step_counter);
+  //
+  // Compute single step
+  //
+  StandardController<T>::_selection_operator->compute (_population);
+  StandardController<T>::_crossover_operator->compute (_population);
+  StandardController<T>::_mutation_operator->compute (_population);
+  StandardController<T>::_fitness_operator->initialize (_population);
+
+  //
+  // Compute fitness values
+  //
+  _minimum_fitness = std::numeric_limits<double>::max ();
+  _maximum_fitness = 0.0;
+  _average_fitness = 0.0;
+
+  for (typename Population<T>::ConstIterator i = _population.begin (); i != _population.end (); ++i)
+    {
+      const Individual<T>& individual = *i;
+      double fitness = StandardController<T>::_fitness_operator->compute (individual);
+
+      _minimum_fitness = std::min (_minimum_fitness, fitness);
+      _maximum_fitness = std::max (_maximum_fitness, fitness);
+      _average_fitness += fitness;
+    }
+
+  _average_fitness /= _population.getSize ();
+
+  return StandardController<T>::_termination_operator->compute (_population, ++_current_step);
 }
 
 }

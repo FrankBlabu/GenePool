@@ -12,9 +12,7 @@
 #include "GEPSystemPopulation.h"
 #include "GEPSystemPopulationFitnessIndex.h"
 
-#include <boost/shared_ptr.hpp>
 #include <math.h>
-
 #include <map>
 
 namespace GEP {
@@ -31,13 +29,13 @@ template <class T>
 class SelectionOperator : public Operator<T>
 {
 public:
-  typedef boost::shared_ptr< FitnessOperator<T> > FitnessOperatorPtr;
+  typedef QSharedPointer< FitnessOperator<T> > FitnessOperatorPtr;
 
 public:
     SelectionOperator (World<T>* world, FitnessOperatorPtr fitness_operator);
     virtual ~SelectionOperator ();
 
-    virtual void compute (const Population<T>& source, Population<T>* target) const = 0;
+    virtual void compute (Population<T>& population) const = 0;
 
 protected:
     FitnessOperatorPtr _fitness_operator;
@@ -72,7 +70,7 @@ public:
     RemainderStochasticSamplingSelectionOperator (World<T>* world, typename SelectionOperator<T>::FitnessOperatorPtr fitness_operator);
     virtual ~RemainderStochasticSamplingSelectionOperator ();
 
-    virtual void compute (const Population<T>& source, Population<T>* target) const;
+    virtual void compute (Population<T>& population) const;
 };
 
 /* Constructor */
@@ -90,10 +88,8 @@ RemainderStochasticSamplingSelectionOperator<T>::~RemainderStochasticSamplingSel
 
 /* Perform selection */
 template <class T>
-void RemainderStochasticSamplingSelectionOperator<T>::compute (const Population<T>& source, Population<T>* target) const
+void RemainderStochasticSamplingSelectionOperator<T>::compute (Population<T>& population) const
 {
-  Q_UNUSED (target);
-
   //
   // Compute individual fitness and fitness sum
   //
@@ -101,7 +97,7 @@ void RemainderStochasticSamplingSelectionOperator<T>::compute (const Population<
   FitnessMap fitness_map;
 
   double fitness_sum = 0.0;
-  for (typename Population<T>::ConstIterator i = source.begin (); i != source.end (); ++i)
+  for (typename Population<T>::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const Individual<T>& individual = *i;
 
@@ -114,17 +110,19 @@ void RemainderStochasticSamplingSelectionOperator<T>::compute (const Population<
   //
   // Step 1: Insert individuals according to their relativ selection probability
   //
-  for (typename Population<T>::ConstIterator i = source.begin (); i != source.end (); ++i)
+  Population<T> selected;
+
+  for (typename Population<T>::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const Individual<T>& individual = *i;
 
       double p = fitness_map[individual.getId ()] / fitness_sum;
-      uint n = static_cast<uint> (floor (p * source.getSize ()));
+      uint n = static_cast<uint> (floor (p * population.getSize ()));
 
-      fitness_map[individual.getId ()] = p * source.getSize () - floor (p * source.getSize ());
+      fitness_map[individual.getId ()] = p * population.getSize () - floor (p * population.getSize ());
 
       for (uint i=0; i < n; ++i)
-        target->add (Individual<T> (individual));
+        selected.add (Individual<T> (individual));
     }
 
   //
@@ -134,9 +132,9 @@ void RemainderStochasticSamplingSelectionOperator<T>::compute (const Population<
   for (FitnessMap::const_iterator i = fitness_map.begin (); i != fitness_map.end (); ++i)
     fitness_sum += i->second;
 
-  PopulationFitnessIndex<T> fitness_index (source, fitness_map);
+  PopulationFitnessIndex<T> fitness_index (population, fitness_map);
 
-  while (source.getSize () > target->getSize ())
+  while (population.getSize () > selected.getSize ())
     {
       double value = Operator<T>::_world->getRandom ();
 
@@ -153,7 +151,7 @@ void RemainderStochasticSamplingSelectionOperator<T>::compute (const Population<
 
           if (value <= sum)
             {
-              target->add (individual);
+              selected.add (individual);
               found = true;
             }
         }
@@ -161,6 +159,7 @@ void RemainderStochasticSamplingSelectionOperator<T>::compute (const Population<
       Q_ASSERT (found);
     }
 
+  population = selected;
 }
 
 }

@@ -12,6 +12,9 @@
 #include "GEPSystemShuffleComparator.h"
 #include "GEPSystemDebug.h"
 
+#include <algorithm>
+#include <vector>
+
 namespace GEP {
 namespace System {
 
@@ -68,9 +71,6 @@ PartiallyMatchedCrossoverOperator<T>::PartiallyMatchedCrossoverOperator (World<T
 template <class T>
 void PartiallyMatchedCrossoverOperator<T>::compute (Population<T>& population)
 {
-  qDebug () << "*** Crossover";
-  qDebug () << population;
-
   //
   // Shuffle population index for random crossover pairs
   //
@@ -78,7 +78,7 @@ void PartiallyMatchedCrossoverOperator<T>::compute (Population<T>& population)
   for (uint i=0; i < population.getSize (); ++i)
     shuffled_index.push_back (i);
 
-  std::sort (shuffled_index.begin (), shuffled_index.end (), ShuffleComparator<uint> ());
+  std::sort (shuffled_index.begin (), shuffled_index.end (), ShuffleComparator<uint> (Operator<T>::_world));
 
   //
   // Crossover of individual pairs
@@ -88,8 +88,6 @@ void PartiallyMatchedCrossoverOperator<T>::compute (Population<T>& population)
       Individual<T>& individual1 = population[shuffled_index[i * 2]];
       Individual<T>& individual2 = population[shuffled_index[i * 2 + 1]];
 
-      qDebug () << "individual_index1=" << shuffled_index[i * 2] << ", individual_index2=" << shuffled_index[i * 2 + 1];
-
       Q_ASSERT (individual1.getSize () == individual2.getSize ());
       Q_ASSERT (individual1.getSize () > 2);
 
@@ -97,10 +95,6 @@ void PartiallyMatchedCrossoverOperator<T>::compute (Population<T>& population)
 
       uint index1 = static_cast<uint> (floor (Operator<T>::_world->getRandom () * size)) % size;
       uint index2 = index1 + 1 + static_cast<uint> (floor (Operator<T>::_world->getRandom () * (size - 2))) % (size - 2);
-
-      qDebug () << "crossover_index1=" << index1 << ", crossover_index2=" << index2;
-      qDebug () << "  Individual1: " << individual1;
-      qDebug () << "  Individual1: " << individual2;
 
       typedef std::map<T, T> IndexMap;
       IndexMap indices1;
@@ -116,10 +110,6 @@ void PartiallyMatchedCrossoverOperator<T>::compute (Population<T>& population)
 
           std::swap (individual1[j % size], individual2[j % size]);
         }
-
-      qDebug () << "Swapped:";
-      qDebug () << "  Individual1: " << individual1;
-      qDebug () << "  Individual1: " << individual2;
 
       for (uint j=index2+1; j % size > index2 || j % size < index1; ++j)
         {
@@ -137,10 +127,6 @@ void PartiallyMatchedCrossoverOperator<T>::compute (Population<T>& population)
           individual1[pos] = value1;
           individual2[pos] = value2;
         }
-
-      qDebug () << "Corrected:";
-      qDebug () << "  Individual1: " << individual1;
-      qDebug () << "  Individual1: " << individual2;
     }
 }
 

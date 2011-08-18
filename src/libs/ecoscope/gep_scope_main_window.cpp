@@ -88,24 +88,25 @@ void MainWindow::slotRun ()
   QTime time = QTime::currentTime ();
   statusBar ()->showMessage ("Starting...");
 
-  qDebug () << "1";
+  qDebug () << "*** Executing";
 
   for (uint i=0; !_controller->executeStep  (); ++i)
     {
-      qDebug () << "2";
+      qDebug () << "Step:" << _controller->getCurrentStep ();
+      qDebug () << "Minimum fitness:" << _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM);
+      qDebug () << "Maximum fitness:" << _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM);
+      qDebug () << "Average fitness:" << _controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE);
 
       if (time.elapsed () >= 1000)
         {
-          qDebug () << "3";
-
-          statusBar ()->showMessage (QString ("Executing step %1").arg (_controller->getStepCounter ()));
+          statusBar ()->showMessage (QString ("Executing step %1").arg (_controller->getCurrentStep ()));
 
           QApplication::processEvents ();
           time.restart ();
         }
     }
 
-  qDebug () << "4";
+  qDebug () << "Done.";
 
   statusBar ()->clearMessage ();
 }

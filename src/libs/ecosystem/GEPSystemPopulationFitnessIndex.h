@@ -12,6 +12,9 @@
 #include "GEPSystemFitnessOperator.h"
 #include "GEPSystemPopulation.h"
 
+#include <QtCore/QSharedPointer>
+
+#include <algorithm>
 #include <map>
 #include <vector>
 
@@ -30,7 +33,7 @@ template <class T>
 class PopulationFitnessIndexComparator
 {
 public:
-  typedef boost::shared_ptr< FitnessOperator<T> > FitnessOperatorPtr;
+  typedef QSharedPointer< FitnessOperator<T> > FitnessOperatorPtr;
   PopulationFitnessIndexComparator (const Population<T>& population, FitnessOperatorPtr fitness_operator);
 
   typedef std::map<Object::Id, double> FitnessMap;
@@ -86,7 +89,7 @@ template <class T>
 class PopulationFitnessIndex
 {
 public:
-  typedef boost::shared_ptr< FitnessOperator<T> > FitnessOperatorPtr;
+  typedef QSharedPointer< FitnessOperator<T> > FitnessOperatorPtr;
   PopulationFitnessIndex (const Population<T>& population, FitnessOperatorPtr fitness_operator);
 
   typedef std::map<Object::Id, double> FitnessMap;

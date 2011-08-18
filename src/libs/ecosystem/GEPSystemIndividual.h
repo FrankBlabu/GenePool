@@ -11,7 +11,6 @@
 
 #include <limits>
 #include <vector>
-#include <boost/shared_ptr.hpp>
 
 #include <QtGlobal>
 #include <QtCore/QMutex>

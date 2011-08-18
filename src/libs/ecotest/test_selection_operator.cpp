@@ -9,7 +9,6 @@
 #include <GEPSystemSelectionOperator.h>
 
 
-
 /*
  * Test selection operators
  */
@@ -21,13 +20,13 @@ void TestMain::testSelectionOperator ()
         TestWorld world;
         TestPopulation population = generatePopulation (10, 10);
 
-        boost::shared_ptr< GEP::System::FitnessOperator<uint> > fitness_operator
+        QSharedPointer< GEP::System::FitnessOperator<uint> > fitness_operator
             (new RandomFitnessOperator<uint> (&world, population));
 
         GEP::System::RemainderStochasticSamplingSelectionOperator<uint> selection_operator (&world, fitness_operator);
 
-        TestPopulation selected;
-        selection_operator.compute (population, &selected);
+        TestPopulation selected = population;
+        selection_operator.compute (selected);
 
         QCOMPARE (population.getSize (), selected.getSize ());
       }

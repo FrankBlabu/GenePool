@@ -71,15 +71,10 @@ SwappingMutationOperator<T>::SwappingMutationOperator (World<T>* world, double p
 template <class T>
 void SwappingMutationOperator<T>::compute (Population<T>& population)
 {
-  qDebug () << "* SwappingMutationOperator";
-  qDebug () << "population:" << population;
-
   for (uint i=0; i < population.getSize (); ++i)
     {
       Individual<T>& individual = population[i];
       uint size = individual.getSize ();
-
-      qDebug () << "Checking" << individual;
 
       for (uint j=0; j < size; ++j)
         {
@@ -89,11 +84,7 @@ void SwappingMutationOperator<T>::compute (Population<T>& population)
               std::swap (individual[j], individual[k % size]);
             }
         }
-
-      qDebug () << "Resulting individual" << individual;
     }
-
-  qDebug () << "mutated population:" << population;
 }
 
 }

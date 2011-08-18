@@ -18,11 +18,11 @@ void TestMain::testPopulationFitnessIndex ()
   typedef std::map<GEP::System::Object::Id, double> FitnessMap;
   FitnessMap fitness_map;
 
-  GEP::System::MersenneTwisterRandomNumberGenerator random_number_generator;
+  TestWorld world;
   for (TestPopulation::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const TestIndividual& individual = *i;
-      fitness_map.insert (std::make_pair (individual.getId (), random_number_generator.generate ()));
+      fitness_map.insert (std::make_pair (individual.getId (), world.getRandom ()));
     }
 
   GEP::System::PopulationFitnessIndex<uint> fitness_index (population, fitness_map);

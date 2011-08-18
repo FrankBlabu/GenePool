@@ -8,7 +8,6 @@
 #define __GEP_SYSTEM_WORLD_H__
 
 #include "GEPSystemIndividual.h"
-#include "GEPSystemRandomNumberGenerator.h"
 
 namespace GEP {
 namespace System {
@@ -16,39 +15,42 @@ namespace System {
 /*
  * World information
  */
-template <class T>
-class World
+class RandomNumberGenerator;
+
+class WorldBase
 {
 public:
-    World (RandomNumberGeneratorPtr random_number_generator);
+  WorldBase ();
+  virtual ~WorldBase ();
+
+  double getRandom ();
+
+private:
+  RandomNumberGenerator* _random_number_generator;
+};
+
+template <class T>
+class World : public WorldBase
+{
+public:
+    World ();
     virtual ~World ();
 
     virtual double getFitness (const Individual<T>& individual) = 0;
-    virtual double getRandom ();
-
-private:
-    RandomNumberGeneratorPtr _random_number_generator;
 };
 
 
 /* Constructor */
 template <class T>
-World<T>::World (RandomNumberGeneratorPtr random_number_generator)
-  : _random_number_generator (random_number_generator)
+World<T>::World ()
 {
+
 }
 
 /* Destructor */
 template <class T>
 World<T>::~World ()
 {
-}
-
-/* Get random number */
-template <class T>
-double World<T>::getRandom ()
-{
-  return _random_number_generator->generate ();
 }
 
 

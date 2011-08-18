@@ -11,7 +11,6 @@
 #include <GEPSystemIndividual.h>
 #include <GEPSystemFitnessOperator.h>
 #include <GEPSystemMutationOperator.h>
-#include <GEPSystemRandomNumberGenerator.h>
 #include <GEPSystemSelectionOperator.h>
 #include <GEPSystemShuffleComparator.h>
 #include <GEPScopeMainWindow.h>
@@ -68,7 +67,7 @@ private:
 
 /* Constructor */
 TravelingWorld::TravelingWorld (uint number_of_cities)
-  : GEP::System::World<uint> (GEP::System::RandomNumberGeneratorPtr (new GEP::System::MersenneTwisterRandomNumberGenerator ())),
+  : GEP::System::World<uint> (),
     _fitness_bias (0.0)
 {
   //
@@ -141,7 +140,8 @@ int main(int argc, char *argv[])
 
     for (uint i=0; i < POPULATION_SIZE; ++i)
       {
-        std::sort (sequence.begin (), sequence.end (), GEP::System::ShuffleComparator<uint> ());
+        GEP::System::ShuffleComparator<uint> comparator (&world);
+        std::sort (sequence.begin (), sequence.end (), comparator);
         population.add (TravelingIndividual (sequence));
       }
 
@@ -150,11 +150,11 @@ int main(int argc, char *argv[])
     //
     GEP::System::SinglePopulationController<uint> controller (population);
 
-    boost::shared_ptr< GEP::System::FitnessOperator<uint> > fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator<uint> (&world, 1.05));
-    boost::shared_ptr< GEP::System::SelectionOperator<uint> > selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator<uint> (&world, fitness_operator));
-    boost::shared_ptr< GEP::System::CrossoverOperator<uint> > crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator<uint> (&world));
-    boost::shared_ptr< GEP::System::MutationOperator<uint> > mutation_operator (new GEP::System::SwappingMutationOperator<uint> (&world, 1.0 / NUMBER_OF_CITIES));
-    boost::shared_ptr< GEP::System::TerminationOperator<uint> > termination_operator (new GEP::System::FixedStepTerminationOperator<uint> (&world, 100000));
+    QSharedPointer< GEP::System::FitnessOperator<uint> > fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator<uint> (&world, 1.05));
+    QSharedPointer< GEP::System::SelectionOperator<uint> > selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator<uint> (&world, fitness_operator));
+    QSharedPointer< GEP::System::CrossoverOperator<uint> > crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator<uint> (&world));
+    QSharedPointer< GEP::System::MutationOperator<uint> > mutation_operator (new GEP::System::SwappingMutationOperator<uint> (&world, 1.0 / NUMBER_OF_CITIES));
+    QSharedPointer< GEP::System::TerminationOperator<uint> > termination_operator (new GEP::System::FixedStepTerminationOperator<uint> (&world, 100000));
 
     controller.setFitnessOperator (fitness_operator);
     controller.setSelectionOperator (selection_operator);
@@ -169,4 +169,5 @@ int main(int argc, char *argv[])
     main_window.show();
 
     return app.exec();
+
 }

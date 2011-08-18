@@ -7,7 +7,7 @@
 #ifndef __GEP_SYSTEM_SHUFFLE_COMPARATOR_H__
 #define __GEP_SYSTEM_SHUFFLE_COMPARATOR_H__
 
-#include "GEPSystemRandomNumberGenerator.h"
+#include "GEPSystemWorld.h"
 
 #include <map>
 
@@ -25,43 +25,44 @@ template <class T>
 class ShuffleComparator
 {
 public:
-  ShuffleComparator ();
+  ShuffleComparator (World<T>* world);
 
-  bool operator () (const T& object1, const T& object2) const;
-
-private:
-  double getOrder (const T& object) const;
+  bool operator () (T object1, T object2);
 
 private:
-  mutable MersenneTwisterRandomNumberGenerator _random_number_generator;
+  double getOrder (T object);
+
+private:
+  World<T>* _world;
 
   typedef std::map<T, double> OrderMap;
-  mutable OrderMap _order_map;
+  OrderMap _order_map;
 };
 
 /* Constructor */
 template <class T>
-ShuffleComparator<T>::ShuffleComparator ()
+ShuffleComparator<T>::ShuffleComparator (World<T>* world)
+  : _world (world)
 {
 }
 
 /* Comparison operator */
 template <class T>
-bool ShuffleComparator<T>::operator () (const T& object1, const T& object2) const
+bool ShuffleComparator<T>::operator () (T object1, T object2)
 {
   return getOrder (object1) < getOrder (object2);
 }
 
 /* Return order of the given object */
 template <class T>
-double ShuffleComparator<T>::getOrder (const T& object) const
+double ShuffleComparator<T>::getOrder (T object)
 {
   double order = 0.0;
 
   typename OrderMap::const_iterator pos = _order_map.find (object);
   if (pos == _order_map.end ())
     {
-      order = _random_number_generator.generate ();
+      order = _world->getRandom ();
       _order_map.insert (std::make_pair (object, order));
     }
   else

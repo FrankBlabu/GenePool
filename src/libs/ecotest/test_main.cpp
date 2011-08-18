@@ -5,11 +5,12 @@
  */
 
 #include "GEPSystemShuffleComparator.h"
+#include "TestMain.h"
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include "TestMain.h"
+#include <algorithm>
 
 
 //#**************************************************************************
@@ -18,7 +19,7 @@
 
 /* Constructor */
 TestWorld::TestWorld ()
-  : GEP::System::World<uint> (GEP::System::RandomNumberGeneratorPtr (new GEP::System::MersenneTwisterRandomNumberGenerator))
+  : GEP::System::World<uint> ()
 {
 }
 

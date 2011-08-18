@@ -19,10 +19,10 @@ void TestMain::testRandomNumberGenerator ()
   {
     double sum = 0.0;
 
-    GEP::System::MersenneTwisterRandomNumberGenerator random_number_generator;
+    TestWorld world;
     for (uint i=0; i < NUMBER_OF_RUNS; ++i)
       {
-        double n = random_number_generator.generate ();
+        double n = world.getRandom ();
 
         Q_ASSERT (n >= 0.0);
         Q_ASSERT (n <= 1.0);

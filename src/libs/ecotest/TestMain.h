@@ -13,7 +13,6 @@
 #include <GEPSystemIndividual.h>
 #include <GEPSystemPopulation.h>
 #include <GEPSystemFitnessOperator.h>
-#include <GEPSystemRandomNumberGenerator.h>
 
 /*
  * Individual definition
