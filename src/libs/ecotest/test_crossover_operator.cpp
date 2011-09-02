@@ -26,24 +26,24 @@ void TestMain::testCrossoverOperator ()
   for (uint i=0; i < NUMBER_OF_RUNS; ++i)
     {
       TestWorld world;
-      TestPopulation population = generatePopulation (POPULATION_SIZE, INDIVIDUAL_SIZE);
+      GEP::System::Population population = generatePopulation (&world, POPULATION_SIZE, INDIVIDUAL_SIZE);
 
-      GEP::System::PartiallyMatchedCrossoverOperator<uint> crossover_operator (&world);
+      GEP::System::PartiallyMatchedCrossoverOperator crossover_operator (&world);
 
-      TestPopulation crossed = population;
+      GEP::System::Population crossed = population;
       crossover_operator.compute (crossed);
 
       uint expected = 0;
       for (uint j=0; j < INDIVIDUAL_SIZE; ++j)
         expected += j;
 
-      for (TestPopulation::ConstIterator j = crossed.begin (); j != crossed.end (); ++j)
+      for (GEP::System::Population::ConstIterator j = crossed.begin (); j != crossed.end (); ++j)
         {
-          const TestIndividual& individual = *j;
+          const GEP::System::Individual& individual = *j;
 
           uint sum = 0;
           for (uint k=0; k < individual.getSize (); ++k)
-            sum += individual[k];
+            sum += individual[k].toUInt ();
 
           QCOMPARE (sum, expected);
         }

@@ -14,12 +14,42 @@
 
 
 //#**************************************************************************
+// CLASS RandomFitnessOperator
+//#**************************************************************************
+
+/* Constructor */
+RandomFitnessOperator::RandomFitnessOperator (GEP::System::World* world, const GEP::System::Population& population)
+  : GEP::System::FitnessOperator (world)
+{
+  for (GEP::System::Population::ConstIterator i = population.begin (); i != population.end (); ++i)
+    {
+      const GEP::System::Individual& individual = *i;
+      _fitness_map.insert (std::make_pair (individual.getId (), _world->getRandom ()));
+    }
+}
+
+/* Destructor */
+RandomFitnessOperator::~RandomFitnessOperator ()
+{
+}
+
+/* Compute fitness for a single individual */
+double RandomFitnessOperator::compute (const GEP::System::Individual& individual) const
+{
+  FitnessMap::const_iterator pos = _fitness_map.find (individual.getId ());
+  Q_ASSERT (pos != _fitness_map.end ());
+
+  return pos->second;
+}
+
+
+//#**************************************************************************
 // CLASS TestWorld
 //#**************************************************************************
 
 /* Constructor */
 TestWorld::TestWorld ()
-  : GEP::System::World<uint> ()
+  : GEP::System::World ()
 {
 }
 
@@ -29,11 +59,11 @@ TestWorld::~TestWorld ()
 }
 
 /* Get random number */
-double TestWorld::getFitness (const GEP::System::Individual<uint>& individual)
+double TestWorld::getFitness (const GEP::System::Individual& individual)
 {
   Q_UNUSED (individual);
 
-  return GEP::System::World<uint>::getRandom () * 100.0;
+  return GEP::System::World::getRandom () * 100.0;
 }
 
 
@@ -47,19 +77,19 @@ TestMain::TestMain ()
 }
 
 /* Generate test population */
-TestPopulation TestMain::generatePopulation (uint population_size, uint individual_size)
+GEP::System::Population TestMain::generatePopulation (GEP::System::World* world, uint population_size, uint individual_size)
 {
-  TestPopulation population;
+  GEP::System::Population population;
 
   for (uint i=0; i < population_size; ++i)
     {
-      std::vector<uint> genes;
+      std::vector<QVariant> genes;
       for (uint j=0; j < individual_size; ++j)
-        genes.push_back (j);
+        genes.push_back (QVariant (j));
 
-      std::sort (genes.begin (), genes.end (), GEP::System::ShuffleComparator<uint> ());
+      std::sort (genes.begin (), genes.end (), GEP::System::ShuffleComparator (world));
 
-      population.add (TestIndividual (genes));
+      population.add (GEP::System::Individual (genes));
     }
 
   return population;

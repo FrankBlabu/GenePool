@@ -15,6 +15,11 @@ namespace System {
 // CLASS GEP::System::Operator
 //#**************************************************************************
 
+/* Constructor */
+Operator::Operator (World* world)
+  : _world (world)
+{
+}
 
 }
 }

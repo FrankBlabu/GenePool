@@ -37,7 +37,7 @@ const uint POPULATION_SIZE = 100;
 /*
  * Individual: Single path
  */
-typedef GEP::System::Individual<uint> TravelingIndividual;
+typedef GEP::System::Individual TravelingIndividual;
 
 
 //#**************************************************************************
@@ -47,7 +47,7 @@ typedef GEP::System::Individual<uint> TravelingIndividual;
 /*
  * World layout
  */
-class TravelingWorld : public GEP::System::World<uint>
+class TravelingWorld : public GEP::System::World
 {
 public:
   TravelingWorld (uint number_of_cities);
@@ -67,14 +67,14 @@ private:
 
 /* Constructor */
 TravelingWorld::TravelingWorld (uint number_of_cities)
-  : GEP::System::World<uint> (),
+  : GEP::System::World (),
     _fitness_bias (0.0)
 {
   //
   // Randomly place cities
   //
   for (uint i=0; i < number_of_cities; ++i)
-    _cities.push_back (QPointF (GEP::System::World<uint>::getRandom (), GEP::System::World<uint>::getRandom ()));
+    _cities.push_back (QPointF (getRandom (), getRandom ()));
 
   //
   // Compute largest city distance to get a fitness bias
@@ -108,7 +108,7 @@ double TravelingWorld::getFitness (const TravelingIndividual& individual)
   double fitness = 0.0;
 
   for (uint i=0; i + 1 < individual.getSize (); ++i)
-    fitness += getDistance (individual[i], individual[i + 1]);
+    fitness += getDistance (individual[i].toUInt (), individual[i + 1].toUInt ());
 
   return _fitness_bias - fitness;
 }
@@ -132,15 +132,15 @@ int main(int argc, char *argv[])
     // Create world
     //
     TravelingWorld world (NUMBER_OF_CITIES);
-    GEP::System::Population<uint> population;
+    GEP::System::Population population;
 
-    std::vector<uint> sequence;
+    std::vector<QVariant> sequence;
     for (uint i=0; i < NUMBER_OF_CITIES; ++i)
-      sequence.push_back (i);
+      sequence.push_back (QVariant (i));
 
     for (uint i=0; i < POPULATION_SIZE; ++i)
       {
-        GEP::System::ShuffleComparator<uint> comparator (&world);
+        GEP::System::ShuffleComparator comparator (&world);
         std::sort (sequence.begin (), sequence.end (), comparator);
         population.add (TravelingIndividual (sequence));
       }
@@ -148,13 +148,13 @@ int main(int argc, char *argv[])
     //
     // Setup controller
     //
-    GEP::System::SinglePopulationController<uint> controller (population);
+    GEP::System::SinglePopulationController controller (population);
 
-    QSharedPointer< GEP::System::FitnessOperator<uint> > fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator<uint> (&world, 1.05));
-    QSharedPointer< GEP::System::SelectionOperator<uint> > selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator<uint> (&world, fitness_operator));
-    QSharedPointer< GEP::System::CrossoverOperator<uint> > crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator<uint> (&world));
-    QSharedPointer< GEP::System::MutationOperator<uint> > mutation_operator (new GEP::System::SwappingMutationOperator<uint> (&world, 1.0 / NUMBER_OF_CITIES));
-    QSharedPointer< GEP::System::TerminationOperator<uint> > termination_operator (new GEP::System::FixedStepTerminationOperator<uint> (&world, 100000));
+    QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 1.05));
+    QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator));
+    QSharedPointer<GEP::System::CrossoverOperator> crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator (&world));
+    QSharedPointer<GEP::System::MutationOperator> mutation_operator (new GEP::System::SwappingMutationOperator (&world, 1.0 / NUMBER_OF_CITIES));
+    QSharedPointer<GEP::System::TerminationOperator> termination_operator (new GEP::System::FixedStepTerminationOperator (&world, 100000));
 
     controller.setFitnessOperator (fitness_operator);
     controller.setSelectionOperator (selection_operator);

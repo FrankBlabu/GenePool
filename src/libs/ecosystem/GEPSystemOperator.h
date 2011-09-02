@@ -15,22 +15,14 @@ namespace System {
 /*
  * Base class for all operator classes
  */
-template <class T>
 class Operator
 {
 public:
-    Operator (World<T>* world);
+    Operator (World* world);
 
 protected:
-    World<T>* _world;
+    World* _world;
 };
-
-/* Constructor */
-template <class T>
-Operator<T>::Operator (World<T>* world)
-  : _world (world)
-{
-}
 
 }
 }

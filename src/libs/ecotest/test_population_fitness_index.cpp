@@ -13,26 +13,26 @@
  */
 void TestMain::testPopulationFitnessIndex ()
 {
-  TestPopulation population = generatePopulation (10, 10);
+  TestWorld world;
+  GEP::System::Population population = generatePopulation (&world, 10, 10);
 
   typedef std::map<GEP::System::Object::Id, double> FitnessMap;
   FitnessMap fitness_map;
 
-  TestWorld world;
-  for (TestPopulation::ConstIterator i = population.begin (); i != population.end (); ++i)
+  for (GEP::System::Population::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
-      const TestIndividual& individual = *i;
+      const GEP::System::Individual& individual = *i;
       fitness_map.insert (std::make_pair (individual.getId (), world.getRandom ()));
     }
 
-  GEP::System::PopulationFitnessIndex<uint> fitness_index (population, fitness_map);
+  GEP::System::PopulationFitnessIndex fitness_index (population, fitness_map);
 
   QCOMPARE (population.getSize (), fitness_index.getSize ());
 
   double upper_bound = 1.0;
   for (uint i=0; i < fitness_index.getSize (); ++i)
     {
-      const TestIndividual& individual = fitness_index.getIndividual (i);
+      const GEP::System::Individual& individual = fitness_index.getIndividual (i);
 
       FitnessMap::const_iterator pos = fitness_map.find (individual.getId ());
       Q_ASSERT (pos != fitness_map.end ());

@@ -18,14 +18,14 @@ void TestMain::testSelectionOperator ()
     for (uint i=0; i < 1000; ++i)
       {
         TestWorld world;
-        TestPopulation population = generatePopulation (10, 10);
+        GEP::System::Population population = generatePopulation (&world, 10, 10);
 
-        QSharedPointer< GEP::System::FitnessOperator<uint> > fitness_operator
-            (new RandomFitnessOperator<uint> (&world, population));
+        QSharedPointer<GEP::System::FitnessOperator> fitness_operator
+            (new RandomFitnessOperator (&world, population));
 
-        GEP::System::RemainderStochasticSamplingSelectionOperator<uint> selection_operator (&world, fitness_operator);
+        GEP::System::RemainderStochasticSamplingSelectionOperator selection_operator (&world, fitness_operator);
 
-        TestPopulation selected = population;
+        GEP::System::Population selected = population;
         selection_operator.compute (selected);
 
         QCOMPARE (population.getSize (), selected.getSize ());

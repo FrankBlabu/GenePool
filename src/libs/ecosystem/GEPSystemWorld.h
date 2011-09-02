@@ -9,6 +9,8 @@
 
 #include "GEPSystemIndividual.h"
 
+uint qHash (const QVariant& data);
+
 namespace GEP {
 namespace System {
 
@@ -17,11 +19,13 @@ namespace System {
  */
 class RandomNumberGenerator;
 
-class WorldBase
+class World
 {
 public:
-  WorldBase ();
-  virtual ~WorldBase ();
+  World ();
+  virtual ~World ();
+
+  virtual double getFitness (const Individual& individual) = 0;
 
   double getRandom ();
 
@@ -29,29 +33,6 @@ private:
   RandomNumberGenerator* _random_number_generator;
 };
 
-template <class T>
-class World : public WorldBase
-{
-public:
-    World ();
-    virtual ~World ();
-
-    virtual double getFitness (const Individual<T>& individual) = 0;
-};
-
-
-/* Constructor */
-template <class T>
-World<T>::World ()
-{
-
-}
-
-/* Destructor */
-template <class T>
-World<T>::~World ()
-{
-}
 
 
 }

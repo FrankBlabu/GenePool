@@ -6,7 +6,7 @@
 
 #include "TestMain.h"
 
-#include <GEPSystemRandomNumberGenerator.h>
+#include <GEPSystemWorld.h>
 
 /*
  * Test random number generator

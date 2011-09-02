@@ -13,6 +13,108 @@ namespace System {
 // CLASS GEP::System::SelectionOperator
 //#**************************************************************************
 
+/* Constructor */
+SelectionOperator::SelectionOperator (World* world, FitnessOperatorPtr fitness_operator)
+  : Operator          (world),
+    _fitness_operator (fitness_operator)
+{
+}
+
+/* Destructor */
+SelectionOperator::~SelectionOperator ()
+{
+}
+
+
+//#**************************************************************************
+// CLASS GEP::System::RemainderStochasticSamplingSelectionOperator
+//#**************************************************************************
+
+/* Constructor */
+RemainderStochasticSamplingSelectionOperator::RemainderStochasticSamplingSelectionOperator (World* world, FitnessOperatorPtr fitness_operator)
+  : SelectionOperator (world, fitness_operator)
+{
+}
+
+/* Destructor */
+RemainderStochasticSamplingSelectionOperator::~RemainderStochasticSamplingSelectionOperator ()
+{
+}
+
+/* Perform selection */
+void RemainderStochasticSamplingSelectionOperator::compute (Population& population) const
+{
+  //
+  // Compute individual fitness and fitness sum
+  //
+  typedef std::map<Object::Id, double> FitnessMap;
+  FitnessMap fitness_map;
+
+  double fitness_sum = 0.0;
+  for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
+    {
+      const Individual& individual = *i;
+
+      double fitness = _fitness_operator->compute (individual);
+
+      fitness_map.insert (std::make_pair (individual.getId (), fitness));
+      fitness_sum += fitness;
+    }
+
+  //
+  // Step 1: Insert individuals according to their relativ selection probability
+  //
+  Population selected;
+
+  for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
+    {
+      const Individual& individual = *i;
+
+      double p = fitness_map[individual.getId ()] / fitness_sum;
+      uint n = static_cast<uint> (floor (p * population.getSize ()));
+
+      fitness_map[individual.getId ()] = p * population.getSize () - floor (p * population.getSize ());
+
+      for (uint i=0; i < n; ++i)
+        selected.add (Individual (individual));
+    }
+
+  //
+  // Step 2: The remaining space in the target population is filled using roulette wheel selection
+  //
+  fitness_sum = 0.0;
+  for (FitnessMap::const_iterator i = fitness_map.begin (); i != fitness_map.end (); ++i)
+    fitness_sum += i->second;
+
+  PopulationFitnessIndex fitness_index (population, fitness_map);
+
+  while (population.getSize () > selected.getSize ())
+    {
+      double value = _world->getRandom ();
+
+      double sum = 0.0;
+      bool found = false;
+      for (uint i=0; i < fitness_index.getSize () && !found; ++i)
+        {
+          const Individual& individual = fitness_index.getIndividual (i);
+
+          FitnessMap::const_iterator pos = fitness_map.find (individual.getId ());
+          Q_ASSERT (pos != fitness_map.end ());
+
+          sum += pos->second / fitness_sum;
+
+          if (value <= sum)
+            {
+              selected.add (individual);
+              found = true;
+            }
+        }
+
+      Q_ASSERT (found);
+    }
+
+  population = selected;
+}
 
 }
 }

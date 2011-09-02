@@ -13,6 +13,43 @@ namespace System {
 // CLASS GEP::System::TerminationOperator
 //#**************************************************************************
 
+/* Constructor */
+TerminationOperator::TerminationOperator (World* world)
+: Operator (world)
+{
+}
+
+/* Destructor */
+TerminationOperator::~TerminationOperator ()
+{
+}
+
+//#**************************************************************************
+// CLASS GEP::System::FixedStepTerminationOperator
+//#**************************************************************************
+
+/* Constructor */
+FixedStepTerminationOperator::FixedStepTerminationOperator (World* world, uint steps)
+  : TerminationOperator (world),
+    _steps              (steps)
+{
+}
+
+/* Destructor */
+FixedStepTerminationOperator::~FixedStepTerminationOperator ()
+{
+}
+
+/*
+ * Compute if the algorithm in done
+ */
+bool FixedStepTerminationOperator::compute (const Population& population, uint step)
+{
+  Q_UNUSED (population);
+  return step >= _steps;
+}
+
+
 
 }
 }
