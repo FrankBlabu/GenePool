@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 
     for (uint i=0; i < POPULATION_SIZE; ++i)
       {
-        GEP::System::ShuffleComparator comparator (&world);
+        GEP::System::ShuffleComparator<QVariant> comparator (&world, sequence);
         std::sort (sequence.begin (), sequence.end (), comparator);
         population.add (TravelingIndividual (sequence));
       }

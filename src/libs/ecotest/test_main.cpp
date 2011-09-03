@@ -87,7 +87,8 @@ GEP::System::Population TestMain::generatePopulation (GEP::System::World* world,
       for (uint j=0; j < individual_size; ++j)
         genes.push_back (QVariant (j));
 
-      std::sort (genes.begin (), genes.end (), GEP::System::ShuffleComparator (world));
+      GEP::System::ShuffleComparator<QVariant> comparator (world, genes);
+      std::sort (genes.begin (), genes.end (), comparator);
 
       population.add (GEP::System::Individual (genes));
     }

@@ -20,6 +20,6 @@ void TestMain::testShuffleComparator ()
   for (uint i=0; i < 100; ++i)
     sequence.push_back (QVariant (i));
 
-  GEP::System::ShuffleComparator comparator (&world);
+  GEP::System::ShuffleComparator<QVariant> comparator (&world, sequence);
   std::sort (sequence.begin (), sequence.end (), comparator);
 }

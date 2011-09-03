@@ -58,7 +58,8 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
   for (uint i=0; i < population.getSize (); ++i)
     shuffled_index.push_back (i);
 
-  std::sort (shuffled_index.begin (), shuffled_index.end (), ShuffleComparator (_world));
+  ShuffleComparator<uint> comparator (_world, shuffled_index);
+  std::sort (shuffled_index.begin (), shuffled_index.end (), comparator);
 
   //
   // Crossover of individual pairs
