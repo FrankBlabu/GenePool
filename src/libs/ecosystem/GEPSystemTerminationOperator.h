@@ -25,6 +25,8 @@ public:
     virtual bool compute (const Population& population, uint step) = 0;
 };
 
+typedef QSharedPointer<TerminationOperator> TerminationOperatorPtr;
+
 
 /*
  * Termination after a fixed number of steps

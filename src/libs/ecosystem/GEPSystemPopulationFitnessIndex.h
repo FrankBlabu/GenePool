@@ -12,8 +12,6 @@
 #include "GEPSystemFitnessOperator.h"
 #include "GEPSystemPopulation.h"
 
-#include <QtCore/QSharedPointer>
-
 #include <algorithm>
 #include <map>
 #include <vector>
@@ -32,7 +30,6 @@ namespace System {
 class PopulationFitnessIndex
 {
 public:
-  typedef QSharedPointer<FitnessOperator> FitnessOperatorPtr;
   PopulationFitnessIndex (const Population& population, FitnessOperatorPtr fitness_operator);
 
   typedef std::map<Object::Id, double> FitnessMap;

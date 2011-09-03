@@ -24,9 +24,6 @@ namespace System {
 class SelectionOperator : public Operator
 {
 public:
-  typedef QSharedPointer<FitnessOperator> FitnessOperatorPtr;
-
-public:
     SelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
     virtual ~SelectionOperator ();
 
@@ -36,6 +33,7 @@ protected:
     FitnessOperatorPtr _fitness_operator;
 };
 
+typedef QSharedPointer<SelectionOperator> SelectionOperatorPtr;
 
 /*
  * Selection operator based on remainder stochastic sampling

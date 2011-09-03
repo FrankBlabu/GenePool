@@ -30,6 +30,8 @@ public:
     virtual void compute (Population& population) = 0;
 };
 
+typedef QSharedPointer<CrossoverOperator> CrossoverOperatorPtr;
+
 /*
  * Base class for Crossover operators
  */

@@ -7,8 +7,6 @@
 #ifndef __GEP_SYSTEM_CONTROLLER_H__
 #define __GEP_SYSTEM_CONTROLLER_H__
 
-#include <QtCore/QSharedPointer>
-
 #include "GEPSystemPopulation.h"
 #include "GEPSystemCrossoverOperator.h"
 #include "GEPSystemFitnessOperator.h"
@@ -26,12 +24,6 @@ class Controller
 {
 public:
   Controller ();
-
-  typedef QSharedPointer<CrossoverOperator> CrossoverOperatorPtr;
-  typedef QSharedPointer<FitnessOperator> FitnessOperatorPtr;
-  typedef QSharedPointer<MutationOperator> MutationOperatorPtr;
-  typedef QSharedPointer<SelectionOperator> SelectionOperatorPtr;
-  typedef QSharedPointer<TerminationOperator> TerminationOperatorPtr;
 
   void setCrossoverOperator (CrossoverOperatorPtr crossover_operator);
   void setFitnessOperator (FitnessOperatorPtr fitness_operator);

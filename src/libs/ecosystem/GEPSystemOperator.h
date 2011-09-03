@@ -9,6 +9,8 @@
 
 #include "GEPSystemWorld.h"
 
+#include <QtCore/QSharedPointer>
+
 namespace GEP {
 namespace System {
 

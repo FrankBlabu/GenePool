@@ -26,6 +26,7 @@ public:
     virtual double compute (const Individual& individual) const = 0;
 };
 
+typedef QSharedPointer<FitnessOperator> FitnessOperatorPtr;
 
 /*
  * Linear static scaled fitness operator

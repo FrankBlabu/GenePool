@@ -27,6 +27,8 @@ public:
     virtual void compute (Population& population) = 0;
 };
 
+typedef QSharedPointer<MutationOperator> MutationOperatorPtr;
+
 
 /*
  * Base class for Mutation operators
