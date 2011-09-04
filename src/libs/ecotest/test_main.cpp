@@ -14,36 +14,6 @@
 
 
 //#**************************************************************************
-// CLASS RandomFitnessOperator
-//#**************************************************************************
-
-/* Constructor */
-RandomFitnessOperator::RandomFitnessOperator (GEP::System::World* world, const GEP::System::Population& population)
-  : GEP::System::FitnessOperator (world)
-{
-  for (GEP::System::Population::ConstIterator i = population.begin (); i != population.end (); ++i)
-    {
-      const GEP::System::Individual& individual = *i;
-      _fitness_map.insert (std::make_pair (individual.getId (), _world->getRandom ()));
-    }
-}
-
-/* Destructor */
-RandomFitnessOperator::~RandomFitnessOperator ()
-{
-}
-
-/* Compute fitness for a single individual */
-double RandomFitnessOperator::compute (const GEP::System::Individual& individual) const
-{
-  FitnessMap::const_iterator pos = _fitness_map.find (individual.getId ());
-  Q_ASSERT (pos != _fitness_map.end ());
-
-  return pos->second;
-}
-
-
-//#**************************************************************************
 // CLASS TestWorld
 //#**************************************************************************
 
@@ -61,9 +31,12 @@ TestWorld::~TestWorld ()
 /* Get random number */
 double TestWorld::getFitness (const GEP::System::Individual& individual)
 {
-  Q_UNUSED (individual);
+  double fitness = 0.0;
 
-  return GEP::System::World::getRandom () * 100.0;
+  for (uint i=0; i < individual.getSize (); ++i)
+    fitness += (i + 1) * individual[i].toUInt ();
+
+  return fmod (fitness, 100.0);
 }
 
 

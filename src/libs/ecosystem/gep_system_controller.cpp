@@ -111,7 +111,8 @@ void SinglePopulationController::initialize ()
   Q_ASSERT (_termination_operator != 0);
 
   _current_step = 0;
-  _fitness_operator->initialize (_population);
+
+  updateFitness ();
 }
 
 /* Execute algorithm */
@@ -123,14 +124,23 @@ bool SinglePopulationController::executeStep ()
   _selection_operator->compute (_population);
   _crossover_operator->compute (_population);
   _mutation_operator->compute (_population);
-  _fitness_operator->initialize (_population);
 
-  //
-  // Compute fitness values
-  //
+  updateFitness ();
+
+  return _termination_operator->compute (_population, ++_current_step);
+}
+
+
+/*
+ * Compute current population fitness
+ */
+void SinglePopulationController::updateFitness ()
+{
   _minimum_fitness = std::numeric_limits<double>::max ();
   _maximum_fitness = 0.0;
   _average_fitness = 0.0;
+
+  _fitness_operator->initialize (_population);
 
   for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i)
     {
@@ -143,10 +153,7 @@ bool SinglePopulationController::executeStep ()
     }
 
   _average_fitness /= _population.getSize ();
-
-  return _termination_operator->compute (_population, ++_current_step);
-}
-
+  }
 
 }
 }

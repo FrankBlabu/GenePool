@@ -22,9 +22,21 @@ QMutex Object::_id_counter_lock;
 Object::Object ()
   : _id (std::numeric_limits<Id>::max ())
 {
+  computeUniqueId ();
+}
+
+/* Copy constructor */
+Object::Object (const Object& toCopy)
+  : _id (toCopy._id)
+{
+}
+
+/* Compute unique id for this object */
+void Object::computeUniqueId ()
+{
   QMutexLocker locker (&_id_counter_lock);
   _id = _id_counter++;
-}
+ }
 
 }
 }

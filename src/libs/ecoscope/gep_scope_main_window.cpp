@@ -95,26 +95,19 @@ void MainWindow::slotRun ()
   for (uint i=0; !_controller->executeStep  (); ++i)
     {
       _fitness_diagram->addPoint (0, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
-      _fitness_diagram->addPoint (1, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
-      _fitness_diagram->addPoint (2, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
+      _fitness_diagram->addPoint (1, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE)));
+      _fitness_diagram->addPoint (2, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM)));
 
       if (time.elapsed () >= 100)
         {
-          statusBar ()->showMessage (QString ("Executing step %1").arg (_controller->getCurrentStep ()));
-
-          _content->_step->setText (QString::number (_controller->getCurrentStep ()));
-          _content->_minimum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM), 'f', 2));
-          _content->_average_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE), 'f', 2));
-          _content->_maximum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM), 'f', 2));
-
-          _fitness_diagram->repaint ();
-
+          updateOutput ();
           QApplication::processEvents ();
           time.restart ();
         }
     }
 
   statusBar ()->clearMessage ();
+  updateOutput ();
 }
 
 /*
@@ -123,6 +116,19 @@ void MainWindow::slotRun ()
 void MainWindow::slotQuit ()
 {
   close ();
+}
+
+/*
+ * Update output
+ */
+void MainWindow::updateOutput ()
+{
+  _content->_step->setText (QString::number (_controller->getCurrentStep ()));
+  _content->_minimum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM), 'f', 2));
+  _content->_average_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE), 'f', 2));
+  _content->_maximum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM), 'f', 2));
+
+  _fitness_diagram->repaint ();
 }
 
 }

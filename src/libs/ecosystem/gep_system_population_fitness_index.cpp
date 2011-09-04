@@ -26,7 +26,7 @@ public:
   typedef QSharedPointer<FitnessOperator> FitnessOperatorPtr;
   PopulationFitnessIndexComparator (const Population& population, FitnessOperatorPtr fitness_operator);
 
-  typedef std::map<Object::Id, double> FitnessMap;
+  typedef QMap<Object::Id, double> FitnessMap;
   PopulationFitnessIndexComparator (const FitnessMap& fitness_map);
 
   inline bool operator () (const Object::Id& id1, const Object::Id& id2) const;
@@ -41,7 +41,7 @@ PopulationFitnessIndexComparator::PopulationFitnessIndexComparator (const Popula
   for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const Individual& individual = *i;
-      _fitness_map.insert (std::make_pair (individual.getId (), fitness_operator->compute (individual)));
+      _fitness_map.insert (individual.getId (), fitness_operator->compute (individual));
     }
 }
 
@@ -60,7 +60,7 @@ inline bool PopulationFitnessIndexComparator::operator () (const Object::Id& id1
   FitnessMap::const_iterator j = _fitness_map.find (id2);
   Q_ASSERT (j != _fitness_map.end ());
 
-  return i->second > j->second;
+  return i.value () > j.value ();
 }
 
 }
@@ -100,7 +100,7 @@ const Individual& PopulationFitnessIndex::getIndividual (uint index) const
   IndexMap::const_iterator pos = _index_map.find (_sorted_ids[index]);
   Q_ASSERT (pos != _index_map.end ());
 
-  return _population[pos->second];
+  return _population[pos.value ()];
 }
 
 /*
@@ -121,7 +121,7 @@ void PopulationFitnessIndex::computeIndexMap (const Population& population)
     {
       const Individual& individual = *i;
       _sorted_ids.push_back (individual.getId ());
-      _index_map.insert (std::make_pair (individual.getId (), count));
+      _index_map.insert (individual.getId (), count);
     }
 }
 

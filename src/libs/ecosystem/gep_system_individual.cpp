@@ -22,7 +22,7 @@ Individual::Individual (const std::vector<QVariant>& genes)
 
 /* Copy constructor */
 Individual::Individual (const Individual& toCopy)
-  : Object (),
+  : Object (toCopy),
     _genes (toCopy._genes)
 {
 }

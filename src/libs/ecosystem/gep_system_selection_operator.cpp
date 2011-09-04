@@ -47,7 +47,7 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
   //
   // Compute individual fitness and fitness sum
   //
-  typedef std::map<Object::Id, double> FitnessMap;
+  typedef QMap<Object::Id, double> FitnessMap;
   FitnessMap fitness_map;
 
   double fitness_sum = 0.0;
@@ -57,7 +57,7 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
 
       double fitness = _fitness_operator->compute (individual);
 
-      fitness_map.insert (std::make_pair (individual.getId (), fitness));
+      fitness_map.insert (individual.getId (), fitness);
       fitness_sum += fitness;
     }
 
@@ -69,14 +69,22 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
   for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const Individual& individual = *i;
+      Object::Id id = individual.getId ();
 
-      double p = fitness_map[individual.getId ()] / fitness_sum;
+      Q_ASSERT (fitness_map.find (id) != fitness_map.end ());
+
+      double p = fitness_map[id] / fitness_sum;
       uint n = static_cast<uint> (floor (p * population.getSize ()));
 
-      fitness_map[individual.getId ()] = p * population.getSize () - floor (p * population.getSize ());
+      fitness_map[id] = p * population.getSize () - floor (p * population.getSize ());
 
       for (uint i=0; i < n; ++i)
-        selected.add (Individual (individual));
+        {
+          Individual copied (individual);
+          copied.computeUniqueId ();
+
+          selected.add (copied);
+        }
     }
 
   //
@@ -84,7 +92,7 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
   //
   fitness_sum = 0.0;
   for (FitnessMap::const_iterator i = fitness_map.begin (); i != fitness_map.end (); ++i)
-    fitness_sum += i->second;
+    fitness_sum += i.value ();
 
   PopulationFitnessIndex fitness_index (population, fitness_map);
 
@@ -101,11 +109,14 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
           FitnessMap::const_iterator pos = fitness_map.find (individual.getId ());
           Q_ASSERT (pos != fitness_map.end ());
 
-          sum += pos->second / fitness_sum;
+          sum += pos.value () / fitness_sum;
 
           if (value <= sum)
             {
-              selected.add (individual);
+              Individual copied (individual);
+              copied.computeUniqueId ();
+              selected.add (copied);
+
               found = true;
             }
         }

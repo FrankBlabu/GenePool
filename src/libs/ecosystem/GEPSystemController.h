@@ -64,6 +64,9 @@ public:
   virtual bool executeStep ();
 
 private:
+  void updateFitness ();
+
+private:
   Population _population;
 
   uint _current_step;

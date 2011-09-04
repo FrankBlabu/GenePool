@@ -20,9 +20,12 @@ class Object
 {
 public:
   Object ();
+  Object (const Object& toCopy);
 
   typedef quint64 Id;
   inline Id getId () const { return _id; }
+
+  void computeUniqueId ();
 
 private:
   Id _id;

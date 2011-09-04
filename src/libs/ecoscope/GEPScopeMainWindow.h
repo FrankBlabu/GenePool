@@ -34,6 +34,9 @@ private slots:
   void slotQuit ();
 
 private:
+  void updateOutput ();
+
+private:
   System::Controller* _controller;
 
   MainWindowContent* _content;

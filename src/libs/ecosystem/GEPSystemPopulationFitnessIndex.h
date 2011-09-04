@@ -12,8 +12,9 @@
 #include "GEPSystemFitnessOperator.h"
 #include "GEPSystemPopulation.h"
 
+#include <QtCore/QMap>
+
 #include <algorithm>
-#include <map>
 #include <vector>
 
 namespace GEP {
@@ -32,7 +33,7 @@ class PopulationFitnessIndex
 public:
   PopulationFitnessIndex (const Population& population, FitnessOperatorPtr fitness_operator);
 
-  typedef std::map<Object::Id, double> FitnessMap;
+  typedef QMap<Object::Id, double> FitnessMap;
   PopulationFitnessIndex (const Population& population, const FitnessMap& fitness_map);
 
   uint getSize () const;
@@ -44,7 +45,7 @@ private:
 private:
   const Population& _population;
 
-  typedef std::map<Object::Id, uint> IndexMap;
+  typedef QMap<Object::Id, uint> IndexMap;
   IndexMap _index_map;
 
   std::vector<Object::Id> _sorted_ids;

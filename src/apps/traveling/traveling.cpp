@@ -22,7 +22,7 @@
 //
 // Number of cities to be visited
 //
-const uint NUMBER_OF_CITIES = 100;
+const uint NUMBER_OF_CITIES = 10;
 
 //
 // Number of individuals in initial population

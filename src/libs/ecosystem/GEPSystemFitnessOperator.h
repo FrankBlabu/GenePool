@@ -10,6 +10,8 @@
 #include "GEPSystemOperator.h"
 #include "GEPSystemPopulation.h"
 
+#include <QtCore/QMap>
+
 namespace GEP {
 namespace System {
 
@@ -23,7 +25,8 @@ public:
     virtual ~FitnessOperator ();
 
     virtual void initialize (const Population& population);
-    virtual double compute (const Individual& individual) const = 0;
+    virtual double compute (const Individual& individual) = 0;
+
 };
 
 typedef QSharedPointer<FitnessOperator> FitnessOperatorPtr;
@@ -37,11 +40,15 @@ public:
   LinearStaticScaledFitnessOperator (World* world, double offset, double scale);
   virtual ~LinearStaticScaledFitnessOperator ();
 
-  virtual double compute (const Individual& individual) const;
+  virtual void initialize (const Population& population);
+  virtual double compute (const Individual& individual);
 
 private:
   double _offset;
   double _scale;
+
+  typedef QMap<Object::Id, double> FitnessMap;
+  FitnessMap _fitness_cache;
 };
 
 
@@ -55,11 +62,14 @@ public:
   virtual ~LinearDynamicScaledFitnessOperator ();
 
   virtual void initialize (const Population& population);
-  virtual double compute (const Individual& individual) const;
+  virtual double compute (const Individual& individual);
 
 private:
   double _scale;
   double _minimum_fitness;
+
+  typedef QMap<Object::Id, double> FitnessMap;
+  FitnessMap _fitness_cache;
 };
 
 

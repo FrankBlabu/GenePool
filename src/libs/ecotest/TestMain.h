@@ -8,27 +8,13 @@
 #define __TEST_MAIN_H__
 
 #include <QtCore/QObject>
+#include <QtCore/QMap>
 #include <QtTest/QtTest>
 
 #include <GEPSystemIndividual.h>
 #include <GEPSystemPopulation.h>
 #include <GEPSystemFitnessOperator.h>
 
-/*
- * Fitness operator for a random fitness
- */
-class RandomFitnessOperator : public GEP::System::FitnessOperator
-{
-public:
-    RandomFitnessOperator (GEP::System::World* world, const GEP::System::Population& population);
-    virtual ~RandomFitnessOperator ();
-
-    virtual double compute (const GEP::System::Individual& individual) const;
-
-private:
-    typedef std::map<GEP::System::Object::Id, double> FitnessMap;
-    FitnessMap _fitness_map;
-};
 
 /*
  * World information
