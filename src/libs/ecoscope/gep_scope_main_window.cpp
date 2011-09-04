@@ -5,6 +5,7 @@
  */
 
 #include "GEPScopeMainWindow.h"
+#include "GEPScopeSequentialDiagram.h"
 #include "GEPScopeTools.h"
 
 #include <iostream>
@@ -25,7 +26,7 @@ namespace Scope {
 // CLASS GEP::Scope::MainWindowContent
 //#**************************************************************************
 
-class MainWindowContent : public QWidget, private Ui::GEPScopeMainWindowUi
+class MainWindowContent : public QWidget, public Ui::GEPScopeMainWindowUi
 {
 public:
   MainWindowContent (QWidget* parent);
@@ -71,6 +72,8 @@ MainWindow::MainWindow (System::Controller* controller)
 
   _content = new MainWindowContent (this);
   setCentralWidget (_content);
+
+  _fitness_diagram = Tools::addWidgetToParent (new SequentialDiagram (_content->_diagram_frame));
 }
 
 /* Destructor */
@@ -83,30 +86,33 @@ MainWindow::~MainWindow ()
  */
 void MainWindow::slotRun ()
 {
+  _fitness_diagram->clear ();
   _controller->initialize ();
 
   QTime time = QTime::currentTime ();
   statusBar ()->showMessage ("Starting...");
 
-  qDebug () << "*** Executing";
-
   for (uint i=0; !_controller->executeStep  (); ++i)
     {
-      qDebug () << "Step:" << _controller->getCurrentStep ();
-      qDebug () << "Minimum fitness:" << _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM);
-      qDebug () << "Maximum fitness:" << _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM);
-      qDebug () << "Average fitness:" << _controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE);
+      _fitness_diagram->addPoint (0, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
+      _fitness_diagram->addPoint (1, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
+      _fitness_diagram->addPoint (2, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
 
-      if (time.elapsed () >= 1000)
+      if (time.elapsed () >= 100)
         {
           statusBar ()->showMessage (QString ("Executing step %1").arg (_controller->getCurrentStep ()));
+
+          _content->_step->setText (QString::number (_controller->getCurrentStep ()));
+          _content->_minimum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM), 'f', 2));
+          _content->_average_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE), 'f', 2));
+          _content->_maximum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM), 'f', 2));
+
+          _fitness_diagram->repaint ();
 
           QApplication::processEvents ();
           time.restart ();
         }
     }
-
-  qDebug () << "Done.";
 
   statusBar ()->clearMessage ();
 }

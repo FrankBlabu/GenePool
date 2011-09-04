@@ -16,6 +16,7 @@ namespace GEP {
 namespace Scope {
 
 class MainWindowContent;
+class SequentialDiagram;
 
 /*
  * Main window of the GenePool scope library
@@ -36,6 +37,8 @@ private:
   System::Controller* _controller;
 
   MainWindowContent* _content;
+  SequentialDiagram* _fitness_diagram;
+
   QAction* _run_action;
   QAction* _quit_action;
 };

@@ -22,7 +22,7 @@
 //
 // Number of cities to be visited
 //
-const uint NUMBER_OF_CITIES = 20;
+const uint NUMBER_OF_CITIES = 100;
 
 //
 // Number of individuals in initial population
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
     QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator));
     QSharedPointer<GEP::System::CrossoverOperator> crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator (&world));
     QSharedPointer<GEP::System::MutationOperator> mutation_operator (new GEP::System::SwappingMutationOperator (&world, 1.0 / NUMBER_OF_CITIES));
-    QSharedPointer<GEP::System::TerminationOperator> termination_operator (new GEP::System::FixedStepTerminationOperator (&world, 100000));
+    QSharedPointer<GEP::System::TerminationOperator> termination_operator (new GEP::System::FixedStepTerminationOperator (&world, 1000));
 
     controller.setFitnessOperator (fitness_operator);
     controller.setSelectionOperator (selection_operator);
