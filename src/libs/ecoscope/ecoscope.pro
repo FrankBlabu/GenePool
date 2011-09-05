@@ -14,12 +14,14 @@ DESTDIR = $$(HOME)/lib
 SOURCES += \
     gep_scope_main_window.cpp \
     gep_scope_tools.cpp \
-    gep_scope_sequential_diagram.cpp
+    gep_scope_sequential_diagram.cpp \
+    gep_scope_world_display.cpp
 
 HEADERS += \
     GEPScopeMainWindow.h \
     GEPScopeTools.h \
-    GEPScopeSequentialDiagram.h
+    GEPScopeSequentialDiagram.h \
+    GEPScopeWorldDisplay.h
 
 FORMS += \
     gep_scope_main_window.ui

@@ -40,6 +40,8 @@ public:
   virtual void initialize ();
   virtual bool executeStep () = 0;
 
+  virtual const Population& getPopulation () const = 0;
+
 protected:
   CrossoverOperatorPtr _crossover_operator;
   FitnessOperatorPtr _fitness_operator;
@@ -62,6 +64,8 @@ public:
 
   virtual void initialize ();
   virtual bool executeStep ();
+
+  virtual const Population& getPopulation () const;
 
 private:
   void updateFitness ();

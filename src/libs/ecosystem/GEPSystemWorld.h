@@ -25,7 +25,7 @@ public:
   World ();
   virtual ~World ();
 
-  virtual double getFitness (const Individual& individual) = 0;
+  virtual double getFitness (const Individual& individual) const = 0;
 
   double getRandom ();
 

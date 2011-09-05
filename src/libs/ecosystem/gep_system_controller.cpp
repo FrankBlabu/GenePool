@@ -101,6 +101,12 @@ double SinglePopulationController::getCurrentFitness (Controller::FitnessType_t 
   return fitness;
 }
 
+/* Returns the current population */
+const Population& SinglePopulationController::getPopulation () const
+{
+  return _population;
+}
+
 /* Initialize algorithm */
 void SinglePopulationController::initialize ()
 {

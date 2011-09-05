@@ -13,8 +13,12 @@ INCLUDEPATH += ../../libs/ecosystem
 INCLUDEPATH += ../../libs/ecoscope
 
 SOURCES += \
-    traveling.cpp
+    gep_traveling_world_display.cpp \
+    gep_traveling_world.cpp \
+    gep_traveling_main.cpp
 
-HEADERS +=
+HEADERS += \
+    GEPTravelingWorldDisplay.h \
+    GEPTravelingWorld.h
 
 LIBS += -L$$(HOME)/lib -lecosystem -lecoscope

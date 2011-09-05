@@ -17,6 +17,7 @@ namespace Scope {
 
 class MainWindowContent;
 class SequentialDiagram;
+class WorldDisplay;
 
 /*
  * Main window of the GenePool scope library
@@ -29,17 +30,19 @@ public:
   MainWindow (System::Controller* controller);
   virtual ~MainWindow ();
 
+  void setWorldDisplay (WorldDisplay* world_display);
+
 private slots:
   void slotRun ();
   void slotQuit ();
 
-private:
-  void updateOutput ();
+  void slotUpdateOutput ();
 
 private:
   System::Controller* _controller;
 
   MainWindowContent* _content;
+  WorldDisplay* _world_display;
   SequentialDiagram* _fitness_diagram;
 
   QAction* _run_action;
