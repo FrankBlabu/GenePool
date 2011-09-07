@@ -9,6 +9,7 @@
 #include <limits>
 
 #include <QtGui/QPainter>
+#include <QDebug>
 
 namespace GEP {
 namespace Scope {
@@ -58,6 +59,8 @@ SequentialDiagram::~SequentialDiagram ()
 void SequentialDiagram::clear ()
 {
   _lines.clear ();
+  _range_x = Range (std::numeric_limits<double>::max (), -std::numeric_limits<double>::max ());
+  _range_y = Range (std::numeric_limits<double>::max (), -std::numeric_limits<double>::max ());
 }
 
 /*

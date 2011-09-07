@@ -6,6 +6,7 @@
 
 #include "GEPScopeMainWindow.h"
 #include "GEPScopeSequentialDiagram.h"
+#include "GEPScopeLogSelectionDisplay.h"
 #include "GEPScopeWorldDisplay.h"
 #include "GEPScopeTools.h"
 
@@ -16,6 +17,7 @@
 #include <QtCore/QTime>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
+#include <QtGui/QToolBar>
 #include <QtGui/QStatusBar>
 
 #include "ui_gep_scope_main_window.h"
@@ -55,6 +57,7 @@ MainWindowContent::~MainWindowContent ()
 MainWindow::MainWindow (System::Controller* controller)
 : QMainWindow (),
   _controller      (controller),
+  _running         (false),
   _content         (0),
   _world_display   (0),
   _fitness_diagram (0),
@@ -76,6 +79,17 @@ MainWindow::MainWindow (System::Controller* controller)
   connect (_run_action, SIGNAL (triggered ()), SLOT (slotRun ()));
   execute_menu->addAction (_run_action);
 
+  _step_action = new QAction ("&Step", execute_menu);
+  connect (_step_action, SIGNAL (triggered ()), SLOT (slotStep ()));
+  execute_menu->addAction (_step_action);
+
+  //
+  // Toolbar setup
+  //
+  QToolBar* execute_toolbar = addToolBar ("execute");
+  execute_toolbar->addAction (_run_action);
+  execute_toolbar->addAction (_step_action);
+
   //
   // Widget setup
   //
@@ -87,6 +101,8 @@ MainWindow::MainWindow (System::Controller* controller)
   _content->_display_content->addItem ("Best", WorldDisplay::DisplayMode::BEST);
   _content->_display_content->addItem ("Worst", WorldDisplay::DisplayMode::WORST);
   _content->_display_content->addItem ("All", WorldDisplay::DisplayMode::ALL);
+
+  _log_selection_display = Tools::addWidgetToParent (new LogSelectionDisplay (controller->getWorld (), _content->_log_frame));
 
   //
   // Signal/slot setup
@@ -117,18 +133,13 @@ void MainWindow::setWorldDisplay (WorldDisplay* world_display)
  */
 void MainWindow::slotRun ()
 {
-  _fitness_diagram->clear ();
-  _controller->initialize ();
+  if (!_running)
+    startup ();
 
   QTime time = QTime::currentTime ();
-  statusBar ()->showMessage ("Starting...");
 
-  for (uint i=0; !_controller->executeStep  (); ++i)
+  while (!executeStep ())
     {
-      _fitness_diagram->addPoint (0, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
-      _fitness_diagram->addPoint (1, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE)));
-      _fitness_diagram->addPoint (2, QPointF (i, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM)));
-
       if (time.elapsed () >= 100)
         {
           slotUpdateOutput ();
@@ -137,8 +148,65 @@ void MainWindow::slotRun ()
         }
     }
 
+  cleanup ();
+}
+
+/*
+ * Slot: Execute single step
+ */
+void MainWindow::slotStep ()
+{
+  if (!_running)
+    startup ();
+
+  if (executeStep ())
+    cleanup ();
+
+  slotUpdateOutput ();
+}
+
+/*
+ * Startup new algorithm execution
+ */
+void MainWindow::startup ()
+{
+  Q_ASSERT (!_running);
+
+  _fitness_diagram->clear ();
+  _controller->initialize ();
+  _running = true;
+
+  statusBar ()->showMessage ("Starting...");
+  slotUpdateOutput ();
+}
+
+/*
+ * Cleanup after algorithm execution
+ */
+void MainWindow::cleanup ()
+{
+  _running = false;
+
   statusBar ()->clearMessage ();
   slotUpdateOutput ();
+}
+
+/*
+ * Execute single algorithm step
+ *
+ * \return 'true' when this was the last step
+ */
+bool MainWindow::executeStep ()
+{
+  uint step = _controller->getCurrentStep ();
+
+  bool done = _controller->executeStep  ();
+
+  _fitness_diagram->addPoint (0, QPointF (step, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
+  _fitness_diagram->addPoint (1, QPointF (step, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE)));
+  _fitness_diagram->addPoint (2, QPointF (step, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM)));
+
+  return done;
 }
 
 /*
@@ -160,6 +228,7 @@ void MainWindow::slotUpdateOutput ()
   _content->_maximum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM), 'f', 2));
 
   _fitness_diagram->repaint ();
+  statusBar ()->showMessage ("Executing step " + QString::number (_controller->getCurrentStep ()));
 
   if (_world_display != 0)
     _world_display->updateDisplay (_controller, static_cast<WorldDisplay::DisplayMode_t> (_content->_display_content->itemData (_content->_display_content->currentIndex ()).toUInt ()));

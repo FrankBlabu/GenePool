@@ -16,6 +16,7 @@ namespace GEP {
 namespace Scope {
 
 class MainWindowContent;
+class LogSelectionDisplay;
 class SequentialDiagram;
 class WorldDisplay;
 
@@ -34,18 +35,28 @@ public:
 
 private slots:
   void slotRun ();
+  void slotStep ();
   void slotQuit ();
 
   void slotUpdateOutput ();
 
 private:
+  void startup ();
+  void cleanup ();
+  bool executeStep ();
+
+private:
   System::Controller* _controller;
+  bool _running;
 
   MainWindowContent* _content;
   WorldDisplay* _world_display;
   SequentialDiagram* _fitness_diagram;
 
+  LogSelectionDisplay* _log_selection_display;
+
   QAction* _run_action;
+  QAction* _step_action;
   QAction* _quit_action;
 };
 

@@ -5,6 +5,7 @@
  */
 
 #include "GEPSystemSelectionOperator.h"
+#include "GEPSystemNotifier.h"
 
 namespace GEP {
 namespace System {
@@ -44,6 +45,8 @@ RemainderStochasticSamplingSelectionOperator::~RemainderStochasticSamplingSelect
 /* Perform selection */
 void RemainderStochasticSamplingSelectionOperator::compute (Population& population) const
 {
+  Notifier* notifier = _world->getNotifier ();
+
   //
   // Compute individual fitness and fitness sum
   //
@@ -82,8 +85,9 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
         {
           Individual copied (individual);
           copied.computeUniqueId ();
-
           selected.add (copied);
+
+          notifier->notifyIndividualSelection (individual.getId (), copied.getId ());
         }
     }
 
@@ -116,6 +120,8 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
               Individual copied (individual);
               copied.computeUniqueId ();
               selected.add (copied);
+
+              notifier->notifyIndividualSelection (individual.getId (), copied.getId ());
 
               found = true;
             }

@@ -25,7 +25,8 @@ SOURCES += \
     gep_system_population_fitness_index.cpp \
     gep_system_debug.cpp \
     gep_system_world.cpp \
-    gep_system_shuffle_comparator.cpp
+    gep_system_shuffle_comparator.cpp \
+    gep_system_notifier.cpp
 
 HEADERS += \
     GEPSystemController.h \
@@ -41,4 +42,11 @@ HEADERS += \
     GEPSystemPopulationFitnessIndex.h \
     GEPSystemDebug.h \
     GEPSystemWorld.h \
-    GEPSystemShuffleComparator.h
+    GEPSystemShuffleComparator.h \
+    GEPSystemNotifier.h
+
+
+
+
+
+

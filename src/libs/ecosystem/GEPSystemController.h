@@ -17,13 +17,17 @@
 namespace GEP {
 namespace System {
 
+class World;
+
 /*
  * Base class for all process controllers
  */
 class Controller
 {
 public:
-  Controller ();
+  Controller (World* world);
+
+  World* getWorld () const;
 
   void setCrossoverOperator (CrossoverOperatorPtr crossover_operator);
   void setFitnessOperator (FitnessOperatorPtr fitness_operator);
@@ -43,6 +47,8 @@ public:
   virtual const Population& getPopulation () const = 0;
 
 protected:
+  World* _world;
+
   CrossoverOperatorPtr _crossover_operator;
   FitnessOperatorPtr _fitness_operator;
   MutationOperatorPtr _mutation_operator;
@@ -57,7 +63,7 @@ protected:
 class SinglePopulationController : public Controller
 {
 public:
-  SinglePopulationController (const Population& population);
+  SinglePopulationController (World* world, const Population& population);
 
   virtual double getCurrentFitness (Controller::FitnessType_t type) const;
   virtual uint getCurrentStep () const;

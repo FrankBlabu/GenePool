@@ -8,6 +8,8 @@
 #define __GEP_SYSTEM_SHUFFLE_COMPARATOR_H__
 
 #include "GEPSystemWorld.h"
+#include "GEPSystemIndividual.h"
+
 #include <QtCore/QHash>
 
 namespace GEP {

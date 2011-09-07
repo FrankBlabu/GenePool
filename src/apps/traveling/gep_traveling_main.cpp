@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     //
     // Setup controller
     //
-    GEP::System::SinglePopulationController controller (population);
+    GEP::System::SinglePopulationController controller (&world, population);
 
     QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 1.05));
     QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator));

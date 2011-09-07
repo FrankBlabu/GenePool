@@ -5,6 +5,8 @@
  */
 
 #include "GEPSystemController.h"
+#include "GEPSystemNotifier.h"
+#include "GEPSystemWorld.h"
 
 #include <limits>
 
@@ -16,13 +18,20 @@ namespace System {
 //#**************************************************************************
 
 /* Constructor */
-Controller::Controller ()
-  : _crossover_operator   (),
+Controller::Controller (World* world)
+  : _world                (world),
+    _crossover_operator   (),
     _fitness_operator     (),
     _mutation_operator    (),
     _selection_operator   (),
     _termination_operator ()
 {
+}
+
+/* Return the world the controller works with */
+World* Controller::getWorld () const
+{
+  return _world;
 }
 
 /* Set crossover operator */
@@ -65,8 +74,9 @@ void Controller::initialize ()
 //#**************************************************************************
 
 /* Constructor */
-SinglePopulationController::SinglePopulationController (const Population& population)
-  : _population      (population),
+SinglePopulationController::SinglePopulationController (World* world, const Population& population)
+  : Controller       (world),
+    _population      (population),
     _current_step    (0),
     _minimum_fitness (0.0),
     _maximum_fitness (0.0),
@@ -124,6 +134,10 @@ void SinglePopulationController::initialize ()
 /* Execute algorithm */
 bool SinglePopulationController::executeStep ()
 {
+  Notifier* notifier = _world->getNotifier ();
+
+  notifier->notifyControllerStep ();
+
   //
   // Compute single step
   //
@@ -159,7 +173,7 @@ void SinglePopulationController::updateFitness ()
     }
 
   _average_fitness /= _population.getSize ();
-  }
+}
 
 }
 }

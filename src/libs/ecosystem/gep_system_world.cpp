@@ -5,6 +5,8 @@
  */
 
 #include "GEPSystemWorld.h"
+#include "GEPSystemIndividual.h"
+#include "GEPSystemNotifier.h"
 
 #include <stdlib.h>
 #include <sys/time.h>
@@ -66,7 +68,8 @@ double RandomNumberGenerator::generate ()
 
 /* Constructor */
 World::World ()
-  : _random_number_generator (new RandomNumberGenerator ())
+  : _notifier                (new Notifier ()),
+    _random_number_generator (new RandomNumberGenerator ())
 {
 }
 
@@ -75,12 +78,21 @@ World::~World ()
 {
   delete _random_number_generator;
   _random_number_generator = 0;
+
+  delete _notifier;
+  _notifier = 0;
 }
 
 /* Generate random number in interval [0:1] */
 double World::getRandom ()
 {
   return _random_number_generator->generate ();
+}
+
+/* Return world notifier */
+Notifier* World::getNotifier () const
+{
+  return _notifier;
 }
 
 }
