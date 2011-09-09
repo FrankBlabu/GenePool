@@ -35,13 +35,13 @@ void Notifier::setEnabled (bool enabled)
 /* Notify new controller step */
 void Notifier::notifyControllerStep ()
 {
+  emit signalControllerStep ();
 }
 
 /* Notify individual selection */
 void Notifier::notifyIndividualSelection (const Object::Id& before, const Object::Id& after)
 {
-  Q_UNUSED (before);
-  Q_UNUSED (after);
+  emit signalIndividualSelection (before, after);
 }
 
 }

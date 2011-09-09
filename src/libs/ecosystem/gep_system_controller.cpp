@@ -34,10 +34,22 @@ World* Controller::getWorld () const
   return _world;
 }
 
+/* Get crossover operator */
+CrossoverOperatorPtr Controller::getCrossoverOperator () const
+{
+  return _crossover_operator;
+}
+
 /* Set crossover operator */
 void Controller::setCrossoverOperator (CrossoverOperatorPtr crossover_operator)
 {
   _crossover_operator = crossover_operator;
+}
+
+/* Get fitness operator */
+FitnessOperatorPtr Controller::getFitnessOperator () const
+{
+  return _fitness_operator;
 }
 
 /* Set fitness operator */
@@ -46,16 +58,34 @@ void Controller::setFitnessOperator (FitnessOperatorPtr fitness_operator)
   _fitness_operator = fitness_operator;
 }
 
+/* Get mutation operator */
+MutationOperatorPtr Controller::getMutationOperator () const
+{
+  return _mutation_operator;
+}
+
 /* Set mutation operator */
 void Controller::setMutationOperator (MutationOperatorPtr mutation_operator)
 {
   _mutation_operator = mutation_operator;
 }
 
+/* Get selection operator */
+SelectionOperatorPtr Controller::getSelectionOperator () const
+{
+  return _selection_operator;
+}
+
 /* Set selection operator */
 void Controller::setSelectionOperator (SelectionOperatorPtr selection_operator)
 {
   _selection_operator = selection_operator;
+}
+
+/* Get termination operator */
+TerminationOperatorPtr Controller::getTerminationOperator () const
+{
+  return _termination_operator;
 }
 
 /* Set termination operator */
@@ -85,7 +115,7 @@ SinglePopulationController::SinglePopulationController (World* world, const Popu
 }
 
 /* Returns current execution step */
-uint SinglePopulationController::getCurrentStep () const
+int SinglePopulationController::getCurrentStep () const
 {
   return _current_step;
 }

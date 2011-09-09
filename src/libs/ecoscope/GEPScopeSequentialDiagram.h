@@ -25,7 +25,7 @@ public:
     virtual ~SequentialDiagram ();
 
     void clear ();
-    void addPoint (uint id, const QPointF& point);
+    void addPoint (int id, const QPointF& point);
 
 protected:
     virtual void paintEvent (QPaintEvent* event);
@@ -41,7 +41,7 @@ private:
       QColor _color;
     };
 
-    typedef QMap<uint, Line> LineMap;
+    typedef QMap<int, Line> LineMap;
     LineMap _lines;
 
     typedef QPair<double, double> Range;

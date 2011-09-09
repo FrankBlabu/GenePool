@@ -6,7 +6,7 @@
 
 #include "GEPScopeMainWindow.h"
 #include "GEPScopeSequentialDiagram.h"
-#include "GEPScopeLogSelectionDisplay.h"
+#include "GEPScopeSelectionDisplay.h"
 #include "GEPScopeWorldDisplay.h"
 #include "GEPScopeTools.h"
 
@@ -17,6 +17,7 @@
 #include <QtCore/QTime>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
+#include <QtGui/QTabWidget>
 #include <QtGui/QToolBar>
 #include <QtGui/QStatusBar>
 
@@ -102,7 +103,8 @@ MainWindow::MainWindow (System::Controller* controller)
   _content->_display_content->addItem ("Worst", WorldDisplay::DisplayMode::WORST);
   _content->_display_content->addItem ("All", WorldDisplay::DisplayMode::ALL);
 
-  _log_selection_display = Tools::addWidgetToParent (new LogSelectionDisplay (controller->getWorld (), _content->_log_frame));
+  QTabWidget* tab_widget = Tools::addWidgetToParent (new QTabWidget (_content->_population_frame));
+  tab_widget->addTab (new SelectionDisplay (controller, tab_widget), "Selection");
 
   //
   // Signal/slot setup
@@ -198,7 +200,7 @@ void MainWindow::cleanup ()
  */
 bool MainWindow::executeStep ()
 {
-  uint step = _controller->getCurrentStep ();
+  int step = _controller->getCurrentStep ();
 
   bool done = _controller->executeStep  ();
 
@@ -231,7 +233,7 @@ void MainWindow::slotUpdateOutput ()
   statusBar ()->showMessage ("Executing step " + QString::number (_controller->getCurrentStep ()));
 
   if (_world_display != 0)
-    _world_display->updateDisplay (_controller, static_cast<WorldDisplay::DisplayMode_t> (_content->_display_content->itemData (_content->_display_content->currentIndex ()).toUInt ()));
+    _world_display->updateDisplay (_controller, static_cast<WorldDisplay::DisplayMode_t> (_content->_display_content->itemData (_content->_display_content->currentIndex ()).toInt ()));
 }
 
 }

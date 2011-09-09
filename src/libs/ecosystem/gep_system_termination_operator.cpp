@@ -29,7 +29,7 @@ TerminationOperator::~TerminationOperator ()
 //#**************************************************************************
 
 /* Constructor */
-FixedStepTerminationOperator::FixedStepTerminationOperator (World* world, uint steps)
+FixedStepTerminationOperator::FixedStepTerminationOperator (World* world, int steps)
   : TerminationOperator (world),
     _steps              (steps)
 {
@@ -43,7 +43,7 @@ FixedStepTerminationOperator::~FixedStepTerminationOperator ()
 /*
  * Compute if the algorithm in done
  */
-bool FixedStepTerminationOperator::compute (const Population& population, uint step)
+bool FixedStepTerminationOperator::compute (const Population& population, int step)
 {
   Q_UNUSED (population);
   return step >= _steps;

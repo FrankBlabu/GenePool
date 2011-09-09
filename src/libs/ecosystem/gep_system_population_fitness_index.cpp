@@ -93,7 +93,7 @@ PopulationFitnessIndex::PopulationFitnessIndex (const Population& population, co
 /*
  * Return n-th individual of the population sorted by its fitness
  */
-const Individual& PopulationFitnessIndex::getIndividual (uint index) const
+const Individual& PopulationFitnessIndex::getIndividual (int index) const
 {
   Q_ASSERT (index < _sorted_ids.size ());
 
@@ -106,7 +106,7 @@ const Individual& PopulationFitnessIndex::getIndividual (uint index) const
 /*
  * Return size of the index table
  */
-uint PopulationFitnessIndex::getSize () const
+int PopulationFitnessIndex::getSize () const
 {
   return _population.getSize ();
 }
@@ -116,7 +116,7 @@ uint PopulationFitnessIndex::getSize () const
  */
 void PopulationFitnessIndex::computeIndexMap (const Population& population)
 {
-  uint count = 0;
+  int count = 0;
   for (Population::ConstIterator i = population.begin (); i != population.end (); ++i, ++count)
     {
       const Individual& individual = *i;

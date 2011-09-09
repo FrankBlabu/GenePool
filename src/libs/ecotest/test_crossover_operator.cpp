@@ -13,9 +13,9 @@
  */
 
 namespace {
-  const uint NUMBER_OF_RUNS = 1;
-  const uint POPULATION_SIZE = 10;
-  const uint INDIVIDUAL_SIZE = 10;
+  const int NUMBER_OF_RUNS = 1;
+  const int POPULATION_SIZE = 10;
+  const int INDIVIDUAL_SIZE = 10;
 }
 
 /*
@@ -23,7 +23,7 @@ namespace {
  */
 void TestMain::testCrossoverOperator ()
 {
-  for (uint i=0; i < NUMBER_OF_RUNS; ++i)
+  for (int i=0; i < NUMBER_OF_RUNS; ++i)
     {
       TestWorld world;
       GEP::System::Population population = generatePopulation (&world, POPULATION_SIZE, INDIVIDUAL_SIZE);
@@ -33,17 +33,17 @@ void TestMain::testCrossoverOperator ()
       GEP::System::Population crossed = population;
       crossover_operator.compute (crossed);
 
-      uint expected = 0;
-      for (uint j=0; j < INDIVIDUAL_SIZE; ++j)
+      int expected = 0;
+      for (int j=0; j < INDIVIDUAL_SIZE; ++j)
         expected += j;
 
       for (GEP::System::Population::ConstIterator j = crossed.begin (); j != crossed.end (); ++j)
         {
           const GEP::System::Individual& individual = *j;
 
-          uint sum = 0;
-          for (uint k=0; k < individual.getSize (); ++k)
-            sum += individual[k].toUInt ();
+          int sum = 0;
+          for (int k=0; k < individual.getSize (); ++k)
+            sum += individual[k].toInt ();
 
           QCOMPARE (sum, expected);
         }

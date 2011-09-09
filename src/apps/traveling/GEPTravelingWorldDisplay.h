@@ -31,6 +31,7 @@ protected:
 private:
     const World* _world;
 
+    QList<QPointF> _cities;
     QList<QPolygonF> _individuals;
 };
 

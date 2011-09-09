@@ -25,7 +25,7 @@ public:
     TestWorld ();
     virtual ~TestWorld ();
 
-    virtual double getFitness (const GEP::System::Individual& individual);
+    virtual double getFitness (const GEP::System::Individual& individual) const;
 };
 
 /*
@@ -39,7 +39,7 @@ public:
     TestMain ();
 
 private:
-    GEP::System::Population generatePopulation (GEP::System::World* world, uint population_size, uint individual_size);
+    GEP::System::Population generatePopulation (GEP::System::World* world, int population_size, int individual_size);
 
 private slots:
     void testShuffleComparator ();

@@ -22,7 +22,7 @@ public:
     TerminationOperator (World* world);
     virtual ~TerminationOperator ();
 
-    virtual bool compute (const Population& population, uint step) = 0;
+    virtual bool compute (const Population& population, int step) = 0;
 };
 
 typedef QSharedPointer<TerminationOperator> TerminationOperatorPtr;
@@ -34,13 +34,13 @@ typedef QSharedPointer<TerminationOperator> TerminationOperatorPtr;
 class FixedStepTerminationOperator : public TerminationOperator
 {
 public:
-    FixedStepTerminationOperator (World* world, uint steps);
+    FixedStepTerminationOperator (World* world, int steps);
     virtual ~FixedStepTerminationOperator ();
 
-    virtual bool compute (const Population& population, uint step);
+    virtual bool compute (const Population& population, int step);
 
 private:
-    uint _steps;
+    int _steps;
 };
 
 }

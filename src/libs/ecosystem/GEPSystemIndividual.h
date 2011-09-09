@@ -9,9 +9,8 @@
 
 #include "GEPSystemObject.h"
 
-#include <vector>
-
 #include <QtGlobal>
+#include <QtCore/QList>
 #include <QtCore/QVariant>
 
 
@@ -24,16 +23,18 @@ namespace System {
 class Individual : public Object
 {
 public:
-    Individual (const std::vector<QVariant>& genes);
+    Individual (const QVariantList& genes);
     Individual (const Individual& toCopy);
 
-    uint getSize () const;
+    int getSize () const;
 
-    QVariant& operator[] (uint index);
-    const QVariant& operator[] (uint index) const;
+    QVariant& operator[] (int index);
+    const QVariant& operator[] (int index) const;
+
+    QString toString () const;
 
 protected:
-    std::vector<QVariant> _genes;
+    QVariantList _genes;
 };
 
 

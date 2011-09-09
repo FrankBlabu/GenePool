@@ -26,12 +26,12 @@ namespace {
 //
 // Number of cities to be visited
 //
-const uint NUMBER_OF_CITIES = 10;
+const int NUMBER_OF_CITIES = 10;
 
 //
 // Number of individuals in initial population
 //
-const uint POPULATION_SIZE = 10;
+const int POPULATION_SIZE = 10;
 
 }
 
@@ -49,11 +49,11 @@ int main(int argc, char *argv[])
     GEP::Traveling::World world (NUMBER_OF_CITIES);
     GEP::System::Population population;
 
-    std::vector<QVariant> sequence;
-    for (uint i=0; i < NUMBER_OF_CITIES; ++i)
+    QVariantList sequence;
+    for (int i=0; i < NUMBER_OF_CITIES; ++i)
       sequence.push_back (QVariant (i));
 
-    for (uint i=0; i < POPULATION_SIZE; ++i)
+    for (int i=0; i < POPULATION_SIZE; ++i)
       {
         GEP::System::ShuffleComparator<QVariant> comparator (&world, sequence);
         std::sort (sequence.begin (), sequence.end (), comparator);
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     //
     GEP::System::SinglePopulationController controller (&world, population);
 
-    QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 1.05));
+    QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 5.0));
     QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator));
     QSharedPointer<GEP::System::CrossoverOperator> crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator (&world));
     QSharedPointer<GEP::System::MutationOperator> mutation_operator (new GEP::System::SwappingMutationOperator (&world, 1.0 / NUMBER_OF_CITIES));

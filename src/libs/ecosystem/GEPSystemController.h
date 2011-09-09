@@ -29,17 +29,26 @@ public:
 
   World* getWorld () const;
 
+  CrossoverOperatorPtr getCrossoverOperator () const;
   void setCrossoverOperator (CrossoverOperatorPtr crossover_operator);
+
+  FitnessOperatorPtr getFitnessOperator () const;
   void setFitnessOperator (FitnessOperatorPtr fitness_operator);
+
+  MutationOperatorPtr getMutationOperator () const;
   void setMutationOperator (MutationOperatorPtr mutation_operator);
+
+  SelectionOperatorPtr getSelectionOperator () const;
   void setSelectionOperator (SelectionOperatorPtr selection_operator);
+
+  TerminationOperatorPtr getTerminationOperator () const;
   void setTerminationOperator (TerminationOperatorPtr termination_operator);
 
   struct FitnessType { enum Type_t { MINIMUM, MAXIMUM, AVERAGE }; };
   typedef FitnessType::Type_t FitnessType_t;
 
   virtual double getCurrentFitness (FitnessType_t type) const = 0;
-  virtual uint getCurrentStep () const = 0;
+  virtual int getCurrentStep () const = 0;
 
   virtual void initialize ();
   virtual bool executeStep () = 0;
@@ -66,7 +75,7 @@ public:
   SinglePopulationController (World* world, const Population& population);
 
   virtual double getCurrentFitness (Controller::FitnessType_t type) const;
-  virtual uint getCurrentStep () const;
+  virtual int getCurrentStep () const;
 
   virtual void initialize ();
   virtual bool executeStep ();
@@ -79,7 +88,7 @@ private:
 private:
   Population _population;
 
-  uint _current_step;
+  int _current_step;
 
   double _minimum_fitness;
   double _maximum_fitness;

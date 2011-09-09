@@ -70,7 +70,7 @@ void SequentialDiagram::clear ()
  * \param point Point to be added. The added points must form a sequence in terms
  *              of the x axis
  */
-void SequentialDiagram::addPoint (uint id, const QPointF& point)
+void SequentialDiagram::addPoint (int id, const QPointF& point)
 {
   if (_lines.find (id) == _lines.end ())
     {
@@ -116,7 +116,7 @@ void SequentialDiagram::paintEvent (QPaintEvent* event)
               const QPointF& point = line._points[i];
 
               polyline.push_back (QPointF ((point.x () - _range_x.first) * scale_x,
-                                           (point.y () - _range_y.first) * scale_y));
+                                           height () - (point.y () - _range_y.first) * scale_y));
             }
 
           painter.setPen (line._color);

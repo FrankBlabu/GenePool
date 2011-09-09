@@ -10,6 +10,7 @@
 #include <QtCore/QVariant>
 
 uint qHash (const QVariant& data);
+QString convertToString (const QVariant& data);
 
 namespace GEP {
 namespace System {

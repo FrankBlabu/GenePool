@@ -16,18 +16,22 @@ SOURCES += \
     gep_scope_tools.cpp \
     gep_scope_sequential_diagram.cpp \
     gep_scope_world_display.cpp \
-    gep_scope_log_selection_display.cpp
+    gep_scope_selection_display.cpp
 
 HEADERS += \
     GEPScopeMainWindow.h \
     GEPScopeTools.h \
     GEPScopeSequentialDiagram.h \
     GEPScopeWorldDisplay.h \
-    GEPScopeLogSelectionDisplay.h
+    GEPScopeSelectionDisplay.h
 
 FORMS += \
-    gep_scope_main_window.ui \
-    gep_scope_log_display_tree.ui
+    gep_scope_main_window.ui
+
+
+
+
+
 
 
 

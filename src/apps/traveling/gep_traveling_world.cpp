@@ -15,14 +15,14 @@ namespace Traveling {
 //#**************************************************************************
 
 /* Constructor */
-World::World (uint number_of_cities)
+World::World (int number_of_cities)
   : GEP::System::World (),
     _fitness_bias (0.0)
 {
   //
   // Randomly place cities
   //
-  for (uint i=0; i < number_of_cities; ++i)
+  for (int i=0; i < number_of_cities; ++i)
     _cities.push_back (QPointF (getRandom (), getRandom ()));
 
   //
@@ -39,7 +39,7 @@ World::World (uint number_of_cities)
 }
 
 /* Return number of cities */
-uint World::getSize () const
+int World::getSize () const
 {
   return _cities.size ();
 }
@@ -54,12 +54,12 @@ const QPointF& World::operator[] (int index) const
 /* Compute fitness of a single individual */
 double World::getFitness (const Individual& individual) const
 {
-  double fitness = 0.0;
+  double distance = 0.0;
 
-  for (uint i=0; i + 1 < individual.getSize (); ++i)
-    fitness += getDistance (individual[i].toUInt (), individual[i + 1].toUInt ());
+  for (int i=0; i + 1 < individual.getSize (); ++i)
+    distance += getDistance (individual[i].toInt (), individual[i + 1].toInt ());
 
-  return _fitness_bias - fitness;
+  return _fitness_bias - distance;
 }
 
 /* Compute distance between two cities */

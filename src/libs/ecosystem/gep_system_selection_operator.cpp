@@ -7,6 +7,8 @@
 #include "GEPSystemSelectionOperator.h"
 #include "GEPSystemNotifier.h"
 
+#include <QDebug>
+
 namespace GEP {
 namespace System {
 
@@ -47,9 +49,13 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
 {
   Notifier* notifier = _world->getNotifier ();
 
+  qDebug () << "*** Selection ***";
+
   //
-  // Compute individual fitness and fitness sum
+  // Step 1: Compute individual fitness and fitness sum
   //
+  qDebug () << "Fitness map:";
+
   typedef QMap<Object::Id, double> FitnessMap;
   FitnessMap fitness_map;
 
@@ -60,14 +66,20 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
 
       double fitness = _fitness_operator->compute (individual);
 
+      qDebug () << "  " << individual.getId () << ": " << fitness;
+
       fitness_map.insert (individual.getId (), fitness);
       fitness_sum += fitness;
     }
 
+  qDebug () << "--> Fitness sum: " << fitness_sum;
+
   //
-  // Step 1: Insert individuals according to their relativ selection probability
+  // Step 2: Insert individuals according to their relativ selection probability
   //
   Population selected;
+
+  qDebug () << "Selection step 1";
 
   for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
@@ -77,11 +89,13 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
       Q_ASSERT (fitness_map.find (id) != fitness_map.end ());
 
       double p = fitness_map[id] / fitness_sum;
-      uint n = static_cast<uint> (floor (p * population.getSize ()));
+      int n = static_cast<int> (floor (p * population.getSize ()));
+
+      qDebug () << "  id=" << id << ", fitness=" << fitness_map[id] << ", p=" << p << ", n=" << n;
 
       fitness_map[id] = p * population.getSize () - floor (p * population.getSize ());
 
-      for (uint i=0; i < n; ++i)
+      for (int i=0; i < n; ++i)
         {
           Individual copied (individual);
           copied.computeUniqueId ();
@@ -92,11 +106,18 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
     }
 
   //
-  // Step 2: The remaining space in the target population is filled using roulette wheel selection
+  // Step 3: The remaining space in the target population is filled using roulette wheel selection
   //
+  qDebug () << "Selection step 2";
+
   fitness_sum = 0.0;
   for (FitnessMap::const_iterator i = fitness_map.begin (); i != fitness_map.end (); ++i)
-    fitness_sum += i.value ();
+    {
+      qDebug () << "  id=" << i.key () << ", fitness=" << i.value ();
+      fitness_sum += i.value ();
+    }
+
+  qDebug () << "  fitness_sum=" << fitness_sum;
 
   PopulationFitnessIndex fitness_index (population, fitness_map);
 
@@ -104,9 +125,11 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
     {
       double value = _world->getRandom ();
 
+      qDebug () << "*** 1: random=" << value;
+
       double sum = 0.0;
       bool found = false;
-      for (uint i=0; i < fitness_index.getSize () && !found; ++i)
+      for (int i=0; i < fitness_index.getSize () && !found; ++i)
         {
           const Individual& individual = fitness_index.getIndividual (i);
 
@@ -115,8 +138,11 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
 
           sum += pos.value () / fitness_sum;
 
-          if (value <= sum)
+          qDebug () << "*** 2: fitness=" << pos.value () << "(" << pos.value () / fitness_sum << "), sum=" << sum;
+
+          if (sum >= value)
             {
+              qDebug () << "*** 3: Match";
               Individual copied (individual);
               copied.computeUniqueId ();
               selected.add (copied);

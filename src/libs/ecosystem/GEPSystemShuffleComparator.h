@@ -11,6 +11,7 @@
 #include "GEPSystemIndividual.h"
 
 #include <QtCore/QHash>
+#include <QtCore/QList>
 
 namespace GEP {
 namespace System {
@@ -22,7 +23,7 @@ template <class T>
 class ShuffleComparator
 {
 public:
-  ShuffleComparator (World* world, const std::vector<T>& values);
+  ShuffleComparator (World* world, const QList<T>& values);
 
   bool operator () (const T& object1, const T& object2);
 
@@ -33,9 +34,9 @@ private:
 
 /* Constructor */
 template <class T>
-ShuffleComparator<T>::ShuffleComparator (World* world, const std::vector<T>& values)
+ShuffleComparator<T>::ShuffleComparator (World* world, const QList<T>& values)
 {
-  for (uint i=0; i < values.size (); ++i)
+  for (int i=0; i < values.size (); ++i)
     _order_map.insert (values[i], world->getRandom ());
 }
 

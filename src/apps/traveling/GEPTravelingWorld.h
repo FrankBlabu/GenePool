@@ -36,9 +36,9 @@ typedef GEP::System::Individual Individual;
 class World : public GEP::System::World
 {
 public:
-  World (uint number_of_cities);
+  World (int number_of_cities);
 
-  uint getSize () const;
+  int getSize () const;
   const QPointF& operator[] (int index) const;
 
   virtual double getFitness (const Individual& individual) const;

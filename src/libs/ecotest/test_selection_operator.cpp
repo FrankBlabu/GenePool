@@ -49,7 +49,7 @@ inline bool FitnessSortingComparator::operator () (const GEP::System::Individual
 void TestMain::testSelectionOperator ()
 {
   QBENCHMARK {
-    for (uint i=0; i < 1000; ++i)
+    for (int i=0; i < 1000; ++i)
       {
         TestWorld world;
         GEP::System::Population population = generatePopulation (&world, 10, 10);
@@ -68,13 +68,13 @@ void TestMain::testSelectionOperator ()
         fitness_operator->initialize (population);
 
         double sum1 = 0.0;
-        for (uint i=0; i < population.getSize (); ++i)
+        for (int i=0; i < population.getSize (); ++i)
           sum1 += fitness_operator->compute (population[i]);
 
         fitness_operator->initialize (selected);
 
         double sum2 = 0.0;
-        for (uint i=0; i < selected.getSize (); ++i)
+        for (int i=0; i < selected.getSize (); ++i)
           sum2 += fitness_operator->compute (selected[i]);
       }
   }

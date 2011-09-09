@@ -44,16 +44,16 @@ SwappingMutationOperator::~SwappingMutationOperator ()
 /* Mutate population */
 void SwappingMutationOperator::compute (Population& population)
 {
-  for (uint i=0; i < population.getSize (); ++i)
+  for (int i=0; i < population.getSize (); ++i)
     {
       Individual& individual = population[i];
-      uint size = individual.getSize ();
+      int size = individual.getSize ();
 
-      for (uint j=0; j < size; ++j)
+      for (int j=0; j < size; ++j)
         {
           if (_world->getRandom () <= _probability)
             {
-              uint k = static_cast<uint> (floor (_world->getRandom () * (size - 1))) % (size - 1);
+              int k = static_cast<int> (floor (_world->getRandom () * (size - 1))) % (size - 1);
               std::swap (individual[j], individual[k % size]);
             }
         }

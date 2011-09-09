@@ -28,11 +28,13 @@ public:
   void setEnabled (bool enabled);
 
   void notifyControllerStep ();
-  void notifyIndividualSelection (const Object::Id& before, const Object::Id& after);
+  void notifyIndividualSelection (const Object::Id& before,
+                                  const Object::Id& after);
 
 signals:
   void signalControllerStep ();
-  void signalIndividualSelection (const Object::Id& before, const Object::Id& after);
+  void signalIndividualSelection (const System::Object::Id& before,
+                                  const System::Object::Id& after);
 
 private:
   bool _enabled;

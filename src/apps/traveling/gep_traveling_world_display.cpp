@@ -21,7 +21,7 @@ namespace Traveling {
 //#**************************************************************************
 
 /* Constructor */
-WorldDisplay::WorldDisplay(const World* world, QWidget* parent)
+WorldDisplay::WorldDisplay (const World* world, QWidget* parent)
   : GEP::Scope::WorldDisplay (parent),
     _world (world)
 {
@@ -37,6 +37,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
 {
   Q_ASSERT (_world->getSize () > 0);
 
+  _cities.clear ();
   _individuals.clear ();
 
   //
@@ -46,7 +47,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
   Range range_x (std::numeric_limits<double>::max (), -std::numeric_limits<double>::max ());
   Range range_y (std::numeric_limits<double>::max (), -std::numeric_limits<double>::max ());
 
-  for (uint i=0; i < _world->getSize (); ++i)
+  for (int i=0; i < _world->getSize (); ++i)
     {
       const QPointF& city = (*_world)[i];
 
@@ -60,7 +61,18 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
   double scale_y = height () / (range_y.second - range_y.first);
 
   //
-  // Step 2: Compute lines representing the individuals
+  // Step 2: Compute city positions
+  //
+  for (int i=0; i < _world->getSize (); ++i)
+    {
+      const QPointF& city = (*_world)[i];
+      _cities.push_back (QPointF ((city.x () - range_x.first) * scale_x,
+                                  (city.y () - range_y.first) * scale_y));
+
+    }
+
+  //
+  // Step 3: Compute lines representing the individuals
   //
   Range range_fitness (std::numeric_limits<double>::max (), -std::numeric_limits<double>::max ());
 
@@ -71,9 +83,9 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
 
       QPolygonF line;
 
-      for (uint i=0; i < individual.getSize (); ++i)
+      for (int i=0; i < individual.getSize (); ++i)
         {
-          QPointF pos = (*_world)[individual[i].toUInt ()];
+          QPointF pos = (*_world)[individual[i].toInt ()];
 
           line.push_back (QPointF ((pos.x () - range_x.first) * scale_x,
                                    (pos.y () - range_y.first) * scale_y));
@@ -119,12 +131,26 @@ void WorldDisplay::paintEvent (QPaintEvent* event)
 {
   QWidget::paintEvent (event);
 
+  //
+  // Step 1: Fill background
+  //
   QPainter painter (this);
   painter.fillRect (rect (), Qt::white);
 
-  painter.setPen (Qt::red);
+  //
+  // Step 2: Paint world content
+  //
+  painter.setPen (Qt::yellow);
+  painter.setBrush (Qt::yellow);
 
-  qDebug () << _individuals.size ();
+  for (int i=0; i < _cities.size (); ++i)
+    painter.drawEllipse (_cities[i], 10, 10);
+
+  //
+  // Step 3: Paint individuals
+  //
+  painter.setPen (Qt::red);
+  painter.setBrush (QBrush ());
 
   for (int i=0; i < _individuals.size (); ++i)
     painter.drawPolyline (_individuals[i]);

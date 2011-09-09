@@ -54,17 +54,17 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
   //
   // Shuffle population index for random crossover pairs
   //
-  std::vector<uint> shuffled_index;
-  for (uint i=0; i < population.getSize (); ++i)
+  QList<int> shuffled_index;
+  for (int i=0; i < population.getSize (); ++i)
     shuffled_index.push_back (i);
 
-  ShuffleComparator<uint> comparator (_world, shuffled_index);
+  ShuffleComparator<int> comparator (_world, shuffled_index);
   std::sort (shuffled_index.begin (), shuffled_index.end (), comparator);
 
   //
   // Crossover of individual pairs
   //
-  for (uint i=0; i < population.getSize () / 2; ++i)
+  for (int i=0; i < population.getSize () / 2; ++i)
     {
       Individual& individual1 = population[shuffled_index[i * 2]];
       Individual& individual2 = population[shuffled_index[i * 2 + 1]];
@@ -72,16 +72,16 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
       Q_ASSERT (individual1.getSize () == individual2.getSize ());
       Q_ASSERT (individual1.getSize () > 2);
 
-      uint size = individual1.getSize ();
+      int size = individual1.getSize ();
 
-      uint index1 = static_cast<uint> (floor (_world->getRandom () * size)) % size;
-      uint index2 = index1 + 1 + static_cast<uint> (floor (_world->getRandom () * (size - 2))) % (size - 2);
+      int index1 = static_cast<int> (floor (_world->getRandom () * size)) % size;
+      int index2 = index1 + 1 + static_cast<int> (floor (_world->getRandom () * (size - 2))) % (size - 2);
 
       typedef QHash<QVariant, QVariant> IndexMap;
       IndexMap indices1;
       IndexMap indices2;
 
-      for (uint j = index1; j <= index2; ++j)
+      for (int j = index1; j <= index2; ++j)
         {
           const QVariant& allel1 = individual1[j % size];
           const QVariant& allel2 = individual2[j % size];
@@ -92,9 +92,9 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
           std::swap (individual1[j % size], individual2[j % size]);
         }
 
-      for (uint j=index2+1; j % size > index2 || j % size < index1; ++j)
+      for (int j=index2+1; j % size > index2 || j % size < index1; ++j)
         {
-          uint pos = j % size;
+          int pos = j % size;
 
           QVariant value1 = individual1[pos];
           QVariant value2 = individual2[pos];

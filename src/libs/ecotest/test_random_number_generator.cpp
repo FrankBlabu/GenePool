@@ -13,14 +13,14 @@
  */
 void TestMain::testRandomNumberGenerator ()
 {
-  static const uint NUMBER_OF_RUNS = 1000000;
+  static const int NUMBER_OF_RUNS = 1000000;
 
   QBENCHMARK
   {
     double sum = 0.0;
 
     TestWorld world;
-    for (uint i=0; i < NUMBER_OF_RUNS; ++i)
+    for (int i=0; i < NUMBER_OF_RUNS; ++i)
       {
         double n = world.getRandom ();
 

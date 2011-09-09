@@ -8,7 +8,9 @@
 #define __GEP_SYSTEM_OBJECT_H__
 
 #include <QtGlobal>
+
 #include <QtCore/QMutex>
+#include <QtCore/QString>
 
 namespace GEP {
 namespace System {

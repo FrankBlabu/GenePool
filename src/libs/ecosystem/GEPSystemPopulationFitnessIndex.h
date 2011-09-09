@@ -36,8 +36,8 @@ public:
   typedef QMap<Object::Id, double> FitnessMap;
   PopulationFitnessIndex (const Population& population, const FitnessMap& fitness_map);
 
-  uint getSize () const;
-  const Individual& getIndividual (uint index) const;
+  int getSize () const;
+  const Individual& getIndividual (int index) const;
 
 private:
   void computeIndexMap (const Population& population);
@@ -45,10 +45,10 @@ private:
 private:
   const Population& _population;
 
-  typedef QMap<Object::Id, uint> IndexMap;
+  typedef QMap<Object::Id, int> IndexMap;
   IndexMap _index_map;
 
-  std::vector<Object::Id> _sorted_ids;
+  QList<Object::Id> _sorted_ids;
 };
 
 }

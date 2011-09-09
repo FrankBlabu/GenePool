@@ -17,11 +17,36 @@
 
 uint qHash (const QVariant& data)
 {
-#if 0
-  XXX: Workaround
-#endif
+  uint hash = 0;
 
-  return data.toUInt ();
+  //
+  // Standard data types. Missing: Mechanism for generic data types.
+  //
+  if (data.type () == QVariant::UInt)
+    hash = data.toUInt ();
+  else if (data.type () == QVariant::Int)
+    hash = data.toInt ();
+  else
+    Q_ASSERT (false && "Unknown variant data typo");
+
+  return hash;
+}
+
+QString convertToString (const QVariant& data)
+{
+  QString s;
+
+  //
+  // Standard data types. Missing: Mechanism for generic data types.
+  //
+  if (data.type () == QVariant::UInt)
+    s = QString::number (data.toUInt ());
+  else if (data.type () == QVariant::Int)
+    s = QString::number (data.toInt ());
+  else
+    Q_ASSERT (false && "Unknown variant data typo");
+
+  return s;
 }
 
 namespace GEP {
