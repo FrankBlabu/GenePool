@@ -5,6 +5,7 @@
  */
 
 #include "GEPSystemCrossoverOperator.h"
+#include "GEPSystemNotifier.h"
 #include "GEPSystemWorld.h"
 
 namespace GEP {
@@ -51,6 +52,8 @@ PartiallyMatchedCrossoverOperator::~PartiallyMatchedCrossoverOperator ()
 */
 void PartiallyMatchedCrossoverOperator::compute (Population& population)
 {
+  Notifier* notifier = _world->getNotifier ();
+
   //
   // Shuffle population index for random crossover pairs
   //
@@ -71,6 +74,8 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
 
       Q_ASSERT (individual1.getSize () == individual2.getSize ());
       Q_ASSERT (individual1.getSize () > 2);
+
+      notifier->notifyPreCrossover (individual1.getId (), individual2.getId ());
 
       int size = individual1.getSize ();
 
@@ -108,6 +113,8 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
           individual1[pos] = value1;
           individual2[pos] = value2;
         }
+
+      notifier->notifyCrossover (individual1.getId (), individual2.getId ());
     }
 }
 

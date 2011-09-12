@@ -1,10 +1,10 @@
 /*
- * gep_selection_display.cpp - Display for selection step of the current population
+ * gep_scope_selection_operator_display.cpp - Display for selection steps of the current population
  *
  * Frank Cieslok, Sep. 2011
  */
 
-#include "GEPScopeSelectionDisplay.h"
+#include "GEPScopeSelectionOperatorDisplay.h"
 #include "GEPScopeTools.h"
 #include "GEPSystemController.h"
 #include "GEPSystemNotifier.h"
@@ -18,28 +18,28 @@ namespace GEP {
 namespace Scope {
 
 //#**************************************************************************
-// CLASS GEP::Scope::SelectionDisplayItem
+// CLASS GEP::Scope::SelectionOperatorDisplayItem
 //#**************************************************************************
 
 /*
  * Item for the selection display
  */
-class SelectionDisplayItem : public QTreeWidgetItem
+class SelectionOperatorDisplayItem : public QTreeWidgetItem
 {
 public:
-  SelectionDisplayItem (QTreeWidget* widget);
+  SelectionOperatorDisplayItem (QTreeWidget* widget);
 
   virtual bool operator< (const QTreeWidgetItem& other) const;
 };
 
 /* Constructor */
-SelectionDisplayItem::SelectionDisplayItem (QTreeWidget* widget)
+SelectionOperatorDisplayItem::SelectionOperatorDisplayItem (QTreeWidget* widget)
   : QTreeWidgetItem (widget)
 {
 }
 
 /* Comparison operator for item sorting */
-bool SelectionDisplayItem::operator< (const QTreeWidgetItem& other) const
+bool SelectionOperatorDisplayItem::operator< (const QTreeWidgetItem& other) const
 {
   bool less = false;
 
@@ -47,18 +47,17 @@ bool SelectionDisplayItem::operator< (const QTreeWidgetItem& other) const
 
   switch (column)
     {
-    case SelectionDisplay::COLUMN_ID:
-    case SelectionDisplay::COLUMN_NEW_IDS:
-    case SelectionDisplay::COLUMN_CONTENT:
+    case SelectionOperatorDisplay::COLUMN_ID:
+    case SelectionOperatorDisplay::COLUMN_NEW_IDS:
+    case SelectionOperatorDisplay::COLUMN_CONTENT:
       less = text (column) < other.text (column);
       break;
 
-    case SelectionDisplay::COLUMN_FITNESS_WORLD:
-    case SelectionDisplay::COLUMN_FITNESS_OPERATOR:
+    case SelectionOperatorDisplay::COLUMN_FITNESS:
       less = text (column).toDouble () < other.text (column).toDouble ();
       break;
 
-    case SelectionDisplay::COLUMN_TIMES_SELECTED:
+    case SelectionOperatorDisplay::COLUMN_TIMES_SELECTED:
       less = text (column).toInt () < other.text (column).toInt ();
       break;
     }
@@ -68,12 +67,12 @@ bool SelectionDisplayItem::operator< (const QTreeWidgetItem& other) const
 
 
 //#**************************************************************************
-// CLASS GEP::Scope::SelectionDisplay
+// CLASS GEP::Scope::SelectionOperatorDisplay
 //#**************************************************************************
 
 /* Constructor */
-SelectionDisplay::SelectionDisplay (System::Controller* controller, QWidget* parent)
-  : QTreeWidget (parent),
+SelectionOperatorDisplay::SelectionOperatorDisplay (System::Controller* controller, QWidget* parent)
+  : OperatorDisplay (parent),
     _controller (controller)
 {
   System::Notifier* notifier = _controller->getWorld ()->getNotifier ();
@@ -81,38 +80,32 @@ SelectionDisplay::SelectionDisplay (System::Controller* controller, QWidget* par
   QStringList header_names;
   header_names.push_back ("Id");
   header_names.push_back ("Content");
-  header_names.push_back ("Fitness (world)");
-  header_names.push_back ("Fitness (operator)");
+  header_names.push_back ("Fitness");
   header_names.push_back ("Times selected");
   header_names.push_back ("New ids");
 
-  setColumnCount (5);
   setHeaderLabels (header_names);
-  setAllColumnsShowFocus (true);
-  setRootIsDecorated (false);
-  setSortingEnabled (true);
 
   header ()->setResizeMode (COLUMN_ID, QHeaderView::ResizeToContents);
   header ()->setResizeMode (COLUMN_CONTENT, QHeaderView::Stretch);
-  header ()->setResizeMode (COLUMN_FITNESS_WORLD, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_FITNESS_OPERATOR, QHeaderView::ResizeToContents);
+  header ()->setResizeMode (COLUMN_FITNESS, QHeaderView::ResizeToContents);
   header ()->setResizeMode (COLUMN_TIMES_SELECTED, QHeaderView::ResizeToContents);
   header ()->setResizeMode (COLUMN_NEW_IDS, QHeaderView::ResizeToContents);
 
   connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotControllerStep ()));
-  connect (notifier, SIGNAL (signalIndividualSelection (const System::Object::Id&, const System::Object::Id&)),
-           SLOT (slotIndividualSelection (const System::Object::Id&, const System::Object::Id&)));
+  connect (notifier, SIGNAL (signalSelection (const System::Object::Id&, const System::Object::Id&)),
+           SLOT (slotSelection (const System::Object::Id&, const System::Object::Id&)));
 }
 
 /* Destructor */
-SelectionDisplay::~SelectionDisplay ()
+SelectionOperatorDisplay::~SelectionOperatorDisplay ()
 {
 }
 
 /*
  * Slot called when the controller advances one step
  */
-void SelectionDisplay::slotControllerStep ()
+void SelectionOperatorDisplay::slotControllerStep ()
 {
   clear ();
 }
@@ -120,8 +113,8 @@ void SelectionDisplay::slotControllerStep ()
 /*
  * Slot called when an individual is selected
  */
-void SelectionDisplay::slotIndividualSelection (const System::Object::Id& before,
-                                                const System::Object::Id& after)
+void SelectionOperatorDisplay::slotSelection (const System::Object::Id& before,
+                                              const System::Object::Id& after)
 {
   const System::Population& population = _controller->getPopulation ();
 
@@ -130,7 +123,7 @@ void SelectionDisplay::slotIndividualSelection (const System::Object::Id& before
   ItemMap::const_iterator pos = _items.find (before);
   if (pos == _items.end ())
     {
-      item = new SelectionDisplayItem (this);
+      item = new SelectionOperatorDisplayItem (this);
       addTopLevelItem (item);
       _items.insert (before, item);
     }
@@ -141,9 +134,7 @@ void SelectionDisplay::slotIndividualSelection (const System::Object::Id& before
 
   item->setText (COLUMN_ID, QString::number (before));
   item->setText (COLUMN_CONTENT, individual.toString ());
-
-  item->setText (COLUMN_FITNESS_WORLD, QString::number (_controller->getWorld ()->getFitness (individual), 'g', 2));
-  item->setText (COLUMN_FITNESS_OPERATOR, QString::number (_controller->getFitnessOperator ()->compute (individual), 'g', 2));
+  item->setText (COLUMN_FITNESS, QString::number (_controller->getFitnessOperator ()->compute (individual), 'g', 2));
 
   QString selected_text = item->text (COLUMN_NEW_IDS);
   if (selected_text.isEmpty ())

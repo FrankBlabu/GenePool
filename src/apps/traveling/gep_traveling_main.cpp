@@ -66,10 +66,16 @@ int main(int argc, char *argv[])
     GEP::System::SinglePopulationController controller (&world, population);
 
     QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 5.0));
-    QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator));
+
+    GEP::System::RemainderStochasticSamplingSelectionOperator* selection_operator_instance = new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator);
+    selection_operator_instance->setSelectionMode (GEP::System::RemainderStochasticSamplingSelectionOperator::SelectionMode::PUT_BACK);
+    QSharedPointer<GEP::System::SelectionOperator> selection_operator (selection_operator_instance);
+
     QSharedPointer<GEP::System::CrossoverOperator> crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator (&world));
-    QSharedPointer<GEP::System::MutationOperator> mutation_operator (new GEP::System::SwappingMutationOperator (&world, 1.0 / NUMBER_OF_CITIES));
+    QSharedPointer<GEP::System::MutationOperator> mutation_operator (new GEP::System::SwappingMutationOperator (&world, 0.5 * 1.0 / NUMBER_OF_CITIES));
     QSharedPointer<GEP::System::TerminationOperator> termination_operator (new GEP::System::FixedStepTerminationOperator (&world, 1000));
+
+
 
     controller.setFitnessOperator (fitness_operator);
     controller.setSelectionOperator (selection_operator);

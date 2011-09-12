@@ -7,8 +7,6 @@
 #include "GEPSystemSelectionOperator.h"
 #include "GEPSystemNotifier.h"
 
-#include <QDebug>
-
 namespace GEP {
 namespace System {
 
@@ -35,7 +33,8 @@ SelectionOperator::~SelectionOperator ()
 
 /* Constructor */
 RemainderStochasticSamplingSelectionOperator::RemainderStochasticSamplingSelectionOperator (World* world, FitnessOperatorPtr fitness_operator)
-  : SelectionOperator (world, fitness_operator)
+  : SelectionOperator (world, fitness_operator),
+    _selection_mode (SelectionMode::TAKE_AWAY)
 {
 }
 
@@ -44,18 +43,27 @@ RemainderStochasticSamplingSelectionOperator::~RemainderStochasticSamplingSelect
 {
 }
 
+/* Get operator selection mode */
+RemainderStochasticSamplingSelectionOperator::SelectionMode_t RemainderStochasticSamplingSelectionOperator::getSelectionMode () const
+{
+  return _selection_mode;
+}
+
+/* Set operator selection mode */
+void RemainderStochasticSamplingSelectionOperator::setSelectionMode (SelectionMode_t selection_mode)
+{
+  _selection_mode = selection_mode;
+}
+
+
 /* Perform selection */
 void RemainderStochasticSamplingSelectionOperator::compute (Population& population) const
 {
   Notifier* notifier = _world->getNotifier ();
 
-  qDebug () << "*** Selection ***";
-
   //
   // Step 1: Compute individual fitness and fitness sum
   //
-  qDebug () << "Fitness map:";
-
   typedef QMap<Object::Id, double> FitnessMap;
   FitnessMap fitness_map;
 
@@ -66,20 +74,14 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
 
       double fitness = _fitness_operator->compute (individual);
 
-      qDebug () << "  " << individual.getId () << ": " << fitness;
-
       fitness_map.insert (individual.getId (), fitness);
       fitness_sum += fitness;
     }
-
-  qDebug () << "--> Fitness sum: " << fitness_sum;
 
   //
   // Step 2: Insert individuals according to their relativ selection probability
   //
   Population selected;
-
-  qDebug () << "Selection step 1";
 
   for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
@@ -91,9 +93,14 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
       double p = fitness_map[id] / fitness_sum;
       int n = static_cast<int> (floor (p * population.getSize ()));
 
-      qDebug () << "  id=" << id << ", fitness=" << fitness_map[id] << ", p=" << p << ", n=" << n;
-
-      fitness_map[id] = p * population.getSize () - floor (p * population.getSize ());
+      switch (_selection_mode)
+        {
+        case SelectionMode::PUT_BACK:
+          break;
+        case SelectionMode::TAKE_AWAY:
+          fitness_map[id] = p * population.getSize () - floor (p * population.getSize ());
+          break;
+        }
 
       for (int i=0; i < n; ++i)
         {
@@ -101,31 +108,22 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
           copied.computeUniqueId ();
           selected.add (copied);
 
-          notifier->notifyIndividualSelection (individual.getId (), copied.getId ());
+          notifier->notifySelection (individual.getId (), copied.getId ());
         }
     }
 
   //
   // Step 3: The remaining space in the target population is filled using roulette wheel selection
   //
-  qDebug () << "Selection step 2";
-
   fitness_sum = 0.0;
   for (FitnessMap::const_iterator i = fitness_map.begin (); i != fitness_map.end (); ++i)
-    {
-      qDebug () << "  id=" << i.key () << ", fitness=" << i.value ();
-      fitness_sum += i.value ();
-    }
-
-  qDebug () << "  fitness_sum=" << fitness_sum;
+    fitness_sum += i.value ();
 
   PopulationFitnessIndex fitness_index (population, fitness_map);
 
   while (population.getSize () > selected.getSize ())
     {
       double value = _world->getRandom ();
-
-      qDebug () << "*** 1: random=" << value;
 
       double sum = 0.0;
       bool found = false;
@@ -138,16 +136,13 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
 
           sum += pos.value () / fitness_sum;
 
-          qDebug () << "*** 2: fitness=" << pos.value () << "(" << pos.value () / fitness_sum << "), sum=" << sum;
-
           if (sum >= value)
             {
-              qDebug () << "*** 3: Match";
               Individual copied (individual);
               copied.computeUniqueId ();
               selected.add (copied);
 
-              notifier->notifyIndividualSelection (individual.getId (), copied.getId ());
+              notifier->notifySelection (individual.getId (), copied.getId ());
 
               found = true;
             }

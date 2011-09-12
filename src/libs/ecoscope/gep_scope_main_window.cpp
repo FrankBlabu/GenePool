@@ -6,7 +6,9 @@
 
 #include "GEPScopeMainWindow.h"
 #include "GEPScopeSequentialDiagram.h"
-#include "GEPScopeSelectionDisplay.h"
+#include "GEPScopeCrossoverOperatorDisplay.h"
+#include "GEPScopeMutationOperatorDisplay.h"
+#include "GEPScopeSelectionOperatorDisplay.h"
 #include "GEPScopeWorldDisplay.h"
 #include "GEPScopeTools.h"
 
@@ -104,7 +106,9 @@ MainWindow::MainWindow (System::Controller* controller)
   _content->_display_content->addItem ("All", WorldDisplay::DisplayMode::ALL);
 
   QTabWidget* tab_widget = Tools::addWidgetToParent (new QTabWidget (_content->_population_frame));
-  tab_widget->addTab (new SelectionDisplay (controller, tab_widget), "Selection");
+  tab_widget->addTab (new SelectionOperatorDisplay (controller, tab_widget), "Selection");
+  tab_widget->addTab (new CrossoverOperatorDisplay (controller, tab_widget), "Crossover");
+  tab_widget->addTab (new MutationOperatorDisplay (controller, tab_widget), "Mutation");
 
   //
   // Signal/slot setup

@@ -39,9 +39,33 @@ void Notifier::notifyControllerStep ()
 }
 
 /* Notify individual selection */
-void Notifier::notifyIndividualSelection (const Object::Id& before, const Object::Id& after)
+void Notifier::notifySelection (const Object::Id& before, const Object::Id& after)
 {
-  emit signalIndividualSelection (before, after);
+  emit signalSelection (before, after);
+}
+
+/* Notify that a crossover operation is going to be performed */
+void Notifier::notifyPreCrossover (const Object::Id& object1, const Object::Id& object2)
+{
+  emit signalPreCrossover (object1, object2);
+}
+
+/* Notify that a crossover operation has been performed */
+void Notifier::notifyCrossover (const Object::Id& object1, const Object::Id& object2)
+{
+  emit signalCrossover (object1, object2);
+}
+
+/* Notify that a mutation operation is going to be performed */
+void Notifier::notifyPreMutation (const Object::Id& id)
+{
+  emit signalPreMutation (id);
+}
+
+/* Notify that a mutation operation has been performed */
+void Notifier::notifyMutation (const Object::Id& id)
+{
+  emit signalMutation (id);
 }
 
 }

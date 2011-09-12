@@ -5,6 +5,8 @@
  */
 
 #include "GEPSystemMutationOperator.h"
+#include "GEPSystemNotifier.h"
+
 #include <math.h>
 
 namespace GEP {
@@ -44,10 +46,14 @@ SwappingMutationOperator::~SwappingMutationOperator ()
 /* Mutate population */
 void SwappingMutationOperator::compute (Population& population)
 {
+  Notifier* notifier = _world->getNotifier ();
+
   for (int i=0; i < population.getSize (); ++i)
     {
       Individual& individual = population[i];
       int size = individual.getSize ();
+
+      notifier->notifyPreMutation (individual.getId ());
 
       for (int j=0; j < size; ++j)
         {
@@ -57,6 +63,8 @@ void SwappingMutationOperator::compute (Population& population)
               std::swap (individual[j], individual[k % size]);
             }
         }
+
+      notifier->notifyMutation (individual.getId ());
     }
 }
 

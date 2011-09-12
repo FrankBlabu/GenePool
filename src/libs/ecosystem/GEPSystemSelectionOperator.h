@@ -24,13 +24,13 @@ namespace System {
 class SelectionOperator : public Operator
 {
 public:
-    SelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
-    virtual ~SelectionOperator ();
+  SelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
+  virtual ~SelectionOperator ();
 
-    virtual void compute (Population& population) const = 0;
+  virtual void compute (Population& population) const = 0;
 
 protected:
-    FitnessOperatorPtr _fitness_operator;
+  FitnessOperatorPtr _fitness_operator;
 };
 
 typedef QSharedPointer<SelectionOperator> SelectionOperatorPtr;
@@ -41,10 +41,19 @@ typedef QSharedPointer<SelectionOperator> SelectionOperatorPtr;
 class RemainderStochasticSamplingSelectionOperator : public SelectionOperator
 {
 public:
-    RemainderStochasticSamplingSelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
-    virtual ~RemainderStochasticSamplingSelectionOperator ();
+  RemainderStochasticSamplingSelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
+  virtual ~RemainderStochasticSamplingSelectionOperator ();
 
-    virtual void compute (Population& population) const;
+  struct SelectionMode { enum Type_t { TAKE_AWAY, PUT_BACK }; };
+  typedef SelectionMode::Type_t SelectionMode_t;
+
+  SelectionMode_t getSelectionMode () const;
+  void setSelectionMode (SelectionMode_t selection_mode);
+
+  virtual void compute (Population& population) const;
+
+private:
+  SelectionMode_t _selection_mode;
 };
 
 }

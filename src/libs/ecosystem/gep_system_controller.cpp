@@ -172,9 +172,12 @@ bool SinglePopulationController::executeStep ()
   // Compute single step
   //
   _selection_operator->compute (_population);
-  _crossover_operator->compute (_population);
-  _mutation_operator->compute (_population);
+  updateFitness ();
 
+  _crossover_operator->compute (_population);
+  updateFitness ();
+
+  _mutation_operator->compute (_population);
   updateFitness ();
 
   return _termination_operator->compute (_population, ++_current_step);
