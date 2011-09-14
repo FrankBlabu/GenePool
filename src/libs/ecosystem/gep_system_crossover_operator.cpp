@@ -46,7 +46,6 @@ PartiallyMatchedCrossoverOperator::PartiallyMatchedCrossoverOperator (World* wor
 PartiallyMatchedCrossoverOperator::~PartiallyMatchedCrossoverOperator ()
 {
 }
-
 /*
  * Compute crossover set
 */
@@ -61,7 +60,7 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
   for (int i=0; i < population.getSize (); ++i)
     shuffled_index.push_back (i);
 
-  ShuffleComparator<int> comparator (_world, shuffled_index);
+  ShuffleComparator<int> comparator (shuffled_index);
   std::sort (shuffled_index.begin (), shuffled_index.end (), comparator);
 
   //
@@ -79,8 +78,8 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
 
       int size = individual1.getSize ();
 
-      int index1 = static_cast<int> (floor (_world->getRandom () * size)) % size;
-      int index2 = index1 + 1 + static_cast<int> (floor (_world->getRandom () * (size - 2))) % (size - 2);
+      int index1 = static_cast<int> (floor (_random_number_generator.generate () * size)) % size;
+      int index2 = index1 + 1 + static_cast<int> (floor (_random_number_generator.generate () * (size - 2))) % (size - 2);
 
       typedef QHash<QVariant, QVariant> IndexMap;
       IndexMap indices1;

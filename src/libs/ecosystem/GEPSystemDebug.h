@@ -7,8 +7,13 @@
 #ifndef __GEP_SYSTEM_DEBUG_H__
 #define __GEP_SYSTEM_DEBUG_H__
 
-
 #include <QtDebug>
+
+#ifdef GEP_DEBUG
+#define DOUT(CONTENT) (qDebug () << CONTENT)
+#else
+#define DOUT(CONTENT)
+#endif
 
 namespace GEP {
 namespace System {

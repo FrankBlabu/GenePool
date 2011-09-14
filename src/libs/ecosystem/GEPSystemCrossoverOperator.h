@@ -9,6 +9,7 @@
 
 #include "GEPSystemOperator.h"
 #include "GEPSystemPopulation.h"
+#include "GEPSystemRandomNumberGenerator.h"
 #include "GEPSystemShuffleComparator.h"
 #include "GEPSystemDebug.h"
 
@@ -42,6 +43,9 @@ public:
     virtual ~PartiallyMatchedCrossoverOperator ();
 
     virtual void compute (Population& population);
+
+private:
+    RandomNumberGenerator _random_number_generator;
 };
 
 }

@@ -14,8 +14,6 @@
  */
 void TestMain::testShuffleComparator ()
 {
-  TestWorld world;
-
   QVariantList sequence;
   int reference_sum = 0;
 
@@ -25,7 +23,7 @@ void TestMain::testShuffleComparator ()
       reference_sum += i;
     }
 
-  GEP::System::ShuffleComparator<QVariant> comparator (&world, sequence);
+  GEP::System::ShuffleComparator<QVariant> comparator (sequence);
   std::sort (sequence.begin (), sequence.end (), comparator);
 
   int sorted_sum = 0;

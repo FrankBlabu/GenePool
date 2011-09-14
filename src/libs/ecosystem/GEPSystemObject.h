@@ -8,9 +8,7 @@
 #define __GEP_SYSTEM_OBJECT_H__
 
 #include <QtGlobal>
-
-#include <QtCore/QMutex>
-#include <QtCore/QString>
+#include <QtCore/QAtomicInt>
 
 namespace GEP {
 namespace System {
@@ -32,8 +30,7 @@ public:
 private:
   Id _id;
 
-  static Id _id_counter;
-  static QMutex _id_counter_lock;
+  static QAtomicInt _id_counter;
 };
 
 }

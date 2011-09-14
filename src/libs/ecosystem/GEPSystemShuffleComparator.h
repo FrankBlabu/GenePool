@@ -9,6 +9,7 @@
 
 #include "GEPSystemWorld.h"
 #include "GEPSystemIndividual.h"
+#include "GEPSystemRandomNumberGenerator.h"
 
 #include <QtCore/QHash>
 #include <QtCore/QList>
@@ -23,21 +24,23 @@ template <class T>
 class ShuffleComparator
 {
 public:
-  ShuffleComparator (World* world, const QList<T>& values);
+  ShuffleComparator (const QList<T>& values);
 
   bool operator () (const T& object1, const T& object2);
 
 private:
   typedef QHash<T, double> OrderMap;
   OrderMap _order_map;
+
+  RandomNumberGenerator _random_number_generator;
 };
 
 /* Constructor */
 template <class T>
-ShuffleComparator<T>::ShuffleComparator (World* world, const QList<T>& values)
+ShuffleComparator<T>::ShuffleComparator (const QList<T>& values)
 {
   for (int i=0; i < values.size (); ++i)
-    _order_map.insert (values[i], world->getRandom ());
+    _order_map.insert (values[i], _random_number_generator.generate ());
 }
 
 /* Comparison operator */

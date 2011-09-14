@@ -31,7 +31,12 @@ const int NUMBER_OF_CITIES = 10;
 //
 // Number of individuals in initial population
 //
-const int POPULATION_SIZE = 10;
+const int POPULATION_SIZE = 1000;
+
+//
+// Number of steps until termination
+//
+const int NUMBER_OF_STEPS = 100;
 
 }
 
@@ -55,7 +60,7 @@ int main(int argc, char *argv[])
 
     for (int i=0; i < POPULATION_SIZE; ++i)
       {
-        GEP::System::ShuffleComparator<QVariant> comparator (&world, sequence);
+        GEP::System::ShuffleComparator<QVariant> comparator (sequence);
         std::sort (sequence.begin (), sequence.end (), comparator);
         population.add (GEP::Traveling::Individual (sequence));
       }
@@ -66,14 +71,11 @@ int main(int argc, char *argv[])
     GEP::System::SinglePopulationController controller (&world, population);
 
     QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 5.0));
-
-    GEP::System::RemainderStochasticSamplingSelectionOperator* selection_operator_instance = new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator);
-    selection_operator_instance->setSelectionMode (GEP::System::RemainderStochasticSamplingSelectionOperator::SelectionMode::PUT_BACK);
-    QSharedPointer<GEP::System::SelectionOperator> selection_operator (selection_operator_instance);
-
+    //QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator));
+    QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RouletteWheelSelectionOperator (&world, fitness_operator));
     QSharedPointer<GEP::System::CrossoverOperator> crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator (&world));
     QSharedPointer<GEP::System::MutationOperator> mutation_operator (new GEP::System::SwappingMutationOperator (&world, 0.5 * 1.0 / NUMBER_OF_CITIES));
-    QSharedPointer<GEP::System::TerminationOperator> termination_operator (new GEP::System::FixedStepTerminationOperator (&world, 1000));
+    QSharedPointer<GEP::System::TerminationOperator> termination_operator (new GEP::System::FixedStepTerminationOperator (&world, NUMBER_OF_STEPS));
 
 
 

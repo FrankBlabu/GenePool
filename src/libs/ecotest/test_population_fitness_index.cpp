@@ -7,8 +7,7 @@
 #include "TestMain.h"
 
 #include <GEPSystemPopulationFitnessIndex.h>
-
-#include <QDebug>
+#include <GEPSystemRandomNumberGenerator.h>
 
 /*
  * Test population fitness index
@@ -16,29 +15,23 @@
 void TestMain::testPopulationFitnessIndex ()
 {
   TestWorld world;
-  GEP::System::Population population = generatePopulation (&world, 10, 10);
+  GEP::System::RandomNumberGenerator random_number_generator;
 
-  qDebug () << "*** Test ***";
+  GEP::System::Population population = generatePopulation (10, 10);
 
   typedef QMap<GEP::System::Object::Id, double> FitnessMap;
   FitnessMap fitness_map;
 
-  qDebug () << "Generate:";
-
   for (GEP::System::Population::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const GEP::System::Individual& individual = *i;
-      double fitness = world.getRandom ();
+      double fitness = random_number_generator.generate ();
       fitness_map.insert (individual.getId (), fitness);
-
-      qDebug () << "  " << individual.getId () << ": " << fitness;
     }
 
   GEP::System::PopulationFitnessIndex fitness_index (population, fitness_map);
 
   QCOMPARE (population.getSize (), fitness_index.getSize ());
-
-  qDebug () << "Sorted:";
 
   double upper_bound = 1.0;
   for (int i=0; i < fitness_index.getSize (); ++i)
@@ -49,8 +42,6 @@ void TestMain::testPopulationFitnessIndex ()
       Q_ASSERT (pos != fitness_map.end ());
 
       double fitness = pos.value ();
-
-      qDebug () << "  " << individual.getId () << ": " << fitness;
 
       QVERIFY (fitness <= upper_bound);
       upper_bound = fitness;

@@ -6,7 +6,7 @@
 
 #include "TestMain.h"
 
-#include <GEPSystemWorld.h>
+#include <GEPSystemRandomNumberGenerator.h>
 
 /*
  * Test random number generator
@@ -17,12 +17,14 @@ void TestMain::testRandomNumberGenerator ()
 
   QBENCHMARK
   {
+    GEP::System::RandomNumberGenerator generator;
+
     double sum = 0.0;
 
     TestWorld world;
     for (int i=0; i < NUMBER_OF_RUNS; ++i)
       {
-        double n = world.getRandom ();
+        double n = generator.generate ();
 
         Q_ASSERT (n >= 0.0);
         Q_ASSERT (n <= 1.0);

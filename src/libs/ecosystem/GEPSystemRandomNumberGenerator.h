@@ -1,49 +1,36 @@
 /*
- * GEPSystemRandomNumberGenerator.h - Random number generators
+ * GEPSystemRandomNumberGenerator.h - Random number generator
  *
- * Frank Cieslok, Aug. 2011
+ * Frank Cieslok, Sep. 2011
  */
 
 #ifndef __GEP_SYSTEM_RANDOM_NUMBER_GENERATOR_H__
 #define __GEP_SYSTEM_RANDOM_NUMBER_GENERATOR_H__
 
-#include <boost/shared_ptr.hpp>
-
 namespace GEP {
 namespace System {
 
+class RandomNumberGeneratorImpl;
+
 /*
- * Base class for random number generators
+ * Random number generator
+ *
+ * Generates random number in a uniform distribution between [0...1[
  */
 class RandomNumberGenerator
 {
 public:
-    RandomNumberGenerator ();
-    virtual ~RandomNumberGenerator ();
+  RandomNumberGenerator ();
 
-    virtual double generate () = 0;
-};
-
-typedef boost::shared_ptr<RandomNumberGenerator> RandomNumberGeneratorPtr;
-
-/*
- * Simple non-deterministic random number generator
- */
-class MersenneTwisterRandomNumberGeneratorImp;
-
-class MersenneTwisterRandomNumberGenerator : public RandomNumberGenerator
-{
-public:
-    MersenneTwisterRandomNumberGenerator ();
-    virtual ~MersenneTwisterRandomNumberGenerator ();
-
-    virtual double generate ();
+  double generate ();
 
 private:
-    MersenneTwisterRandomNumberGeneratorImp* _imp;
+  RandomNumberGeneratorImpl* _impl;
 };
+
 
 }
 }
 
 #endif
+

@@ -17,7 +17,6 @@ namespace System {
 
 class Individual;
 class Notifier;
-class RandomNumberGenerator;
 
 /*
  * World information
@@ -31,13 +30,10 @@ public:
 
   virtual double getFitness (const Individual& individual) const = 0;
 
-  double getRandom ();
-
   Notifier* getNotifier () const;
 
 private:
   Notifier* _notifier;
-  RandomNumberGenerator* _random_number_generator;
 };
 
 

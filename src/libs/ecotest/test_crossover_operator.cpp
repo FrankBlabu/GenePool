@@ -26,7 +26,7 @@ void TestMain::testCrossoverOperator ()
   for (int i=0; i < NUMBER_OF_RUNS; ++i)
     {
       TestWorld world;
-      GEP::System::Population population = generatePopulation (&world, POPULATION_SIZE, INDIVIDUAL_SIZE);
+      GEP::System::Population population = generatePopulation (POPULATION_SIZE, INDIVIDUAL_SIZE);
 
       GEP::System::PartiallyMatchedCrossoverOperator crossover_operator (&world);
 

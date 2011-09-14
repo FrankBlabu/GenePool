@@ -8,9 +8,6 @@
 #include "GEPSystemIndividual.h"
 #include "GEPSystemNotifier.h"
 
-#include <stdlib.h>
-#include <sys/time.h>
-
 //#**************************************************************************
 // Global functions
 //#**************************************************************************
@@ -52,40 +49,6 @@ QString convertToString (const QVariant& data)
 namespace GEP {
 namespace System {
 
-//#**************************************************************************
-// CLASS GEP::System::RandomNumberGenerator
-//#**************************************************************************
-
-
-/* Random number generator */
-class RandomNumberGenerator
-{
-public:
-  RandomNumberGenerator ();
-
-  double generate ();
-};
-
-
-/* Constructor */
-RandomNumberGenerator::RandomNumberGenerator ()
-{
-  struct timeval tv;
-  gettimeofday (&tv, 0);
-
-  unsigned short seeds[3];
-  seeds[0] = tv.tv_usec;
-  seeds[1] = tv.tv_usec;
-  seeds[2] = tv.tv_sec;
-
-  seed48 (seeds);
-}
-
-/* Generate new random number in interval [0:1] */
-double RandomNumberGenerator::generate ()
-{
-  return drand48 ();
-}
 
 //#**************************************************************************
 // CLASS GEP::System::World
@@ -93,25 +56,15 @@ double RandomNumberGenerator::generate ()
 
 /* Constructor */
 World::World ()
-  : _notifier                (new Notifier ()),
-    _random_number_generator (new RandomNumberGenerator ())
+  : _notifier (new Notifier ())
 {
 }
 
 /* Destructor */
 World::~World ()
 {
-  delete _random_number_generator;
-  _random_number_generator = 0;
-
   delete _notifier;
   _notifier = 0;
-}
-
-/* Generate random number in interval [0:1] */
-double World::getRandom ()
-{
-  return _random_number_generator->generate ();
 }
 
 /* Return world notifier */

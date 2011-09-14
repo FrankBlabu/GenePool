@@ -11,6 +11,7 @@
 #include "GEPSystemFitnessOperator.h"
 #include "GEPSystemPopulation.h"
 #include "GEPSystemPopulationFitnessIndex.h"
+#include "GEPSystemRandomNumberGenerator.h"
 
 #include <math.h>
 #include <map>
@@ -27,13 +28,38 @@ public:
   SelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
   virtual ~SelectionOperator ();
 
-  virtual void compute (Population& population) const = 0;
+  virtual void compute (Population& population) = 0;
 
 protected:
   FitnessOperatorPtr _fitness_operator;
 };
 
 typedef QSharedPointer<SelectionOperator> SelectionOperatorPtr;
+
+/*
+ * Roulette wheel selection operator
+ */
+class RouletteWheelSelectionOperator : public SelectionOperator
+{
+public:
+  RouletteWheelSelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
+  virtual ~RouletteWheelSelectionOperator ();
+
+  virtual void compute (Population& population);
+
+private:
+  struct WheelSegment
+  {
+    WheelSegment (const Object::Id& id, double fitness);
+    WheelSegment (const WheelSegment& toCopy);
+
+    Object::Id _id;
+    double _fitness;
+  };
+
+  RandomNumberGenerator _random_number_generator;
+};
+
 
 /*
  * Selection operator based on remainder stochastic sampling
@@ -50,10 +76,11 @@ public:
   SelectionMode_t getSelectionMode () const;
   void setSelectionMode (SelectionMode_t selection_mode);
 
-  virtual void compute (Population& population) const;
+  virtual void compute (Population& population);
 
 private:
   SelectionMode_t _selection_mode;
+  RandomNumberGenerator _random_number_generator;
 };
 
 }

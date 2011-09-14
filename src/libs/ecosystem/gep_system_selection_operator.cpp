@@ -4,8 +4,11 @@
  * Frank Cieslok, Aug. 2011
  */
 
+#define GEP_DEBUG
+
 #include "GEPSystemSelectionOperator.h"
 #include "GEPSystemNotifier.h"
+#include "GEPSystemDebug.h"
 
 namespace GEP {
 namespace System {
@@ -24,6 +27,93 @@ SelectionOperator::SelectionOperator (World* world, FitnessOperatorPtr fitness_o
 /* Destructor */
 SelectionOperator::~SelectionOperator ()
 {
+}
+
+//#**************************************************************************
+// CLASS GEP::System::RouletteWheelSelectionOperator::WheelSegment
+//#**************************************************************************
+
+/* Constructor */
+RouletteWheelSelectionOperator::WheelSegment::WheelSegment (const Object::Id& id, double fitness)
+  : _id      (id),
+    _fitness (fitness)
+{
+}
+
+/* Copy constructor */
+RouletteWheelSelectionOperator::WheelSegment::WheelSegment (const WheelSegment& toCopy)
+  : _id      (toCopy._id),
+    _fitness (toCopy._fitness)
+{
+}
+
+//#**************************************************************************
+// CLASS GEP::System::RouletteWheelSelectionOperator
+//#**************************************************************************
+
+/* Constructor */
+RouletteWheelSelectionOperator::RouletteWheelSelectionOperator (World* world, FitnessOperatorPtr fitness_operator)
+  : SelectionOperator (world, fitness_operator)
+{
+}
+
+/* Destructor */
+RouletteWheelSelectionOperator::~RouletteWheelSelectionOperator ()
+{
+}
+
+/* Perform selection */
+void RouletteWheelSelectionOperator::compute (Population& population)
+{
+  Notifier* notifier = _world->getNotifier ();
+
+  //
+  // Step 1: Compute fitness list
+  //
+  QList<WheelSegment> fitness_list;
+
+  double fitness_sum = 0.0;
+  for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
+    {
+      const Individual& individual = *i;
+
+      fitness_sum += _fitness_operator->compute (individual);
+      fitness_list.push_back (WheelSegment (individual.getId (), fitness_sum));
+    }
+
+  for (int i=0; i < fitness_list.size (); ++i)
+    fitness_list[i]._fitness /= fitness_sum;
+
+  //
+  // Step 2: Perform roulette wheel selection
+  //
+  Population selected;
+
+  while (selected.getSize () < population.getSize ())
+    {
+      double n = _random_number_generator.generate ();
+
+      bool found = false;
+      for (int i=0; i < fitness_list.size () && !found; ++i)
+        {
+          const WheelSegment& segment = fitness_list[i];
+          if (n <= segment._fitness)
+            {
+              const Individual& individual = population[segment._id];
+              Individual copied (individual);
+              copied.computeUniqueId ();
+              selected.add (copied);
+
+              notifier->notifySelection (individual.getId (), copied.getId ());
+
+              found= true;
+            }
+        }
+
+      Q_ASSERT (found);
+    }
+
+  population = selected;
 }
 
 
@@ -57,7 +147,7 @@ void RemainderStochasticSamplingSelectionOperator::setSelectionMode (SelectionMo
 
 
 /* Perform selection */
-void RemainderStochasticSamplingSelectionOperator::compute (Population& population) const
+void RemainderStochasticSamplingSelectionOperator::compute (Population& population)
 {
   Notifier* notifier = _world->getNotifier ();
 
@@ -123,7 +213,7 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
 
   while (population.getSize () > selected.getSize ())
     {
-      double value = _world->getRandom ();
+      double value = _random_number_generator.generate ();
 
       double sum = 0.0;
       bool found = false;

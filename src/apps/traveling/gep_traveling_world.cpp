@@ -4,6 +4,7 @@
  * Frank Cieslok, Sep. 2011
  */
 
+#include <GEPSystemRandomNumberGenerator.h>
 #include "GEPTravelingWorld.h"
 
 namespace GEP {
@@ -19,11 +20,13 @@ World::World (int number_of_cities)
   : GEP::System::World (),
     _fitness_bias (0.0)
 {
+  System::RandomNumberGenerator random_number_generator;
+
   //
   // Randomly place cities
   //
   for (int i=0; i < number_of_cities; ++i)
-    _cities.push_back (QPointF (getRandom (), getRandom ()));
+    _cities.push_back (QPointF (random_number_generator.generate (), random_number_generator.generate ()));
 
   //
   // Compute largest city distance to get a fitness bias

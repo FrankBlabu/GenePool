@@ -39,7 +39,7 @@ public:
     TestMain ();
 
 private:
-    GEP::System::Population generatePopulation (GEP::System::World* world, int population_size, int individual_size);
+    GEP::System::Population generatePopulation (int population_size, int individual_size);
 
 private slots:
     void testShuffleComparator ();

@@ -1,42 +1,28 @@
 /*
- * gep_system_random_number_generator.cpp - Random number generators
+ * gep_system_random_number_generator.cpp - Random number generator
  *
- * Frank Cieslok, Aug. 2011
+ * Frank Cieslok, Sep. 2011
  */
 
 #include "GEPSystemRandomNumberGenerator.h"
 
-#include <sys/time.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_real.hpp>
+#include <sys/time.h>
 
 namespace GEP {
 namespace System {
 
 //#**************************************************************************
-// CLASS GEP::System::RandomNumberGenerator
+// CLASS GEP::System::RandomNumberGeneratorImpl
 //#**************************************************************************
 
-/* Constructor */
-RandomNumberGenerator::RandomNumberGenerator ()
-{
-}
-
-/* Destructor */
-RandomNumberGenerator::~RandomNumberGenerator ()
-{
-}
-
-//#**************************************************************************
-// CLASS GEP::System::MersenneTwisterRandomNumberGeneratorImp
-//#**************************************************************************
-
-class MersenneTwisterRandomNumberGeneratorImp
+class RandomNumberGeneratorImpl
 {
 public:
-  MersenneTwisterRandomNumberGeneratorImp ();
+  RandomNumberGeneratorImpl ();
 
   double generate ();
 
@@ -47,7 +33,7 @@ private:
 
 
 /* Constructor */
-MersenneTwisterRandomNumberGeneratorImp::MersenneTwisterRandomNumberGeneratorImp ()
+RandomNumberGeneratorImpl::RandomNumberGeneratorImpl ()
  : _generator (),
    _die       (_generator, boost::uniform_real<> (0.0, 1.0))
 {
@@ -57,36 +43,28 @@ MersenneTwisterRandomNumberGeneratorImp::MersenneTwisterRandomNumberGeneratorImp
   _generator.seed (static_cast<uint> (tv.tv_usec));
 }
 
-/* Generate new random number in interval [0:1] */
-double MersenneTwisterRandomNumberGeneratorImp::generate ()
+/* Generate new random number in interval [0:1[ */
+double RandomNumberGeneratorImpl::generate ()
 {
   return _die ();
 }
 
 
+
 //#**************************************************************************
-// CLASS GEP::System::MersenneTwisterRandomNumberGenerator
+// CLASS GEP::System::RandomNumberGenerator
 //#**************************************************************************
 
 /* Constructor */
-MersenneTwisterRandomNumberGenerator::MersenneTwisterRandomNumberGenerator ()
-: _imp (new MersenneTwisterRandomNumberGeneratorImp ())
+RandomNumberGenerator::RandomNumberGenerator ()
+  : _impl (new RandomNumberGeneratorImpl ())
 {
-}
-
-/* Destructor */
-MersenneTwisterRandomNumberGenerator::~MersenneTwisterRandomNumberGenerator ()
-{
-#if 0
-  delete _imp;
-  _imp = 0;
-#endif
 }
 
 /* Generate new random number in interval [0:1] */
-double MersenneTwisterRandomNumberGenerator::generate ()
+double RandomNumberGenerator::generate ()
 {
-  return _imp->generate ();
+  return _impl->generate ();
 }
 
 }

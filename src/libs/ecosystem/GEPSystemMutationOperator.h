@@ -10,6 +10,7 @@
 #include "GEPSystemOperator.h"
 #include "GEPSystemIndividual.h"
 #include "GEPSystemPopulation.h"
+#include "GEPSystemRandomNumberGenerator.h"
 #include "GEPSystemDebug.h"
 
 namespace GEP {
@@ -42,6 +43,7 @@ public:
     virtual void compute (Population& population);
 
 private:
+    RandomNumberGenerator _random_number_generator;
     double _probability;
 };
 

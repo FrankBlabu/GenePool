@@ -5,6 +5,8 @@
  */
 
 #include "GEPSystemObject.h"
+
+#include <QtCore/QAtomicInt>
 #include <limits>
 
 namespace GEP {
@@ -15,8 +17,7 @@ namespace System {
 //#**************************************************************************
 
 /* Counter for unique object ids [STATIC] */
-Object::Id Object::_id_counter = 0;
-QMutex Object::_id_counter_lock;
+QAtomicInt Object::_id_counter = 0;
 
 /* Constructor */
 Object::Object ()
@@ -34,8 +35,7 @@ Object::Object (const Object& toCopy)
 /* Compute unique id for this object */
 void Object::computeUniqueId ()
 {
-  QMutexLocker locker (&_id_counter_lock);
-  _id = _id_counter++;
+  _id = _id_counter.fetchAndAddRelaxed (1);
  }
 
 }

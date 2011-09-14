@@ -52,7 +52,7 @@ void TestMain::testSelectionOperator ()
     for (int i=0; i < 1000; ++i)
       {
         TestWorld world;
-        GEP::System::Population population = generatePopulation (&world, 10, 10);
+        GEP::System::Population population = generatePopulation (10, 10);
 
         QSharedPointer<GEP::System::FitnessOperator> fitness_operator
             (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 1.0));

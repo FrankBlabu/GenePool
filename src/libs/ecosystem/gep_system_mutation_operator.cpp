@@ -57,9 +57,9 @@ void SwappingMutationOperator::compute (Population& population)
 
       for (int j=0; j < size; ++j)
         {
-          if (_world->getRandom () <= _probability)
+          if (_random_number_generator.generate () <= _probability)
             {
-              int k = static_cast<int> (floor (_world->getRandom () * (size - 1))) % (size - 1);
+              int k = static_cast<int> (floor (_random_number_generator.generate () * (size - 1))) % (size - 1);
               std::swap (individual[j], individual[k % size]);
             }
         }
