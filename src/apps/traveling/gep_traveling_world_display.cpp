@@ -4,9 +4,13 @@
  * Frank Cieslok, Sep. 2011
  */
 
+//#define GEP_DEBUG
+
 #include "GEPTravelingWorldDisplay.h"
 #include "GEPTravelingWorld.h"
 #include "GEPSystemController.h"
+#include "GEPSystemNotifier.h"
+#include "GEPSystemDebug.h"
 
 #include <QtCore/QPair>
 #include <QtGui/QPainter>
@@ -22,9 +26,16 @@ namespace Traveling {
 
 /* Constructor */
 WorldDisplay::WorldDisplay (const World* world, QWidget* parent)
-  : GEP::Scope::WorldDisplay (parent),
+  : GEP::Scope::WorldDisplay (world, parent),
     _world (world)
 {
+  System::Notifier* notifier = System::Notifier::getNotifier ();
+
+  connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotClear ()));
+  connect (notifier, SIGNAL (signalIndividualCreated (const System::Individual&)),
+           SLOT (slotAddIndividual (const System::Individual&)));
+
+
 }
 
 /* Destructor */
@@ -120,6 +131,13 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
               }
           }
           break;
+
+        case GEP::Scope::WorldDisplay::DisplayMode::SELECTED:
+          {
+            if (individual.getId () == getSelectedId ())
+              _individuals.push_back (line);
+          }
+          break;
         }
     }
 
@@ -154,6 +172,19 @@ void WorldDisplay::paintEvent (QPaintEvent* event)
 
   for (int i=0; i < _individuals.size (); ++i)
     painter.drawPolyline (_individuals[i]);
+}
+
+/* Clear individual list */
+void WorldDisplay::slotClear ()
+{
+  DOUT ("Clear");
+}
+
+/* Add new created individual */
+void WorldDisplay::slotAddIndividual (const System::Individual& individual)
+{
+  Q_UNUSED (individual);
+  DOUT ("Add" << individual.getId ());
 }
 
 

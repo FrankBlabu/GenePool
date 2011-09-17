@@ -12,8 +12,6 @@
 
 #include <QtGui/QHeaderView>
 
-#include <QDebug>
-
 namespace GEP {
 namespace Scope {
 
@@ -24,17 +22,23 @@ namespace Scope {
 /*
  * Item for the crossover display
  */
-class CrossoverOperatorDisplayItem : public QTreeWidgetItem
+class CrossoverOperatorDisplayItem : public OperatorDisplayItem
 {
 public:
-  CrossoverOperatorDisplayItem (QTreeWidget* widget);
+  CrossoverOperatorDisplayItem (const System::Object::Id& id, QTreeWidget* widget);
+  virtual ~CrossoverOperatorDisplayItem ();
 
   virtual bool operator< (const QTreeWidgetItem& other) const;
 };
 
 /* Constructor */
-CrossoverOperatorDisplayItem::CrossoverOperatorDisplayItem (QTreeWidget* widget)
-  : QTreeWidgetItem (widget)
+CrossoverOperatorDisplayItem::CrossoverOperatorDisplayItem (const System::Object::Id& id, QTreeWidget* widget)
+  : OperatorDisplayItem (id, widget)
+{
+}
+
+/* Destructor */
+CrossoverOperatorDisplayItem::~CrossoverOperatorDisplayItem ()
 {
 }
 
@@ -70,10 +74,9 @@ bool CrossoverOperatorDisplayItem::operator< (const QTreeWidgetItem& other) cons
 
 /* Constructor */
 CrossoverOperatorDisplay::CrossoverOperatorDisplay (System::Controller* controller, QWidget* parent)
-  : OperatorDisplay (parent),
-    _controller (controller)
+  : OperatorDisplay (controller, parent)
 {
-  System::Notifier* notifier = _controller->getWorld ()->getNotifier ();
+  System::Notifier* notifier = System::Notifier::getNotifier ();
 
   QStringList header_names;
   header_names.push_back ("Id");
@@ -140,14 +143,14 @@ void CrossoverOperatorDisplay::setupItem (const System::Object::Id& object1,
 {
   CrossoverOperatorDisplayItem* item = getItem (object1);
 
-  const System::Population& population = _controller->getPopulation ();
+  const System::Population& population = getController ()->getPopulation ();
   const System::Individual& individual = population[object1];
 
   item->setText (COLUMN_ID, QString::number (object1));
   item->setText (COLUMN_CONTENT, individual.toString ());
   item->setText (COLUMN_MATE, QString::number (object2));
 
-  item->setText (COLUMN_FITNESS_BEFORE, QString::number (_controller->getFitnessOperator ()->compute (individual), 'g', 2));
+  item->setText (COLUMN_FITNESS_BEFORE, QString::number (getController ()->getFitnessOperator ()->compute (individual), 'g', 2));
 }
 
 /*
@@ -157,11 +160,11 @@ void CrossoverOperatorDisplay::completeItem (const System::Object::Id& object)
 {
   CrossoverOperatorDisplayItem* item = getItem (object);
 
-  const System::Population& population = _controller->getPopulation ();
+  const System::Population& population = getController ()->getPopulation ();
   const System::Individual& individual = population[object];
 
   item->setText (COLUMN_CROSSED, individual.toString ());
-  item->setText (COLUMN_FITNESS_AFTER, QString::number (_controller->getFitnessOperator ()->compute (individual), 'g', 2));
+  item->setText (COLUMN_FITNESS_AFTER, QString::number (getController ()->getFitnessOperator ()->compute (individual), 'g', 2));
 }
 
 /*
@@ -174,7 +177,7 @@ CrossoverOperatorDisplayItem* CrossoverOperatorDisplay::getItem (const System::O
   ItemMap::const_iterator pos = _items.find (id);
   if (pos == _items.end ())
     {
-      item = new CrossoverOperatorDisplayItem (this);
+      item = new CrossoverOperatorDisplayItem (id, this);
       addTopLevelItem (item);
       _items.insert (id, item);
     }

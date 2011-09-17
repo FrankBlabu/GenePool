@@ -65,7 +65,7 @@ RouletteWheelSelectionOperator::~RouletteWheelSelectionOperator ()
 /* Perform selection */
 void RouletteWheelSelectionOperator::compute (Population& population)
 {
-  Notifier* notifier = _world->getNotifier ();
+  Notifier* notifier = System::Notifier::getNotifier ();
 
   //
   // Step 1: Compute fitness list
@@ -149,7 +149,7 @@ void RemainderStochasticSamplingSelectionOperator::setSelectionMode (SelectionMo
 /* Perform selection */
 void RemainderStochasticSamplingSelectionOperator::compute (Population& population)
 {
-  Notifier* notifier = _world->getNotifier ();
+  Notifier* notifier = System::Notifier::getNotifier ();
 
   //
   // Step 1: Compute individual fitness and fitness sum

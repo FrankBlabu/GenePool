@@ -16,7 +16,6 @@ namespace GEP {
 namespace System {
 
 class Individual;
-class Notifier;
 
 /*
  * World information
@@ -29,11 +28,6 @@ public:
   virtual ~World ();
 
   virtual double getFitness (const Individual& individual) const = 0;
-
-  Notifier* getNotifier () const;
-
-private:
-  Notifier* _notifier;
 };
 
 

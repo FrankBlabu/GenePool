@@ -19,6 +19,9 @@ namespace System {
 /* Counter for unique object ids [STATIC] */
 QAtomicInt Object::_id_counter = 0;
 
+/* Value fpr invalid ids [STATIC] */
+Object::Id Object::INVALID = std::numeric_limits<Id>::max ();
+
 /* Constructor */
 Object::Object ()
   : _id (std::numeric_limits<Id>::max ())

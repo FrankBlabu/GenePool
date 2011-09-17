@@ -9,7 +9,6 @@
 #include <limits>
 
 #include <QtGui/QPainter>
-#include <QDebug>
 
 namespace GEP {
 namespace Scope {

@@ -6,7 +6,6 @@
 
 #include "GEPSystemWorld.h"
 #include "GEPSystemIndividual.h"
-#include "GEPSystemNotifier.h"
 
 //#**************************************************************************
 // Global functions
@@ -56,22 +55,14 @@ namespace System {
 
 /* Constructor */
 World::World ()
-  : _notifier (new Notifier ())
 {
 }
 
 /* Destructor */
 World::~World ()
 {
-  delete _notifier;
-  _notifier = 0;
 }
 
-/* Return world notifier */
-Notifier* World::getNotifier () const
-{
-  return _notifier;
-}
 
 }
 }

@@ -72,7 +72,7 @@ protected:
 class SinglePopulationController : public Controller
 {
 public:
-  SinglePopulationController (World* world, const Population& population);
+  SinglePopulationController (World* world);
 
   virtual double getCurrentFitness (Controller::FitnessType_t type) const;
   virtual int getCurrentStep () const;
@@ -81,6 +81,7 @@ public:
   virtual bool executeStep ();
 
   virtual const Population& getPopulation () const;
+  void setPopulation (const Population& population);
 
 private:
   void updateFitness ();

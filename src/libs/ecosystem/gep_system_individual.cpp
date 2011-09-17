@@ -7,7 +7,6 @@
 #include "GEPSystemIndividual.h"
 #include "GEPSystemWorld.h"
 
-
 namespace GEP {
 namespace System {
 

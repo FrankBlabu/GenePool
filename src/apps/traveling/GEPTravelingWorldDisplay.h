@@ -7,6 +7,7 @@
 #ifndef __GEP_TRAVELING_WORLD_DISPLAY_H__
 #define __GEP_TRAVELING_WORLD_DISPLAY_H__
 
+#include <GEPSystemIndividual.h>
 #include "GEPScopeWorldDisplay.h"
 
 namespace GEP {
@@ -19,6 +20,8 @@ class World;
  */
 class WorldDisplay : public GEP::Scope::WorldDisplay
 {
+  Q_OBJECT
+
 public:
     WorldDisplay (const World* world, QWidget* parent);
     virtual ~WorldDisplay ();
@@ -27,6 +30,10 @@ public:
 
 protected:
     virtual void paintEvent (QPaintEvent* event);
+
+private slots:
+    void slotClear ();
+    void slotAddIndividual (const System::Individual& individual);
 
 private:
     const World* _world;

@@ -27,6 +27,8 @@ public:
 
   void computeUniqueId ();
 
+  static Id INVALID;
+
 private:
   Id _id;
 

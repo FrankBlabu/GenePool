@@ -51,7 +51,7 @@ PartiallyMatchedCrossoverOperator::~PartiallyMatchedCrossoverOperator ()
 */
 void PartiallyMatchedCrossoverOperator::compute (Population& population)
 {
-  Notifier* notifier = _world->getNotifier ();
+  Notifier* notifier = System::Notifier::getNotifier ();
 
   //
   // Shuffle population index for random crossover pairs

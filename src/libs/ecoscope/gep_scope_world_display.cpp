@@ -4,6 +4,12 @@
  * Frank Cieslok, Sep. 2011
  */
 
+#define GEP_DEBUG
+
+#include <GEPSystemDebug.h>
+#include <GEPSystemNotifier.h>
+#include <GEPSystemWorld.h>
+
 #include "GEPScopeWorldDisplay.h"
 
 namespace GEP {
@@ -14,14 +20,31 @@ namespace Scope {
 //#**************************************************************************
 
 /* Constructor */
-WorldDisplay::WorldDisplay(QWidget* parent)
-  : QWidget (parent)
+WorldDisplay::WorldDisplay(const System::World* world, QWidget* parent)
+  : QWidget (parent),
+    _world       (world),
+    _selected_id (System::Object::INVALID)
 {
+  connect (System::Notifier::getNotifier (), SIGNAL (signalIndividualFocusChanged (const System::Object::Id&)),
+           SLOT (slotIndividualFocusChanged (const System::Object::Id&)));
 }
 
 /* Destructor */
 WorldDisplay::~WorldDisplay()
 {
+}
+
+/* Return currently selected id */
+const System::Object::Id& WorldDisplay::getSelectedId () const
+{
+  return _selected_id;
+}
+
+/* Called when the currently selected individual changed */
+void WorldDisplay::slotIndividualFocusChanged (const System::Object::Id& id)
+{
+  _selected_id = id;
+  emit signalUpdate ();
 }
 
 }

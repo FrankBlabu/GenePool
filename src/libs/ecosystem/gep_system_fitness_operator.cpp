@@ -4,9 +4,10 @@
  * Frank Cieslok, Aug. 2011
  */
 
-#include "GEPSystemFitnessOperator.h"
+#define GEP_DEBUG
 
-#include <QDebug>
+#include "GEPSystemFitnessOperator.h"
+#include "GEPSystemDebug.h"
 
 namespace GEP {
 namespace System {

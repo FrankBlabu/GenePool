@@ -6,8 +6,6 @@
 
 #include "GEPSystemShuffleComparator.h"
 
-#include <QDebug>
-
 namespace GEP {
 namespace System {
 

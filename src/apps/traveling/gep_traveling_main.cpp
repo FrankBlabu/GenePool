@@ -49,35 +49,18 @@ int main(int argc, char *argv[])
     QApplication app (argc, argv);
 
     //
-    // Create world
+    // Setup world and controller
     //
     GEP::Traveling::World world (NUMBER_OF_CITIES);
-    GEP::System::Population population;
-
-    QVariantList sequence;
-    for (int i=0; i < NUMBER_OF_CITIES; ++i)
-      sequence.push_back (QVariant (i));
-
-    for (int i=0; i < POPULATION_SIZE; ++i)
-      {
-        GEP::System::ShuffleComparator<QVariant> comparator (sequence);
-        std::sort (sequence.begin (), sequence.end (), comparator);
-        population.add (GEP::Traveling::Individual (sequence));
-      }
-
-    //
-    // Setup controller
-    //
-    GEP::System::SinglePopulationController controller (&world, population);
+    GEP::System::SinglePopulationController controller (&world);
 
     QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 5.0));
+    //QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearStaticScaledFitnessOperator (&world, 0.0, 1.0));
     //QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator));
     QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RouletteWheelSelectionOperator (&world, fitness_operator));
     QSharedPointer<GEP::System::CrossoverOperator> crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator (&world));
     QSharedPointer<GEP::System::MutationOperator> mutation_operator (new GEP::System::SwappingMutationOperator (&world, 0.5 * 1.0 / NUMBER_OF_CITIES));
     QSharedPointer<GEP::System::TerminationOperator> termination_operator (new GEP::System::FixedStepTerminationOperator (&world, NUMBER_OF_STEPS));
-
-
 
     controller.setFitnessOperator (fitness_operator);
     controller.setSelectionOperator (selection_operator);
@@ -92,6 +75,23 @@ int main(int argc, char *argv[])
     main_window.setWorldDisplay (new GEP::Traveling::WorldDisplay (&world, 0));
     main_window.show ();
 
-    return app.exec();
+    //
+    // Create world
+    //
+    GEP::System::Population population;
 
+    QVariantList sequence;
+    for (int i=0; i < NUMBER_OF_CITIES; ++i)
+      sequence.push_back (QVariant (i));
+
+    for (int i=0; i < POPULATION_SIZE; ++i)
+      {
+        GEP::System::ShuffleComparator<QVariant> comparator (sequence);
+        std::sort (sequence.begin (), sequence.end (), comparator);
+        population.add (GEP::Traveling::Individual (sequence));
+      }
+
+    controller.setPopulation (population);
+
+    return app.exec();
 }

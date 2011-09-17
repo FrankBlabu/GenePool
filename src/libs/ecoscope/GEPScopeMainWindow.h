@@ -12,11 +12,12 @@
 
 #include <GEPSystemController.h>
 
+class QTabWidget;
+
 namespace GEP {
 namespace Scope {
 
 class MainWindowContent;
-class LogSelectionDisplay;
 class SequentialDiagram;
 class WorldDisplay;
 
@@ -33,30 +34,43 @@ public:
 
   void setWorldDisplay (WorldDisplay* world_display);
 
+protected:
+  virtual void keyPressEvent (QKeyEvent* event);
+  virtual void closeEvent (QCloseEvent* event);
+
 private slots:
   void slotRun ();
   void slotStep ();
+  void slotReset ();
   void slotQuit ();
 
   void slotUpdateOutput ();
+  void slotActiveOperatorDisplayChanged ();
 
 private:
   void startup ();
   void cleanup ();
   bool executeStep ();
 
+  void updateEnabledState ();
+
 private:
   System::Controller* _controller;
-  bool _running;
+
+  struct RunningMode { enum Type_t { STOPPED, RUNNING, SINGLE_STEP }; };
+  typedef RunningMode::Type_t RunningMode_t;
+
+  RunningMode_t _running_mode;
 
   MainWindowContent* _content;
   WorldDisplay* _world_display;
   SequentialDiagram* _fitness_diagram;
 
-  LogSelectionDisplay* _log_selection_display;
+  QTabWidget* _operator_display_tab;
 
   QAction* _run_action;
   QAction* _step_action;
+  QAction* _reset_action;
   QAction* _quit_action;
 };
 

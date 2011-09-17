@@ -4,7 +4,10 @@
  * Frank Cieslok, Sep. 2011
  */
 
+#define GEP_DEBUG
+
 #include "GEPSystemNotifier.h"
+#include "GEPSystemDebug.h"
 
 namespace GEP {
 namespace System {
@@ -20,6 +23,13 @@ Notifier::Notifier ()
 {
 }
 
+/* Return singleton instance [STATIC] */
+Notifier* Notifier::getNotifier ()
+{
+  static Notifier notifier;
+  return &notifier;
+}
+
 /* Reads if notifying is currently enabled */
 bool Notifier::getEnabled () const
 {
@@ -32,40 +42,60 @@ void Notifier::setEnabled (bool enabled)
   _enabled = enabled;
 }
 
+/* Notify individual creation */
+void Notifier::notifyIndividualCreated (const Individual& individual)
+{
+  if (_enabled)
+    emit signalIndividualCreated (individual);
+}
+
 /* Notify new controller step */
 void Notifier::notifyControllerStep ()
 {
-  emit signalControllerStep ();
+  if (_enabled)
+    emit signalControllerStep ();
 }
 
 /* Notify individual selection */
 void Notifier::notifySelection (const Object::Id& before, const Object::Id& after)
 {
-  emit signalSelection (before, after);
+  if (_enabled)
+    emit signalSelection (before, after);
 }
 
 /* Notify that a crossover operation is going to be performed */
 void Notifier::notifyPreCrossover (const Object::Id& object1, const Object::Id& object2)
 {
-  emit signalPreCrossover (object1, object2);
+  if (_enabled)
+    emit signalPreCrossover (object1, object2);
 }
 
 /* Notify that a crossover operation has been performed */
 void Notifier::notifyCrossover (const Object::Id& object1, const Object::Id& object2)
 {
-  emit signalCrossover (object1, object2);
+  if (_enabled)
+    emit signalCrossover (object1, object2);
 }
 
 /* Notify that a mutation operation is going to be performed */
 void Notifier::notifyPreMutation (const Object::Id& id)
 {
-  emit signalPreMutation (id);
+  if (_enabled)
+    emit signalPreMutation (id);
 }
 
 /* Notify that a mutation operation has been performed */
 void Notifier::notifyMutation (const Object::Id& id)
 {
-  emit signalMutation (id);
+  if (_enabled)
+    emit signalMutation (id);
+}
+
+/* Notify that the individual focus changed */
+void Notifier::notifyIndividualFocusChanged (const Object::Id& id)
+{
+  if (_enabled)
+    emit signalIndividualFocusChanged (id);
 }
 
 }

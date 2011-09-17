@@ -4,6 +4,8 @@
  * Frank Cieslok, Aug. 2011
  */
 
+#define GEP_DEBUG
+
 #include "GEPScopeMainWindow.h"
 #include "GEPScopeSequentialDiagram.h"
 #include "GEPScopeCrossoverOperatorDisplay.h"
@@ -12,11 +14,12 @@
 #include "GEPScopeWorldDisplay.h"
 #include "GEPScopeTools.h"
 
+#include <GEPSystemDebug.h>
+
 #include <iostream>
 
-#include <QDebug>
-
 #include <QtCore/QTime>
+#include <QtGui/QKeyEvent>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
 #include <QtGui/QTabWidget>
@@ -60,11 +63,13 @@ MainWindowContent::~MainWindowContent ()
 MainWindow::MainWindow (System::Controller* controller)
 : QMainWindow (),
   _controller      (controller),
-  _running         (false),
+  _running_mode    (RunningMode::STOPPED),
   _content         (0),
   _world_display   (0),
   _fitness_diagram (0),
   _run_action      (0),
+  _step_action     (0),
+  _reset_action    (0),
   _quit_action     (0)
 {
   //
@@ -86,12 +91,17 @@ MainWindow::MainWindow (System::Controller* controller)
   connect (_step_action, SIGNAL (triggered ()), SLOT (slotStep ()));
   execute_menu->addAction (_step_action);
 
+  _reset_action = new QAction ("Reset", execute_menu);
+  connect (_reset_action, SIGNAL (triggered ()), SLOT (slotReset ()));
+  execute_menu->addAction (_reset_action);
+
   //
   // Toolbar setup
   //
   QToolBar* execute_toolbar = addToolBar ("execute");
   execute_toolbar->addAction (_run_action);
   execute_toolbar->addAction (_step_action);
+  execute_toolbar->addAction (_reset_action);
 
   //
   // Widget setup
@@ -101,21 +111,26 @@ MainWindow::MainWindow (System::Controller* controller)
 
   _fitness_diagram = Tools::addWidgetToParent (new SequentialDiagram (_content->_diagram_frame));
 
+  //_content->_display_content->addItem ("Selected", WorldDisplay::DisplayMode::SELECTED);
   _content->_display_content->addItem ("Best", WorldDisplay::DisplayMode::BEST);
   _content->_display_content->addItem ("Worst", WorldDisplay::DisplayMode::WORST);
   _content->_display_content->addItem ("All", WorldDisplay::DisplayMode::ALL);
 
-  QTabWidget* tab_widget = Tools::addWidgetToParent (new QTabWidget (_content->_population_frame));
-  tab_widget->addTab (new SelectionOperatorDisplay (controller, tab_widget), "Selection");
-  tab_widget->addTab (new CrossoverOperatorDisplay (controller, tab_widget), "Crossover");
-  tab_widget->addTab (new MutationOperatorDisplay (controller, tab_widget), "Mutation");
+  _operator_display_tab = Tools::addWidgetToParent (new QTabWidget (_content->_population_frame));
+  _operator_display_tab->addTab (new SelectionOperatorDisplay (controller, _operator_display_tab), "Selection");
+  _operator_display_tab->addTab (new CrossoverOperatorDisplay (controller, _operator_display_tab), "Crossover");
+  _operator_display_tab->addTab (new MutationOperatorDisplay (controller, _operator_display_tab), "Mutation");
 
   //
   // Signal/slot setup
   //
   connect (_content->_display_content, SIGNAL (activated (int)), SLOT (slotUpdateOutput ()));
+  connect (_operator_display_tab, SIGNAL (currentChanged (int)), SLOT (slotActiveOperatorDisplayChanged ()));
 
   slotUpdateOutput ();
+  slotActiveOperatorDisplayChanged ();
+
+  updateEnabledState ();
 }
 
 /* Destructor */
@@ -132,6 +147,40 @@ void MainWindow::setWorldDisplay (WorldDisplay* world_display)
 
   world_display->setParent (_content->_world_display_frame);
   _world_display = Tools::addWidgetToParent (world_display);
+
+  connect (_world_display, SIGNAL (signalUpdate ()), SLOT (slotUpdateOutput ()));
+}
+
+/*
+ * Handler for keyboard events
+ */
+void MainWindow::keyPressEvent (QKeyEvent* event)
+{
+  if ( event->modifiers () == Qt::NoModifier &&
+       event->key () == Qt::Key_Escape)
+    {
+      switch (_running_mode)
+        {
+        case RunningMode::STOPPED:
+        case RunningMode::SINGLE_STEP:
+          break;
+
+        case RunningMode::RUNNING:
+          _running_mode = RunningMode::SINGLE_STEP;
+          break;
+        }
+    }
+
+  updateEnabledState ();
+}
+
+/*
+ * Close main window
+ */
+void MainWindow::closeEvent (QCloseEvent* event)
+{
+  _running_mode = RunningMode::STOPPED;
+  QMainWindow::closeEvent (event);
 }
 
 /*
@@ -139,22 +188,32 @@ void MainWindow::setWorldDisplay (WorldDisplay* world_display)
  */
 void MainWindow::slotRun ()
 {
-  if (!_running)
+  if (_running_mode == RunningMode::STOPPED)
     startup ();
 
   QTime time = QTime::currentTime ();
+  _running_mode = RunningMode::RUNNING;
+  updateEnabledState ();
 
-  while (!executeStep ())
-    {
-      if (time.elapsed () >= 100)
-        {
-          slotUpdateOutput ();
-          QApplication::processEvents ();
-          time.restart ();
-        }
-    }
+  while (_running_mode == RunningMode::RUNNING)
+  {
+    if (!executeStep ())
+      {
+        if (time.elapsed () >= 100)
+          {
+            slotUpdateOutput ();
+            QApplication::processEvents ();
+            time.restart ();
+          }
+      }
+    else
+      {
+        _running_mode = RunningMode::STOPPED;
+        cleanup ();
+      }
+  }
 
-  cleanup ();
+  updateEnabledState ();
 }
 
 /*
@@ -162,13 +221,33 @@ void MainWindow::slotRun ()
  */
 void MainWindow::slotStep ()
 {
-  if (!_running)
+  if (_running_mode == RunningMode::STOPPED)
     startup ();
 
+  _running_mode = RunningMode::SINGLE_STEP;
+
   if (executeStep ())
-    cleanup ();
+    {
+      _running_mode = RunningMode::STOPPED;
+      cleanup ();
+    }
 
   slotUpdateOutput ();
+  updateEnabledState ();
+}
+
+/*
+ * Slot: Reset current execution
+ */
+void MainWindow::slotReset ()
+{
+  if (_running_mode != RunningMode::STOPPED)
+    cleanup ();
+
+  _running_mode = RunningMode::STOPPED;
+
+  slotUpdateOutput ();
+  updateEnabledState ();
 }
 
 /*
@@ -176,11 +255,10 @@ void MainWindow::slotStep ()
  */
 void MainWindow::startup ()
 {
-  Q_ASSERT (!_running);
+  Q_ASSERT (_running_mode == RunningMode::STOPPED);
 
   _fitness_diagram->clear ();
   _controller->initialize ();
-  _running = true;
 
   statusBar ()->showMessage ("Starting...");
   slotUpdateOutput ();
@@ -191,7 +269,7 @@ void MainWindow::startup ()
  */
 void MainWindow::cleanup ()
 {
-  _running = false;
+  _running_mode = RunningMode::STOPPED;
 
   statusBar ()->clearMessage ();
   slotUpdateOutput ();
@@ -220,6 +298,7 @@ bool MainWindow::executeStep ()
  */
 void MainWindow::slotQuit ()
 {
+  slotReset ();
   close ();
 }
 
@@ -239,6 +318,52 @@ void MainWindow::slotUpdateOutput ()
   if (_world_display != 0)
     _world_display->updateDisplay (_controller, static_cast<WorldDisplay::DisplayMode_t> (_content->_display_content->itemData (_content->_display_content->currentIndex ()).toInt ()));
 }
+
+/*
+ * Called if the active operator display changed
+ */
+void MainWindow::slotActiveOperatorDisplayChanged ()
+{
+  for (int i=0; i < _operator_display_tab->count (); ++i)
+    {
+      OperatorDisplay* display = dynamic_cast<OperatorDisplay*> (_operator_display_tab->widget (i));
+      Q_ASSERT (display != 0);
+      display->setActive (i == _operator_display_tab->currentIndex ());
+    }
+}
+
+/*
+ * Update widget enabled state
+ */
+void MainWindow::updateEnabledState ()
+{
+  switch (_running_mode)
+    {
+    case RunningMode::STOPPED:
+      _run_action->setEnabled (true);
+      _step_action->setEnabled (true);
+      _reset_action->setEnabled (true);
+      _quit_action->setEnabled (true);
+      break;
+
+    case RunningMode::SINGLE_STEP:
+      _run_action->setEnabled (true);
+      _step_action->setEnabled (true);
+      _reset_action->setEnabled (true);
+      _quit_action->setEnabled (true);
+      break;
+
+    case RunningMode::RUNNING:
+      _run_action->setEnabled (false);
+      _step_action->setEnabled (false);
+      _reset_action->setEnabled (false);
+      _quit_action->setEnabled (true);
+      break;
+    }
+
+  QApplication::processEvents ();
+}
+
 
 }
 }

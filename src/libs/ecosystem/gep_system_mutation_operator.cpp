@@ -46,7 +46,7 @@ SwappingMutationOperator::~SwappingMutationOperator ()
 /* Mutate population */
 void SwappingMutationOperator::compute (Population& population)
 {
-  Notifier* notifier = _world->getNotifier ();
+  Notifier* notifier = System::Notifier::getNotifier ();
 
   for (int i=0; i < population.getSize (); ++i)
     {

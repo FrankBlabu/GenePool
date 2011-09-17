@@ -22,17 +22,23 @@ namespace Scope {
 /*
  * Item for the selection display
  */
-class MutationOperatorDisplayItem : public QTreeWidgetItem
+class MutationOperatorDisplayItem : public OperatorDisplayItem
 {
 public:
-  MutationOperatorDisplayItem (QTreeWidget* widget);
+  MutationOperatorDisplayItem (const System::Object::Id& id, QTreeWidget* widget);
+  virtual ~MutationOperatorDisplayItem ();
 
   virtual bool operator< (const QTreeWidgetItem& other) const;
 };
 
 /* Constructor */
-MutationOperatorDisplayItem::MutationOperatorDisplayItem (QTreeWidget* widget)
-  : QTreeWidgetItem (widget)
+MutationOperatorDisplayItem::MutationOperatorDisplayItem (const System::Object::Id& id, QTreeWidget* widget)
+  : OperatorDisplayItem (id, widget)
+{
+}
+
+/* Destructor */
+MutationOperatorDisplayItem::~MutationOperatorDisplayItem ()
 {
 }
 
@@ -66,10 +72,9 @@ bool MutationOperatorDisplayItem::operator< (const QTreeWidgetItem& other) const
 
 /* Constructor */
 MutationOperatorDisplay::MutationOperatorDisplay (System::Controller* controller, QWidget* parent)
-  : OperatorDisplay (parent),
-    _controller (controller)
+  : OperatorDisplay (controller, parent)
 {
-  System::Notifier* notifier = _controller->getWorld ()->getNotifier ();
+  System::Notifier* notifier = System::Notifier::getNotifier ();
 
   QStringList header_names;
   header_names.push_back ("Id");
@@ -109,16 +114,16 @@ void MutationOperatorDisplay::slotControllerStep ()
  */
 void MutationOperatorDisplay::slotPreMutation (const System::Object::Id& id)
 {
-  MutationOperatorDisplayItem* item = new MutationOperatorDisplayItem (this);
+  MutationOperatorDisplayItem* item = new MutationOperatorDisplayItem (id, this);
   addTopLevelItem (item);
   _items.insert (id, item);
 
-  const System::Population& population = _controller->getPopulation ();
+  const System::Population& population = getController ()->getPopulation ();
   const System::Individual& individual = population[id];
 
   item->setText (COLUMN_ID, QString::number (id));
   item->setText (COLUMN_CONTENT, individual.toString ());
-  item->setText (COLUMN_FITNESS, QString::number (_controller->getFitnessOperator ()->compute (individual), 'g', 2));
+  item->setText (COLUMN_FITNESS, QString::number (getController ()->getFitnessOperator ()->compute (individual), 'g', 2));
 }
 
 /*
@@ -131,7 +136,7 @@ void MutationOperatorDisplay::slotMutation (const System::Object::Id& id)
 
   MutationOperatorDisplayItem* item = pos.value ();
 
-  const System::Population& population = _controller->getPopulation ();
+  const System::Population& population = getController ()->getPopulation ();
   const System::Individual& individual = population[id];
 
   item->setText (COLUMN_MUTATED, individual.toString ());

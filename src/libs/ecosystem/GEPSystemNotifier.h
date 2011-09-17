@@ -14,6 +14,8 @@
 namespace GEP {
 namespace System {
 
+class Individual;
+
 /*
  * Notifier class for algorithm events
  */
@@ -21,12 +23,26 @@ class Notifier : public QObject
 {
   Q_OBJECT
 
-public:
+private:
   Notifier ();
 
+public:
+  static Notifier* getNotifier ();
+
+  //
+  // Configuration
+  //
   bool getEnabled () const;
   void setEnabled (bool enabled);
 
+  //
+  // Individual creation
+  //
+  void notifyIndividualCreated (const Individual& individual);
+
+  //
+  // Notifier calls for algorithm steps
+  //
   void notifyControllerStep ();
 
   void notifySelection (const Object::Id& before,
@@ -40,7 +56,20 @@ public:
   void notifyPreMutation (const Object::Id& id);
   void notifyMutation (const Object::Id& id);
 
+  //
+  // Notifier calls for GUI events
+  //
+  void notifyIndividualFocusChanged (const Object::Id& id);
+
 signals:
+  //
+  // Individual creation
+  //
+  void signalIndividualCreated (const System::Individual& individual);
+
+  //
+  // Notifier signals for algorithm steps
+  //
   void signalControllerStep ();
 
   void signalSelection (const System::Object::Id& before,
@@ -53,6 +82,12 @@ signals:
 
   void signalPreMutation (const System::Object::Id& id);
   void signalMutation (const System::Object::Id& id);
+
+  //
+  // Notifier signales for GUI events
+  //
+  void signalIndividualFocusChanged (const System::Object::Id& id);
+
 
 private:
   bool _enabled;

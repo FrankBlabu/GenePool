@@ -104,9 +104,9 @@ void Controller::initialize ()
 //#**************************************************************************
 
 /* Constructor */
-SinglePopulationController::SinglePopulationController (World* world, const Population& population)
+SinglePopulationController::SinglePopulationController (World* world)
   : Controller       (world),
-    _population      (population),
+    _population      (),
     _current_step    (0),
     _minimum_fitness (0.0),
     _maximum_fitness (0.0),
@@ -147,6 +147,12 @@ const Population& SinglePopulationController::getPopulation () const
   return _population;
 }
 
+/* Set the current population */
+void SinglePopulationController::setPopulation (const Population& population)
+{
+  _population = population;
+}
+
 /* Initialize algorithm */
 void SinglePopulationController::initialize ()
 {
@@ -164,7 +170,7 @@ void SinglePopulationController::initialize ()
 /* Execute algorithm */
 bool SinglePopulationController::executeStep ()
 {
-  Notifier* notifier = _world->getNotifier ();
+  Notifier* notifier = System::Notifier::getNotifier ();
 
   notifier->notifyControllerStep ();
 

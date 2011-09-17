@@ -12,8 +12,6 @@
 
 #include <QtGui/QHeaderView>
 
-#include <QDebug>
-
 namespace GEP {
 namespace Scope {
 
@@ -24,17 +22,23 @@ namespace Scope {
 /*
  * Item for the selection display
  */
-class SelectionOperatorDisplayItem : public QTreeWidgetItem
+class SelectionOperatorDisplayItem : public OperatorDisplayItem
 {
 public:
-  SelectionOperatorDisplayItem (QTreeWidget* widget);
+  SelectionOperatorDisplayItem (const System::Object::Id& id, QTreeWidget* widget);
+  virtual ~SelectionOperatorDisplayItem ();
 
   virtual bool operator< (const QTreeWidgetItem& other) const;
 };
 
 /* Constructor */
-SelectionOperatorDisplayItem::SelectionOperatorDisplayItem (QTreeWidget* widget)
-  : QTreeWidgetItem (widget)
+SelectionOperatorDisplayItem::SelectionOperatorDisplayItem (const System::Object::Id& id, QTreeWidget* widget)
+  : OperatorDisplayItem (id, widget)
+{
+}
+
+/* Destructor */
+SelectionOperatorDisplayItem::~SelectionOperatorDisplayItem ()
 {
 }
 
@@ -72,10 +76,9 @@ bool SelectionOperatorDisplayItem::operator< (const QTreeWidgetItem& other) cons
 
 /* Constructor */
 SelectionOperatorDisplay::SelectionOperatorDisplay (System::Controller* controller, QWidget* parent)
-  : OperatorDisplay (parent),
-    _controller (controller)
+  : OperatorDisplay (controller, parent)
 {
-  System::Notifier* notifier = _controller->getWorld ()->getNotifier ();
+  System::Notifier* notifier = System::Notifier::getNotifier ();
 
   QStringList header_names;
   header_names.push_back ("Id");
@@ -116,14 +119,14 @@ void SelectionOperatorDisplay::slotControllerStep ()
 void SelectionOperatorDisplay::slotSelection (const System::Object::Id& before,
                                               const System::Object::Id& after)
 {
-  const System::Population& population = _controller->getPopulation ();
+  const System::Population& population = getController ()->getPopulation ();
 
   QTreeWidgetItem* item = 0;
 
   ItemMap::const_iterator pos = _items.find (before);
   if (pos == _items.end ())
     {
-      item = new SelectionOperatorDisplayItem (this);
+      item = new SelectionOperatorDisplayItem (before, this);
       addTopLevelItem (item);
       _items.insert (before, item);
     }
@@ -134,7 +137,7 @@ void SelectionOperatorDisplay::slotSelection (const System::Object::Id& before,
 
   item->setText (COLUMN_ID, QString::number (before));
   item->setText (COLUMN_CONTENT, individual.toString ());
-  item->setText (COLUMN_FITNESS, QString::number (_controller->getFitnessOperator ()->compute (individual), 'g', 2));
+  item->setText (COLUMN_FITNESS, QString::number (getController ()->getFitnessOperator ()->compute (individual), 'g', 2));
 
   QString selected_text = item->text (COLUMN_NEW_IDS);
   if (selected_text.isEmpty ())

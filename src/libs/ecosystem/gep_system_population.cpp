@@ -5,6 +5,8 @@
  */
 
 #include "GEPSystemPopulation.h"
+#include "GEPSystemNotifier.h"
+
 
 namespace GEP {
 namespace System {
@@ -32,6 +34,8 @@ void Population::add (const Individual& individual)
 {
   _individuals.append (individual);
   _index_map.insert (individual.getId (), _individuals.size () - 1);
+
+  System::Notifier::getNotifier ()->notifyIndividualCreated (individual);
 }
 
 /* Access operator */
