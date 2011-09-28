@@ -7,6 +7,7 @@
 #define GEP_DEBUG
 
 #include "GEPScopeMainWindow.h"
+#include "GEPScopeFitnessStatisticsDialog.h"
 #include "GEPScopeSequentialDiagram.h"
 #include "GEPScopeCrossoverOperatorDisplay.h"
 #include "GEPScopeMutationOperatorDisplay.h"
@@ -95,6 +96,12 @@ MainWindow::MainWindow (System::Controller* controller)
   connect (_reset_action, SIGNAL (triggered ()), SLOT (slotReset ()));
   execute_menu->addAction (_reset_action);
 
+  QMenu* tools_menu = menuBar ()->addMenu ("&Tools");
+
+  _fitness_statistics_action = new QAction ("&Fitness statistics", tools_menu);
+  connect (_fitness_statistics_action, SIGNAL (triggered ()), SLOT (slotFitnessStatistics ()));
+  tools_menu->addAction (_fitness_statistics_action);
+
   //
   // Toolbar setup
   //
@@ -157,7 +164,7 @@ void MainWindow::setWorldDisplay (WorldDisplay* world_display)
 void MainWindow::keyPressEvent (QKeyEvent* event)
 {
   if ( event->modifiers () == Qt::NoModifier &&
-       event->key () == Qt::Key_Escape)
+       event->key () == Qt::Key_Escape )
     {
       switch (_running_mode)
         {
@@ -300,6 +307,15 @@ void MainWindow::slotQuit ()
 {
   slotReset ();
   close ();
+}
+
+/*
+ * Slot: Display fitness statistics
+ */
+void MainWindow::slotFitnessStatistics ()
+{
+  FitnessStatisticsDialog dialog (_controller, this);
+  dialog.exec ();
 }
 
 /*

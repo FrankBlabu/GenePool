@@ -36,7 +36,7 @@ const int POPULATION_SIZE = 1000;
 //
 // Number of steps until termination
 //
-const int NUMBER_OF_STEPS = 100;
+const int NUMBER_OF_STEPS = 1000;
 
 }
 
@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
     GEP::System::SinglePopulationController controller (&world);
 
     QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 5.0));
-    //QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearStaticScaledFitnessOperator (&world, 0.0, 1.0));
     //QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator (&world, fitness_operator));
     QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RouletteWheelSelectionOperator (&world, fitness_operator));
     QSharedPointer<GEP::System::CrossoverOperator> crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator (&world));

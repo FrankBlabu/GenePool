@@ -19,7 +19,8 @@ SOURCES += \
     gep_scope_selection_operator_display.cpp \
     gep_scope_operator_display.cpp \
     gep_scope_crossover_operator_display.cpp \
-    gep_scope_mutation_operator_display.cpp
+    gep_scope_mutation_operator_display.cpp \
+    gep_scope_fitness_statistics_dialog.cpp
 
 HEADERS += \
     GEPScopeMainWindow.h \
@@ -29,10 +30,21 @@ HEADERS += \
     GEPScopeSelectionOperatorDisplay.h \
     GEPScopeOperatorDisplay.h \
     GEPScopeCrossoverOperatorDisplay.h \
-    GEPScopeMutationOperatorDisplay.h
+    GEPScopeMutationOperatorDisplay.h \
+    GEPScopeFitnessStatisticsDialog.h
 
 FORMS += \
-    gep_scope_main_window.ui
+    gep_scope_main_window.ui \
+    gep_scope_fitness_statistics_dialog.ui
+
+
+
+
+
+
+
+
+
 
 
 

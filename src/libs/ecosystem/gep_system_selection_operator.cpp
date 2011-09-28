@@ -70,19 +70,24 @@ void RouletteWheelSelectionOperator::compute (Population& population)
   //
   // Step 1: Compute fitness list
   //
-  QList<WheelSegment> fitness_list;
+  QList<WheelSegment> segments;
 
   double fitness_sum = 0.0;
   for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const Individual& individual = *i;
 
-      fitness_sum += _fitness_operator->compute (individual);
-      fitness_list.push_back (WheelSegment (individual.getId (), fitness_sum));
+      double fitness = _fitness_operator->compute (individual);
+
+      fitness_sum += fitness;
+      segments.push_back (WheelSegment (individual.getId (), fitness_sum));
     }
 
-  for (int i=0; i < fitness_list.size (); ++i)
-    fitness_list[i]._fitness /= fitness_sum;
+  for (int i=0; i < segments.size (); ++i)
+    {
+      WheelSegment& segment = segments[i];
+      segment._fitness /= fitness_sum;
+    }
 
   //
   // Step 2: Perform roulette wheel selection
@@ -94,9 +99,9 @@ void RouletteWheelSelectionOperator::compute (Population& population)
       double n = _random_number_generator.generate ();
 
       bool found = false;
-      for (int i=0; i < fitness_list.size () && !found; ++i)
+      for (int i=0; i < segments.size () && !found; ++i)
         {
-          const WheelSegment& segment = fitness_list[i];
+          const WheelSegment& segment = segments[i];
           if (n <= segment._fitness)
             {
               const Individual& individual = population[segment._id];

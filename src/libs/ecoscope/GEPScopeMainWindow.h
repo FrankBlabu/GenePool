@@ -43,9 +43,11 @@ private slots:
   void slotStep ();
   void slotReset ();
   void slotQuit ();
+  void slotFitnessStatistics ();
 
   void slotUpdateOutput ();
   void slotActiveOperatorDisplayChanged ();
+
 
 private:
   void startup ();
@@ -72,6 +74,8 @@ private:
   QAction* _step_action;
   QAction* _reset_action;
   QAction* _quit_action;
+
+  QAction* _fitness_statistics_action;
 };
 
 }
