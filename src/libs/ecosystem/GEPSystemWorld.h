@@ -16,6 +16,7 @@ namespace GEP {
 namespace System {
 
 class Individual;
+class Population;
 
 /*
  * World information
@@ -26,6 +27,9 @@ class World
 public:
   World ();
   virtual ~World ();
+
+  virtual void generateWorld () = 0;
+  virtual Population generatePopulation () = 0;
 
   virtual double getFitness (const Individual& individual) const = 0;
 };

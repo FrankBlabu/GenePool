@@ -22,10 +22,17 @@
 class TestWorld : public GEP::System::World
 {
 public:
-    TestWorld ();
+    TestWorld (int population_size, int individual_size);
     virtual ~TestWorld ();
 
+    virtual void generateWorld ();
+    virtual GEP::System::Population generatePopulation ();
+
     virtual double getFitness (const GEP::System::Individual& individual) const;
+
+private:
+    int _population_size;
+    int _individual_size;
 };
 
 /*
@@ -37,9 +44,6 @@ class TestMain : public QObject
 
 public:
     TestMain ();
-
-private:
-    GEP::System::Population generatePopulation (int population_size, int individual_size);
 
 private slots:
     void testShuffleComparator ();

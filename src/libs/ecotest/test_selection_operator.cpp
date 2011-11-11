@@ -48,11 +48,14 @@ inline bool FitnessSortingComparator::operator () (const GEP::System::Individual
  */
 void TestMain::testSelectionOperator ()
 {
+  static const int POPULATION_SIZE = 10;
+  static const int INDIVIDUAL_SIZE = 10;
+
   QBENCHMARK {
     for (int i=0; i < 1000; ++i)
       {
-        TestWorld world;
-        GEP::System::Population population = generatePopulation (10, 10);
+        TestWorld world (POPULATION_SIZE, INDIVIDUAL_SIZE);
+        GEP::System::Population population = world.generatePopulation ();
 
         QSharedPointer<GEP::System::FitnessOperator> fitness_operator
             (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 1.0));

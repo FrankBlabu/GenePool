@@ -15,6 +15,9 @@
 #include "GEPScopeWorldDisplay.h"
 #include "GEPScopeTools.h"
 
+#include <GEPSystemController.h>
+#include <GEPSystemWorld.h>
+
 #include <GEPSystemDebug.h>
 
 #include <iostream>
@@ -63,52 +66,59 @@ MainWindowContent::~MainWindowContent ()
 /* Constructor */
 MainWindow::MainWindow (System::Controller* controller)
 : QMainWindow (),
-  _controller      (controller),
-  _running_mode    (RunningMode::STOPPED),
-  _content         (0),
-  _world_display   (0),
-  _fitness_diagram (0),
-  _run_action      (0),
-  _step_action     (0),
-  _reset_action    (0),
-  _quit_action     (0)
+  _controller         (controller),
+  _content            (0),
+  _world_display      (0),
+  _fitness_diagram    (0),
+  _action_run         (0),
+  _action_single_step (0),
+  _action_stop        (0),
+  _action_reset       (0),
+  _action_quit        (0),
+  _state_machine      (),
+  _state_initialized  (),
+  _state_running      (),
+  _state_step         (),
+  _state_finished     (),
+  _aborted            (false)
 {
   //
   // Menu setup
   //
   QMenu* file_menu = menuBar ()->addMenu ("&File");
 
-  _quit_action = new QAction ("&Quit", file_menu);
-  connect (_quit_action, SIGNAL (triggered ()), SLOT (slotQuit ()));
-  file_menu->addAction (_quit_action);
+  _action_quit = new QAction ("&Quit", file_menu);
+  connect (_action_quit, SIGNAL (triggered ()), SLOT (slotQuit ()));
+  file_menu->addAction (_action_quit);
 
   QMenu* execute_menu = menuBar ()->addMenu ("&Execute");
 
-  _run_action = new QAction ("&Run", execute_menu);
-  connect (_run_action, SIGNAL (triggered ()), SLOT (slotRun ()));
-  execute_menu->addAction (_run_action);
+  _action_run = new QAction ("&Run", execute_menu);
+  execute_menu->addAction (_action_run);
 
-  _step_action = new QAction ("&Step", execute_menu);
-  connect (_step_action, SIGNAL (triggered ()), SLOT (slotStep ()));
-  execute_menu->addAction (_step_action);
+  _action_single_step = new QAction ("&Step", execute_menu);
+  execute_menu->addAction (_action_single_step);
 
-  _reset_action = new QAction ("Reset", execute_menu);
-  connect (_reset_action, SIGNAL (triggered ()), SLOT (slotReset ()));
-  execute_menu->addAction (_reset_action);
+  _action_stop = new QAction ("Stop", execute_menu);
+  execute_menu->addAction (_action_stop);
+
+  _action_reset = new QAction ("Reset", execute_menu);
+  execute_menu->addAction (_action_reset);
 
   QMenu* tools_menu = menuBar ()->addMenu ("&Tools");
 
-  _fitness_statistics_action = new QAction ("&Fitness statistics", tools_menu);
-  connect (_fitness_statistics_action, SIGNAL (triggered ()), SLOT (slotFitnessStatistics ()));
-  tools_menu->addAction (_fitness_statistics_action);
+  _action_fitness_statistics = new QAction ("&Fitness statistics", tools_menu);
+  connect (_action_fitness_statistics, SIGNAL (triggered ()), SLOT (slotFitnessStatistics ()));
+  tools_menu->addAction (_action_fitness_statistics);
 
   //
   // Toolbar setup
   //
   QToolBar* execute_toolbar = addToolBar ("execute");
-  execute_toolbar->addAction (_run_action);
-  execute_toolbar->addAction (_step_action);
-  execute_toolbar->addAction (_reset_action);
+  execute_toolbar->addAction (_action_run);
+  execute_toolbar->addAction (_action_single_step);
+  execute_toolbar->addAction (_action_stop);
+  execute_toolbar->addAction (_action_reset);
 
   //
   // Widget setup
@@ -129,6 +139,35 @@ MainWindow::MainWindow (System::Controller* controller)
   _operator_display_tab->addTab (new MutationOperatorDisplay (controller, _operator_display_tab), "Mutation");
 
   //
+  // State machine setup
+  //
+  _state_machine.addState (&_state_initialized);
+  _state_machine.addState (&_state_running);
+  _state_machine.addState (&_state_step);
+  _state_machine.addState (&_state_finished);
+
+  _state_initialized.addTransition (_action_run, SIGNAL (triggered ()), &_state_running);
+  _state_initialized.addTransition (_action_single_step, SIGNAL (triggered ()), &_state_step);
+  _state_initialized.addTransition (_action_reset, SIGNAL (triggered ()), &_state_initialized);
+
+  _state_running.addTransition (_action_stop, SIGNAL (triggered ()), &_state_finished);
+  _state_running.addTransition (this, SIGNAL (signalFinished ()), &_state_finished);
+
+  _state_step.addTransition (_action_single_step, SIGNAL (triggered ()), &_state_step);
+  _state_step.addTransition (_action_run, SIGNAL (triggered ()), &_state_running);
+  _state_step.addTransition (_action_reset, SIGNAL (triggered ()), &_state_initialized);
+  _state_step.addTransition (this, SIGNAL (signalFinished ()), &_state_finished);
+
+  _state_finished.addTransition (_action_reset, SIGNAL (triggered ()), &_state_initialized);
+
+  _state_machine.setInitialState (&_state_initialized);
+
+  connect (&_state_initialized, SIGNAL (entered ()), SLOT (slotStateInitialized ()));
+  connect (&_state_running, SIGNAL (entered ()), SLOT (slotStateRunning ()));
+  connect (&_state_step, SIGNAL (entered ()), SLOT (slotStateStep ()));
+  connect (&_state_finished, SIGNAL (entered ()), SLOT (slotStateFinished ()));
+
+  //
   // Signal/slot setup
   //
   connect (_content->_display_content, SIGNAL (activated (int)), SLOT (slotUpdateOutput ()));
@@ -137,7 +176,7 @@ MainWindow::MainWindow (System::Controller* controller)
   slotUpdateOutput ();
   slotActiveOperatorDisplayChanged ();
 
-  updateEnabledState ();
+  _state_machine.start ();
 }
 
 /* Destructor */
@@ -165,20 +204,7 @@ void MainWindow::keyPressEvent (QKeyEvent* event)
 {
   if ( event->modifiers () == Qt::NoModifier &&
        event->key () == Qt::Key_Escape )
-    {
-      switch (_running_mode)
-        {
-        case RunningMode::STOPPED:
-        case RunningMode::SINGLE_STEP:
-          break;
-
-        case RunningMode::RUNNING:
-          _running_mode = RunningMode::SINGLE_STEP;
-          break;
-        }
-    }
-
-  updateEnabledState ();
+    _aborted = true;
 }
 
 /*
@@ -186,28 +212,47 @@ void MainWindow::keyPressEvent (QKeyEvent* event)
  */
 void MainWindow::closeEvent (QCloseEvent* event)
 {
-  _running_mode = RunningMode::STOPPED;
+  emit signalFinished ();
   QMainWindow::closeEvent (event);
 }
 
 /*
- * Slot: Algorithm execution
+ * Slot: Initialized state entered
  */
-void MainWindow::slotRun ()
+void MainWindow::slotStateInitialized ()
 {
-  if (_running_mode == RunningMode::STOPPED)
-    startup ();
+  _action_run->setEnabled (true);
+  _action_single_step->setEnabled (true);
+  _action_stop->setEnabled (false);
+  _action_reset->setEnabled (true);
+
+  _fitness_diagram->clear ();
+  _controller->initialize ();
+
+  statusBar ()->showMessage ("Ready");
+  slotUpdateOutput ();
+}
+
+/*
+ * Slot: Running state entered
+ */
+void MainWindow::slotStateRunning ()
+{
+  _action_run->setEnabled (false);
+  _action_single_step->setEnabled (false);
+  _action_stop->setEnabled (true);
+  _action_reset->setEnabled (false);
 
   QTime time = QTime::currentTime ();
-  _running_mode = RunningMode::RUNNING;
-  updateEnabledState ();
+  _aborted = false;
 
-  while (_running_mode == RunningMode::RUNNING)
+  while (!_aborted)
   {
     if (!executeStep ())
       {
         if (time.elapsed () >= 100)
           {
+            statusBar ()->showMessage ("Executing step " + QString::number (_controller->getCurrentStep ()));
             slotUpdateOutput ();
             QApplication::processEvents ();
             time.restart ();
@@ -215,71 +260,52 @@ void MainWindow::slotRun ()
       }
     else
       {
-        _running_mode = RunningMode::STOPPED;
-        cleanup ();
+        _aborted = true;
+        emit signalFinished ();
       }
   }
-
-  updateEnabledState ();
 }
 
 /*
- * Slot: Execute single step
+ * Slot: Step state entered
  */
-void MainWindow::slotStep ()
+void MainWindow::slotStateStep ()
 {
-  if (_running_mode == RunningMode::STOPPED)
-    startup ();
+  _action_run->setEnabled (true);
+  _action_single_step->setEnabled (true);
+  _action_stop->setEnabled (false);
+  _action_reset->setEnabled (true);
 
-  _running_mode = RunningMode::SINGLE_STEP;
-
-  if (executeStep ())
+  if (!executeStep ())
     {
-      _running_mode = RunningMode::STOPPED;
-      cleanup ();
+      statusBar ()->showMessage ("Executing step " + QString::number (_controller->getCurrentStep ()));
+      slotUpdateOutput ();
     }
-
-  slotUpdateOutput ();
-  updateEnabledState ();
+  else
+    emit signalFinished ();
 }
 
 /*
- * Slot: Reset current execution
+ * Slot: Finished state entered
  */
-void MainWindow::slotReset ()
+void MainWindow::slotStateFinished ()
 {
-  if (_running_mode != RunningMode::STOPPED)
-    cleanup ();
+  _action_run->setEnabled (false);
+  _action_single_step->setEnabled (false);
+  _action_stop->setEnabled (false);
+  _action_reset->setEnabled (true);
 
-  _running_mode = RunningMode::STOPPED;
-
-  slotUpdateOutput ();
-  updateEnabledState ();
-}
-
-/*
- * Startup new algorithm execution
- */
-void MainWindow::startup ()
-{
-  Q_ASSERT (_running_mode == RunningMode::STOPPED);
-
-  _fitness_diagram->clear ();
-  _controller->initialize ();
-
-  statusBar ()->showMessage ("Starting...");
+  statusBar ()->showMessage ("Finished");
   slotUpdateOutput ();
 }
 
 /*
- * Cleanup after algorithm execution
+ * Slot: Application termination
  */
-void MainWindow::cleanup ()
+void MainWindow::slotQuit ()
 {
-  _running_mode = RunningMode::STOPPED;
-
-  statusBar ()->clearMessage ();
-  slotUpdateOutput ();
+  emit signalFinished ();
+  close ();
 }
 
 /*
@@ -301,15 +327,6 @@ bool MainWindow::executeStep ()
 }
 
 /*
- * Slot: Application termination
- */
-void MainWindow::slotQuit ()
-{
-  slotReset ();
-  close ();
-}
-
-/*
  * Slot: Display fitness statistics
  */
 void MainWindow::slotFitnessStatistics ()
@@ -324,12 +341,11 @@ void MainWindow::slotFitnessStatistics ()
 void MainWindow::slotUpdateOutput ()
 {
   _content->_step->setText (QString::number (_controller->getCurrentStep ()));
-  _content->_minimum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM), 'f', 2));
-  _content->_average_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE), 'f', 2));
-  _content->_maximum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM), 'f', 2));
+  _content->_minimum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM), 'f', 8));
+  _content->_average_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE), 'f', 8));
+  _content->_maximum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM), 'f', 8));
 
   _fitness_diagram->repaint ();
-  statusBar ()->showMessage ("Executing step " + QString::number (_controller->getCurrentStep ()));
 
   if (_world_display != 0)
     _world_display->updateDisplay (_controller, static_cast<WorldDisplay::DisplayMode_t> (_content->_display_content->itemData (_content->_display_content->currentIndex ()).toInt ()));
@@ -347,39 +363,6 @@ void MainWindow::slotActiveOperatorDisplayChanged ()
       display->setActive (i == _operator_display_tab->currentIndex ());
     }
 }
-
-/*
- * Update widget enabled state
- */
-void MainWindow::updateEnabledState ()
-{
-  switch (_running_mode)
-    {
-    case RunningMode::STOPPED:
-      _run_action->setEnabled (true);
-      _step_action->setEnabled (true);
-      _reset_action->setEnabled (true);
-      _quit_action->setEnabled (true);
-      break;
-
-    case RunningMode::SINGLE_STEP:
-      _run_action->setEnabled (true);
-      _step_action->setEnabled (true);
-      _reset_action->setEnabled (true);
-      _quit_action->setEnabled (true);
-      break;
-
-    case RunningMode::RUNNING:
-      _run_action->setEnabled (false);
-      _step_action->setEnabled (false);
-      _reset_action->setEnabled (false);
-      _quit_action->setEnabled (true);
-      break;
-    }
-
-  QApplication::processEvents ();
-}
-
 
 }
 }

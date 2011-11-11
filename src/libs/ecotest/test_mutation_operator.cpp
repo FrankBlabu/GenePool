@@ -25,8 +25,8 @@ void TestMain::testMutationOperator ()
 {
   for (int i=0; i < NUMBER_OF_RUNS; ++i)
     {
-      TestWorld world;
-      GEP::System::Population population = generatePopulation (POPULATION_SIZE, INDIVIDUAL_SIZE);
+      TestWorld world (POPULATION_SIZE, INDIVIDUAL_SIZE);
+      GEP::System::Population population = world.generatePopulation ();
 
       GEP::System::SwappingMutationOperator mutation_operator (&world, 1.0 / INDIVIDUAL_SIZE);
 

@@ -18,14 +18,44 @@
 //#**************************************************************************
 
 /* Constructor */
-TestWorld::TestWorld ()
-  : GEP::System::World ()
+TestWorld::TestWorld (int population_size, int individual_size)
+  : GEP::System::World (),
+    _population_size (population_size),
+    _individual_size (individual_size)
+
 {
+  Q_ASSERT (population_size > 0);
+  Q_ASSERT (individual_size > 0);
 }
 
 /* Destructor */
 TestWorld::~TestWorld ()
 {
+}
+
+/* Generate world */
+void TestWorld::generateWorld ()
+{
+}
+
+/* Generate world population */
+GEP::System::Population TestWorld::generatePopulation ()
+{
+  GEP::System::Population population;
+
+  for (int i=0; i < _population_size; ++i)
+    {
+      QVariantList genes;
+      for (int j=0; j < _individual_size; ++j)
+        genes.push_back (QVariant (j));
+
+      GEP::System::ShuffleComparator<QVariant> comparator (genes);
+      std::sort (genes.begin (), genes.end (), comparator);
+
+      population.add (GEP::System::Individual (genes));
+    }
+
+  return population;
 }
 
 /* Get random number */
@@ -47,26 +77,6 @@ double TestWorld::getFitness (const GEP::System::Individual& individual) const
 /* Constructor */
 TestMain::TestMain ()
 {
-}
-
-/* Generate test population */
-GEP::System::Population TestMain::generatePopulation (int population_size, int individual_size)
-{
-  GEP::System::Population population;
-
-  for (int i=0; i < population_size; ++i)
-    {
-      QVariantList genes;
-      for (int j=0; j < individual_size; ++j)
-        genes.push_back (QVariant (j));
-
-      GEP::System::ShuffleComparator<QVariant> comparator (genes);
-      std::sort (genes.begin (), genes.end (), comparator);
-
-      population.add (GEP::System::Individual (genes));
-    }
-
-  return population;
 }
 
 

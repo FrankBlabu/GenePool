@@ -12,7 +12,7 @@
 #ifdef GEP_DEBUG
 #define DOUT(CONTENT) (qDebug () << CONTENT)
 #else
-#define DOUT(CONTENT)
+#define DOUT(CONTENT) while (false) {}
 #endif
 
 namespace GEP {

@@ -7,11 +7,15 @@
 #ifndef __GEP_SCOPE_MAIN_WINDOW_H__
 #define __GEP_SCOPE_MAIN_WINDOW_H__
 
+#include <QtCore/QStateMachine>
+#include <QtCore/QState>
 #include <QtGui/QAction>
 #include <QtGui/QMainWindow>
 
 #include <GEPSystemController.h>
 
+class QState;
+class QStateMachine;
 class QTabWidget;
 
 namespace GEP {
@@ -34,35 +38,32 @@ public:
 
   void setWorldDisplay (WorldDisplay* world_display);
 
+signals:
+  void signalFinished ();
+
 protected:
   virtual void keyPressEvent (QKeyEvent* event);
   virtual void closeEvent (QCloseEvent* event);
 
 private slots:
-  void slotRun ();
-  void slotStep ();
-  void slotReset ();
+  void slotStateInitialized ();
+  void slotStateRunning ();
+  void slotStateStep ();
+  void slotStateFinished ();
+
   void slotQuit ();
   void slotFitnessStatistics ();
 
   void slotUpdateOutput ();
   void slotActiveOperatorDisplayChanged ();
 
-
 private:
   void startup ();
   void cleanup ();
   bool executeStep ();
 
-  void updateEnabledState ();
-
 private:
   System::Controller* _controller;
-
-  struct RunningMode { enum Type_t { STOPPED, RUNNING, SINGLE_STEP }; };
-  typedef RunningMode::Type_t RunningMode_t;
-
-  RunningMode_t _running_mode;
 
   MainWindowContent* _content;
   WorldDisplay* _world_display;
@@ -70,12 +71,21 @@ private:
 
   QTabWidget* _operator_display_tab;
 
-  QAction* _run_action;
-  QAction* _step_action;
-  QAction* _reset_action;
-  QAction* _quit_action;
+  QAction* _action_run;
+  QAction* _action_single_step;
+  QAction* _action_stop;
+  QAction* _action_reset;
+  QAction* _action_quit;
 
-  QAction* _fitness_statistics_action;
+  QAction* _action_fitness_statistics;
+
+  QStateMachine _state_machine;
+  QState _state_initialized;
+  QState _state_running;
+  QState _state_step;
+  QState _state_finished;
+
+  bool _aborted;
 };
 
 }

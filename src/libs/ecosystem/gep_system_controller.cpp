@@ -4,6 +4,9 @@
  * Frank Cieslok, Aug. 2011
  */
 
+#define GEP_DEBUG
+
+#include "GEPSystemDebug.h"
 #include "GEPSystemController.h"
 #include "GEPSystemNotifier.h"
 #include "GEPSystemWorld.h"
@@ -162,6 +165,7 @@ void SinglePopulationController::initialize ()
   Q_ASSERT (_mutation_operator != 0);
   Q_ASSERT (_termination_operator != 0);
 
+  _population = _world->generatePopulation ();
   _current_step = 0;
 
   updateFitness ();

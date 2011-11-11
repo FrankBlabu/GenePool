@@ -14,6 +14,8 @@
 void TestMain::testRandomNumberGenerator ()
 {
   static const int NUMBER_OF_RUNS = 1000000;
+  static const int POPULATION_SIZE = 100;
+  static const int INDIVIDUAL_SIZE = 10;
 
   QBENCHMARK
   {
@@ -21,7 +23,7 @@ void TestMain::testRandomNumberGenerator ()
 
     double sum = 0.0;
 
-    TestWorld world;
+    TestWorld world (POPULATION_SIZE, INDIVIDUAL_SIZE);
     for (int i=0; i < NUMBER_OF_RUNS; ++i)
       {
         double n = generator.generate ();

@@ -14,10 +14,13 @@
  */
 void TestMain::testPopulationFitnessIndex ()
 {
-  TestWorld world;
+  static const int POPULATION_SIZE = 10;
+  static const int INDIVIDUAL_SIZE = 10;
+
+  TestWorld world (POPULATION_SIZE, INDIVIDUAL_SIZE);
   GEP::System::RandomNumberGenerator random_number_generator;
 
-  GEP::System::Population population = generatePopulation (10, 10);
+  GEP::System::Population population = world.generatePopulation ();
 
   typedef QMap<GEP::System::Object::Id, double> FitnessMap;
   FitnessMap fitness_map;
