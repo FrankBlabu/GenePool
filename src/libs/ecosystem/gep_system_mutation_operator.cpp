@@ -53,7 +53,7 @@ void SwappingMutationOperator::compute (Population& population)
       Individual& individual = population[i];
       int size = individual.getSize ();
 
-      notifier->notifyPreMutation (individual.getId ());
+      IndividualInfo before (individual, _world->getFitness (individual));
 
       for (int j=0; j < size; ++j)
         {
@@ -64,7 +64,8 @@ void SwappingMutationOperator::compute (Population& population)
             }
         }
 
-      notifier->notifyMutation (individual.getId ());
+      IndividualInfo after (individual, _world->getFitness (individual));
+      notifier->notifyMutation (MutationNotification (before, after));
     }
 }
 

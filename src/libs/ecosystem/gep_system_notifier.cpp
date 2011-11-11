@@ -12,7 +12,6 @@
 namespace GEP {
 namespace System {
 
-
 //#**************************************************************************
 // CLASS GEP::System::Notifier
 //#**************************************************************************
@@ -57,38 +56,24 @@ void Notifier::notifyControllerStep ()
 }
 
 /* Notify individual selection */
-void Notifier::notifySelection (const Object::Id& before, const Object::Id& after)
+void Notifier::notifySelection (const SelectionNotification& notification)
 {
   if (_enabled)
-    emit signalSelection (before, after);
-}
-
-/* Notify that a crossover operation is going to be performed */
-void Notifier::notifyPreCrossover (const Object::Id& object1, const Object::Id& object2)
-{
-  if (_enabled)
-    emit signalPreCrossover (object1, object2);
+    emit signalSelection (notification);
 }
 
 /* Notify that a crossover operation has been performed */
-void Notifier::notifyCrossover (const Object::Id& object1, const Object::Id& object2)
+void Notifier::notifyCrossover (const CrossoverNotification& notification)
 {
   if (_enabled)
-    emit signalCrossover (object1, object2);
-}
-
-/* Notify that a mutation operation is going to be performed */
-void Notifier::notifyPreMutation (const Object::Id& id)
-{
-  if (_enabled)
-    emit signalPreMutation (id);
+    emit signalCrossover (notification);
 }
 
 /* Notify that a mutation operation has been performed */
-void Notifier::notifyMutation (const Object::Id& id)
+void Notifier::notifyMutation (const MutationNotification& notification)
 {
   if (_enabled)
-    emit signalMutation (id);
+    emit signalMutation (notification);
 }
 
 /* Notify that the individual focus changed */

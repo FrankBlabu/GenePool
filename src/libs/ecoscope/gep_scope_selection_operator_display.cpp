@@ -96,8 +96,8 @@ SelectionOperatorDisplay::SelectionOperatorDisplay (System::Controller* controll
   header ()->setResizeMode (COLUMN_NEW_IDS, QHeaderView::ResizeToContents);
 
   connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotControllerStep ()));
-  connect (notifier, SIGNAL (signalSelection (const GEP::System::Object::Id&, const GEP::System::Object::Id&)),
-           SLOT (slotSelection (const GEP::System::Object::Id&, const GEP::System::Object::Id&)));
+  connect (notifier, SIGNAL (signalSelection (GEP::System::SelectionNotification)),
+           SLOT (slotSelection (GEP::System::SelectionNotification)));
 }
 
 /* Destructor */
@@ -116,39 +116,36 @@ void SelectionOperatorDisplay::slotControllerStep ()
 /*
  * Slot called when an individual is selected
  */
-void SelectionOperatorDisplay::slotSelection (const System::Object::Id& before,
-                                              const System::Object::Id& after)
+void SelectionOperatorDisplay::slotSelection (const System::SelectionNotification& notification)
 {
-  const System::Population& population = getController ()->getPopulation ();
-
   QTreeWidgetItem* item = 0;
 
-  ItemMap::const_iterator pos = _items.find (before);
+  const System::IndividualInfo& selected = notification.getBefore ();
+
+  ItemMap::const_iterator pos = _items.find (selected.getId ());
   if (pos == _items.end ())
     {
-      item = new SelectionOperatorDisplayItem (before, this);
+      item = new SelectionOperatorDisplayItem (selected.getId (), this);
       addTopLevelItem (item);
-      _items.insert (before, item);
+      _items.insert (selected.getId (), item);
     }
   else
     item = pos.value ();
 
-  const System::Individual& individual = population[before];
-
-  item->setText (COLUMN_ID, QString::number (before));
-  item->setText (COLUMN_CONTENT, individual.toString ());
-  item->setText (COLUMN_FITNESS, QString::number (getController ()->getFitnessOperator ()->compute (individual), 'g', 2));
+  item->setText (COLUMN_ID, QString::number (selected.getId ()));
+  item->setText (COLUMN_CONTENT, selected.getRepresentation ());
+  item->setText (COLUMN_FITNESS, QString::number (selected.getFitness (), 'g', 8));
 
   QString selected_text = item->text (COLUMN_NEW_IDS);
   if (selected_text.isEmpty ())
     {
       item->setText (COLUMN_TIMES_SELECTED, QString::number (1));
-      item->setText (COLUMN_NEW_IDS, QString::number (after));
+      item->setText (COLUMN_NEW_IDS, QString::number (notification.getAfter ().getId ()));
     }
   else
     {
       item->setText (COLUMN_TIMES_SELECTED, QString::number (selected_text.count (",") + 2));
-      item->setText (COLUMN_NEW_IDS, selected_text + "," + QString::number (after));
+      item->setText (COLUMN_NEW_IDS, selected_text + "," + QString::number (notification.getAfter ().getId ()));
     }
 }
 

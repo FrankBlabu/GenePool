@@ -7,6 +7,7 @@
 #define GEP_DEBUG
 
 #include "GEPSystemInit.h"
+#include "GEPSystemNotifier.h"
 #include "GEPSystemObject.h"
 #include "GEPSystemDebug.h"
 
@@ -19,6 +20,9 @@ namespace System {
 void InitLibrary ()
 {
   qRegisterMetaType<GEP::System::Object::Id> ("GEP::System::Object::Id");
+  qRegisterMetaType<GEP::System::SelectionNotification> ("GEP::System::SelectionNotification");
+  qRegisterMetaType<GEP::System::MutationNotification> ("GEP::System::MutationNotification");
+  qRegisterMetaType<GEP::System::CrossoverNotification> ("GEP::System::CrossoverNotification");
 }
 
 }

@@ -16,6 +16,7 @@ namespace GEP {
 
 namespace System {
 class Controller;
+class MutationNotification;
 }
 
 namespace Scope {
@@ -30,10 +31,11 @@ class MutationOperatorDisplay : public OperatorDisplay
   Q_OBJECT
 
 public:
-  static const int COLUMN_ID      = 0;
-  static const int COLUMN_CONTENT = 1;
-  static const int COLUMN_FITNESS = 2;
-  static const int COLUMN_MUTATED = 3;
+  static const int COLUMN_ID             = 0;
+  static const int COLUMN_BEFORE         = 1;
+  static const int COLUMN_FITNESS_BEFORE = 2;
+  static const int COLUMN_AFTER          = 3;
+  static const int COLUMN_FITNESS_AFTER  = 4;
 
 public:
   MutationOperatorDisplay (System::Controller* controller, QWidget* parent);
@@ -42,14 +44,10 @@ public:
 private slots:
   void slotControllerStep ();
 
-  void slotPreMutation (const GEP::System::Object::Id& object);
-  void slotMutation (const GEP::System::Object::Id& object);
+  void slotMutation (const GEP::System::MutationNotification& notification);
 
 private:
   System::Controller* _controller;
-
-  typedef QMap<System::Object::Id, MutationOperatorDisplayItem*> ItemMap;
-  ItemMap _items;
 };
 
 }

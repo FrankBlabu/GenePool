@@ -8,6 +8,7 @@
 #define __GEP_SCOPE_SELECTION_OPERATOR_DISPLAY_H__
 
 #include <GEPSystemObject.h>
+#include <GEPSystemNotifier.h>
 #include "GEPScopeOperatorDisplay.h"
 
 #include <QtCore/QMap>
@@ -40,8 +41,7 @@ public:
 
 private slots:
   void slotControllerStep ();
-  void slotSelection (const GEP::System::Object::Id& before,
-                      const GEP::System::Object::Id& after);
+  void slotSelection (const GEP::System::SelectionNotification& notification);
 
 private:
   System::Controller* _controller;

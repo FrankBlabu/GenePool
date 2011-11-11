@@ -96,10 +96,8 @@ CrossoverOperatorDisplay::CrossoverOperatorDisplay (System::Controller* controll
   header ()->setResizeMode (COLUMN_FITNESS_AFTER, QHeaderView::ResizeToContents);
 
   connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotControllerStep ()));
-  connect (notifier, SIGNAL (signalPreCrossover (const GEP::System::Object::Id&, const GEP::System::Object::Id&)),
-           SLOT (slotPreCrossover (const GEP::System::Object::Id&, const GEP::System::Object::Id&)));
-  connect (notifier, SIGNAL (signalCrossover (const GEP::System::Object::Id&, const GEP::System::Object::Id&)),
-           SLOT (slotCrossover (const GEP::System::Object::Id&, const GEP::System::Object::Id&)));
+  connect (notifier, SIGNAL (signalCrossover (GEP::System::CrossoverNotification)),
+           SLOT (slotCrossover (const GEP::System::CrossoverNotification&)));
 }
 
 /* Destructor */
@@ -116,75 +114,29 @@ void CrossoverOperatorDisplay::slotControllerStep ()
 }
 
 /*
- * A crossover operation is going to be performed
- */
-void CrossoverOperatorDisplay::slotPreCrossover (const System::Object::Id& object1,
-                                                 const System::Object::Id& object2)
-{
-  setupItem (object1, object2);
-  setupItem (object2, object1);
-}
-
-/*
  * A crossover operation has been performed
  */
-void CrossoverOperatorDisplay::slotCrossover (const System::Object::Id& object1,
-                                              const System::Object::Id& object2)
+void CrossoverOperatorDisplay::slotCrossover (const System::CrossoverNotification& notification)
 {
-  completeItem (object1);
-  completeItem (object2);
-}
+  CrossoverOperatorDisplayItem* item1 = new CrossoverOperatorDisplayItem (notification.getBeforeFirst ().getId (), this);
+  addTopLevelItem (item1);
 
-/*
- * Setup item for pre crossover
- */
-void CrossoverOperatorDisplay::setupItem (const System::Object::Id& object1,
-                                          const System::Object::Id& object2)
-{
-  CrossoverOperatorDisplayItem* item = getItem (object1);
+  item1->setText (COLUMN_ID, QString::number (notification.getBeforeFirst ().getId ()));
+  item1->setText (COLUMN_CONTENT, notification.getBeforeFirst ().getRepresentation ());
+  item1->setText (COLUMN_MATE, QString::number (notification.getBeforeSecond ().getId ()));
+  item1->setText (COLUMN_FITNESS_BEFORE, QString::number (notification.getBeforeFirst ().getFitness ()));
+  item1->setText (COLUMN_CROSSED, notification.getAfterFirst ().getRepresentation ());
+  item1->setText (COLUMN_FITNESS_AFTER, QString::number (notification.getAfterFirst ().getFitness (), 'g', 2));
 
-  const System::Population& population = getController ()->getPopulation ();
-  const System::Individual& individual = population[object1];
+  CrossoverOperatorDisplayItem* item2 = new CrossoverOperatorDisplayItem (notification.getBeforeSecond ().getId (), this);
+  addTopLevelItem (item2);
 
-  item->setText (COLUMN_ID, QString::number (object1));
-  item->setText (COLUMN_CONTENT, individual.toString ());
-  item->setText (COLUMN_MATE, QString::number (object2));
-
-  item->setText (COLUMN_FITNESS_BEFORE, QString::number (getController ()->getFitnessOperator ()->compute (individual), 'g', 2));
-}
-
-/*
- * Complete item for a performed crossover
- */
-void CrossoverOperatorDisplay::completeItem (const System::Object::Id& object)
-{
-  CrossoverOperatorDisplayItem* item = getItem (object);
-
-  const System::Population& population = getController ()->getPopulation ();
-  const System::Individual& individual = population[object];
-
-  item->setText (COLUMN_CROSSED, individual.toString ());
-  item->setText (COLUMN_FITNESS_AFTER, QString::number (getController ()->getFitnessOperator ()->compute (individual), 'g', 2));
-}
-
-/*
- * Get or create item belonging to a given object id
- */
-CrossoverOperatorDisplayItem* CrossoverOperatorDisplay::getItem (const System::Object::Id& id)
-{
-  CrossoverOperatorDisplayItem* item = 0;
-
-  ItemMap::const_iterator pos = _items.find (id);
-  if (pos == _items.end ())
-    {
-      item = new CrossoverOperatorDisplayItem (id, this);
-      addTopLevelItem (item);
-      _items.insert (id, item);
-    }
-  else
-    item = pos.value ();
-
-  return item;
+  item2->setText (COLUMN_ID, QString::number (notification.getBeforeSecond ().getId ()));
+  item2->setText (COLUMN_CONTENT, notification.getBeforeSecond ().getRepresentation ());
+  item2->setText (COLUMN_MATE, QString::number (notification.getBeforeFirst ().getId ()));
+  item2->setText (COLUMN_FITNESS_BEFORE, QString::number (notification.getBeforeSecond ().getFitness ()));
+  item2->setText (COLUMN_CROSSED, notification.getAfterSecond ().getRepresentation ());
+  item2->setText (COLUMN_FITNESS_AFTER, QString::number (notification.getAfterSecond ().getFitness (), 'g', 2));
 }
 
 }

@@ -8,9 +8,8 @@
 #define __GEP_SCOPE_CROSSOVER_OPERATOR_DISPLAY_H__
 
 #include <GEPSystemObject.h>
+#include <GEPSystemNotifier.h>
 #include "GEPScopeOperatorDisplay.h"
-
-#include <QtCore/QMap>
 
 namespace GEP {
 
@@ -43,24 +42,10 @@ public:
 
 private slots:
   void slotControllerStep ();
-
-  void slotPreCrossover (const GEP::System::Object::Id& object1,
-                         const GEP::System::Object::Id& object2);
-  void slotCrossover (const GEP::System::Object::Id& object1,
-                      const GEP::System::Object::Id& object2);
-
-private:
-  CrossoverOperatorDisplayItem* getItem (const System::Object::Id& id);
-
-  void setupItem(const System::Object::Id& object1,
-                 const System::Object::Id& object2);
-  void completeItem (const System::Object::Id& object);
+  void slotCrossover (const GEP::System::CrossoverNotification& notification);
 
 private:
   System::Controller* _controller;
-
-  typedef QMap<System::Object::Id, CrossoverOperatorDisplayItem*> ItemMap;
-  ItemMap _items;
 };
 
 }

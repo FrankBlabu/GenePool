@@ -109,7 +109,8 @@ void RouletteWheelSelectionOperator::compute (Population& population)
               copied.computeUniqueId ();
               selected.add (copied);
 
-              notifier->notifySelection (individual.getId (), copied.getId ());
+              notifier->notifySelection (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
+                                                                IndividualInfo (copied, _world->getFitness (copied))));
 
               found= true;
             }
@@ -203,7 +204,9 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
           copied.computeUniqueId ();
           selected.add (copied);
 
-          notifier->notifySelection (individual.getId (), copied.getId ());
+          notifier->notifySelection (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
+                                                            IndividualInfo (copied, _world->getFitness (copied))));
+
         }
     }
 
@@ -229,6 +232,7 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
           FitnessMap::const_iterator pos = fitness_map.find (individual.getId ());
           Q_ASSERT (pos != fitness_map.end ());
 
+
           sum += pos.value () / fitness_sum;
 
           if (sum >= value)
@@ -237,7 +241,8 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
               copied.computeUniqueId ();
               selected.add (copied);
 
-              notifier->notifySelection (individual.getId (), copied.getId ());
+              notifier->notifySelection (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
+                                                                IndividualInfo (copied, _world->getFitness (copied))));
 
               found = true;
             }
