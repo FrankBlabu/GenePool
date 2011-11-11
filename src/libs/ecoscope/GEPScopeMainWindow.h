@@ -73,7 +73,6 @@ private:
 
   QAction* _action_run;
   QAction* _action_single_step;
-  QAction* _action_stop;
   QAction* _action_reset;
   QAction* _action_quit;
 

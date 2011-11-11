@@ -9,6 +9,7 @@
 
 #include <QtGlobal>
 #include <QtCore/QAtomicInt>
+#include <QtCore/QMetaType>
 
 namespace GEP {
 namespace System {
@@ -37,5 +38,7 @@ private:
 
 }
 }
+
+Q_DECLARE_METATYPE (GEP::System::Object::Id);
 
 #endif

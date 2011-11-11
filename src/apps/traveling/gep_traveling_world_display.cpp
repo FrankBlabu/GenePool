@@ -32,8 +32,8 @@ WorldDisplay::WorldDisplay (const World* world, QWidget* parent)
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
   connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotClear ()));
-  connect (notifier, SIGNAL (signalIndividualCreated (const System::Individual&)),
-           SLOT (slotAddIndividual (const System::Individual&)));
+  connect (notifier, SIGNAL (signalIndividualCreated (const GEP::System::Object::Id&)),
+           SLOT (slotAddIndividual (const GEP::System::Object::Id&)));
 
 
 }
@@ -181,10 +181,10 @@ void WorldDisplay::slotClear ()
 }
 
 /* Add new created individual */
-void WorldDisplay::slotAddIndividual (const System::Individual& individual)
+void WorldDisplay::slotAddIndividual (const System::Object::Id& id)
 {
-  Q_UNUSED (individual);
-  DOUT ("Add" << individual.getId ());
+  Q_UNUSED (id);
+  DOUT ("Add" << id);
 }
 
 

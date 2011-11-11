@@ -16,6 +16,7 @@
 #include "GEPScopeTools.h"
 
 #include <GEPSystemController.h>
+#include <GEPSystemControllerThread.h>
 #include <GEPSystemWorld.h>
 
 #include <GEPSystemDebug.h>
@@ -26,6 +27,7 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
+#include <QtGui/QProgressDialog>
 #include <QtGui/QTabWidget>
 #include <QtGui/QToolBar>
 #include <QtGui/QStatusBar>
@@ -34,6 +36,7 @@
 
 namespace GEP {
 namespace Scope {
+
 
 //#**************************************************************************
 // CLASS GEP::Scope::MainWindowContent
@@ -72,7 +75,6 @@ MainWindow::MainWindow (System::Controller* controller)
   _fitness_diagram    (0),
   _action_run         (0),
   _action_single_step (0),
-  _action_stop        (0),
   _action_reset       (0),
   _action_quit        (0),
   _state_machine      (),
@@ -99,9 +101,6 @@ MainWindow::MainWindow (System::Controller* controller)
   _action_single_step = new QAction ("&Step", execute_menu);
   execute_menu->addAction (_action_single_step);
 
-  _action_stop = new QAction ("Stop", execute_menu);
-  execute_menu->addAction (_action_stop);
-
   _action_reset = new QAction ("Reset", execute_menu);
   execute_menu->addAction (_action_reset);
 
@@ -117,7 +116,6 @@ MainWindow::MainWindow (System::Controller* controller)
   QToolBar* execute_toolbar = addToolBar ("execute");
   execute_toolbar->addAction (_action_run);
   execute_toolbar->addAction (_action_single_step);
-  execute_toolbar->addAction (_action_stop);
   execute_toolbar->addAction (_action_reset);
 
   //
@@ -150,7 +148,6 @@ MainWindow::MainWindow (System::Controller* controller)
   _state_initialized.addTransition (_action_single_step, SIGNAL (triggered ()), &_state_step);
   _state_initialized.addTransition (_action_reset, SIGNAL (triggered ()), &_state_initialized);
 
-  _state_running.addTransition (_action_stop, SIGNAL (triggered ()), &_state_finished);
   _state_running.addTransition (this, SIGNAL (signalFinished ()), &_state_finished);
 
   _state_step.addTransition (_action_single_step, SIGNAL (triggered ()), &_state_step);
@@ -223,7 +220,6 @@ void MainWindow::slotStateInitialized ()
 {
   _action_run->setEnabled (true);
   _action_single_step->setEnabled (true);
-  _action_stop->setEnabled (false);
   _action_reset->setEnabled (true);
 
   _fitness_diagram->clear ();
@@ -240,30 +236,24 @@ void MainWindow::slotStateRunning ()
 {
   _action_run->setEnabled (false);
   _action_single_step->setEnabled (false);
-  _action_stop->setEnabled (true);
   _action_reset->setEnabled (false);
 
-  QTime time = QTime::currentTime ();
-  _aborted = false;
+  QProgressDialog progress_dialog;
+  progress_dialog.setLabelText ("Computing...");
+  progress_dialog.setRange (0, 1000);
 
-  while (!_aborted)
-  {
-    if (!executeStep ())
-      {
-        if (time.elapsed () >= 100)
-          {
-            statusBar ()->showMessage ("Executing step " + QString::number (_controller->getCurrentStep ()));
-            slotUpdateOutput ();
-            QApplication::processEvents ();
-            time.restart ();
-          }
-      }
-    else
-      {
-        _aborted = true;
-        emit signalFinished ();
-      }
-  }
+  System::ControllerThread thread (_controller);
+
+  QObject::connect (&thread, SIGNAL (signalDone ()), &progress_dialog, SLOT (cancel ()));
+  QObject::connect (&thread, SIGNAL (signalStep (int)), &progress_dialog, SLOT (setValue (int)));
+  QObject::connect (&progress_dialog, SIGNAL (canceled ()), &thread, SLOT (slotAbort ()));
+
+  thread.start ();
+  progress_dialog.exec ();
+  thread.wait ();
+
+  slotUpdateOutput ();
+  emit signalFinished ();
 }
 
 /*
@@ -273,7 +263,6 @@ void MainWindow::slotStateStep ()
 {
   _action_run->setEnabled (true);
   _action_single_step->setEnabled (true);
-  _action_stop->setEnabled (false);
   _action_reset->setEnabled (true);
 
   if (!executeStep ())
@@ -292,7 +281,6 @@ void MainWindow::slotStateFinished ()
 {
   _action_run->setEnabled (false);
   _action_single_step->setEnabled (false);
-  _action_stop->setEnabled (false);
   _action_reset->setEnabled (true);
 
   statusBar ()->showMessage ("Finished");
@@ -306,24 +294,6 @@ void MainWindow::slotQuit ()
 {
   emit signalFinished ();
   close ();
-}
-
-/*
- * Execute single algorithm step
- *
- * \return 'true' when this was the last step
- */
-bool MainWindow::executeStep ()
-{
-  int step = _controller->getCurrentStep ();
-
-  bool done = _controller->executeStep  ();
-
-  _fitness_diagram->addPoint (0, QPointF (step, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
-  _fitness_diagram->addPoint (1, QPointF (step, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE)));
-  _fitness_diagram->addPoint (2, QPointF (step, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM)));
-
-  return done;
 }
 
 /*
@@ -362,6 +332,24 @@ void MainWindow::slotActiveOperatorDisplayChanged ()
       Q_ASSERT (display != 0);
       display->setActive (i == _operator_display_tab->currentIndex ());
     }
+}
+
+/*
+ * Execute single algorithm step
+ *
+ * \return 'true' when this was the last step
+ */
+bool MainWindow::executeStep ()
+{
+  int step = _controller->getCurrentStep ();
+
+  bool done = _controller->executeStep  ();
+
+  _fitness_diagram->addPoint (0, QPointF (step, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MINIMUM)));
+  _fitness_diagram->addPoint (1, QPointF (step, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::AVERAGE)));
+  _fitness_diagram->addPoint (2, QPointF (step, _controller->getCurrentFitness (GEP::System::Controller::FitnessType::MAXIMUM)));
+
+  return done;
 }
 
 }

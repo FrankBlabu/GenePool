@@ -11,6 +11,7 @@
 
 #include <QtGlobal>
 #include <QtCore/QList>
+#include <QtCore/QMetaType>
 #include <QtCore/QVariant>
 
 

@@ -25,8 +25,8 @@ WorldDisplay::WorldDisplay(const System::World* world, QWidget* parent)
     _world       (world),
     _selected_id (System::Object::INVALID)
 {
-  connect (System::Notifier::getNotifier (), SIGNAL (signalIndividualFocusChanged (const System::Object::Id&)),
-           SLOT (slotIndividualFocusChanged (const System::Object::Id&)));
+  connect (System::Notifier::getNotifier (), SIGNAL (signalIndividualFocusChanged (const GEP::System::Object::Id&)),
+           SLOT (slotIndividualFocusChanged (const GEP::System::Object::Id&)));
 }
 
 /* Destructor */

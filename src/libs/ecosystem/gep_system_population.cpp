@@ -35,7 +35,7 @@ void Population::add (const Individual& individual)
   _individuals.append (individual);
   _index_map.insert (individual.getId (), _individuals.size () - 1);
 
-  System::Notifier::getNotifier ()->notifyIndividualCreated (individual);
+  System::Notifier::getNotifier ()->notifyIndividualCreated (individual.getId ());
 }
 
 /* Access operator */

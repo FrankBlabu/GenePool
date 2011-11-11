@@ -27,7 +27,9 @@ SOURCES += \
     gep_system_world.cpp \
     gep_system_shuffle_comparator.cpp \
     gep_system_notifier.cpp \
-    gep_system_random_number_generator.cpp
+    gep_system_random_number_generator.cpp \
+    gep_system_controller_thread.cpp \
+    gep_system_init.cpp
 
 HEADERS += \
     GEPSystemController.h \
@@ -45,7 +47,13 @@ HEADERS += \
     GEPSystemWorld.h \
     GEPSystemShuffleComparator.h \
     GEPSystemNotifier.h \
-    GEPSystemRandomNumberGenerator.h
+    GEPSystemRandomNumberGenerator.h \
+    GEPSystemControllerThread.h \
+    GEPSystemInit.h
+
+
+
+
 
 
 

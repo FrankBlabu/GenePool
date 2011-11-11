@@ -44,10 +44,10 @@ public:
 private slots:
   void slotControllerStep ();
 
-  void slotPreCrossover (const System::Object::Id& object1,
-                         const System::Object::Id& object2);
-  void slotCrossover (const System::Object::Id& object1,
-                      const System::Object::Id& object2);
+  void slotPreCrossover (const GEP::System::Object::Id& object1,
+                         const GEP::System::Object::Id& object2);
+  void slotCrossover (const GEP::System::Object::Id& object1,
+                      const GEP::System::Object::Id& object2);
 
 private:
   CrossoverOperatorDisplayItem* getItem (const System::Object::Id& id);

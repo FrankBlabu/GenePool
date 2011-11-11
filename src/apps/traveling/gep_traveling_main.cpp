@@ -12,6 +12,7 @@
 
 #include <GEPSystemController.h>
 #include <GEPSystemFitnessOperator.h>
+#include <GEPSystemInit.h>
 #include <GEPSystemMutationOperator.h>
 #include <GEPSystemSelectionOperator.h>
 #include <GEPSystemShuffleComparator.h>
@@ -47,6 +48,8 @@ const int NUMBER_OF_STEPS = 100;
 int main(int argc, char *argv[])
 {
     QApplication app (argc, argv);
+
+    GEP::System::InitLibrary ();
 
     //
     // Setup world and controller

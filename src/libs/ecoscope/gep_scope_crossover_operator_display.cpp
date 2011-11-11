@@ -96,10 +96,10 @@ CrossoverOperatorDisplay::CrossoverOperatorDisplay (System::Controller* controll
   header ()->setResizeMode (COLUMN_FITNESS_AFTER, QHeaderView::ResizeToContents);
 
   connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotControllerStep ()));
-  connect (notifier, SIGNAL (signalPreCrossover (const System::Object::Id&, const System::Object::Id&)),
-           SLOT (slotPreCrossover (const System::Object::Id&, const System::Object::Id&)));
-  connect (notifier, SIGNAL (signalCrossover (const System::Object::Id&, const System::Object::Id&)),
-           SLOT (slotCrossover (const System::Object::Id&, const System::Object::Id&)));
+  connect (notifier, SIGNAL (signalPreCrossover (const GEP::System::Object::Id&, const GEP::System::Object::Id&)),
+           SLOT (slotPreCrossover (const GEP::System::Object::Id&, const GEP::System::Object::Id&)));
+  connect (notifier, SIGNAL (signalCrossover (const GEP::System::Object::Id&, const GEP::System::Object::Id&)),
+           SLOT (slotCrossover (const GEP::System::Object::Id&, const GEP::System::Object::Id&)));
 }
 
 /* Destructor */

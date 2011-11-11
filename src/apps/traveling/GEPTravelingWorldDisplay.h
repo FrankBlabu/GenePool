@@ -33,7 +33,7 @@ protected:
 
 private slots:
     void slotClear ();
-    void slotAddIndividual (const System::Individual& individual);
+    void slotAddIndividual (const GEP::System::Object::Id& id);
 
 private:
     const World* _world;

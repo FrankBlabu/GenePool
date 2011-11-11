@@ -96,8 +96,8 @@ SelectionOperatorDisplay::SelectionOperatorDisplay (System::Controller* controll
   header ()->setResizeMode (COLUMN_NEW_IDS, QHeaderView::ResizeToContents);
 
   connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotControllerStep ()));
-  connect (notifier, SIGNAL (signalSelection (const System::Object::Id&, const System::Object::Id&)),
-           SLOT (slotSelection (const System::Object::Id&, const System::Object::Id&)));
+  connect (notifier, SIGNAL (signalSelection (const GEP::System::Object::Id&, const GEP::System::Object::Id&)),
+           SLOT (slotSelection (const GEP::System::Object::Id&, const GEP::System::Object::Id&)));
 }
 
 /* Destructor */

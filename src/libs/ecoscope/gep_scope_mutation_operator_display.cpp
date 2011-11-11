@@ -90,10 +90,10 @@ MutationOperatorDisplay::MutationOperatorDisplay (System::Controller* controller
   header ()->setResizeMode (COLUMN_MUTATED, QHeaderView::Stretch);
 
   connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotControllerStep ()));
-  connect (notifier, SIGNAL (signalPreMutation (const System::Object::Id&)),
-           SLOT (slotPreMutation (const System::Object::Id&)));
-  connect (notifier, SIGNAL (signalMutation (const System::Object::Id&)),
-           SLOT (slotMutation (const System::Object::Id&)));
+  connect (notifier, SIGNAL (signalPreMutation (const GEP::System::Object::Id&)),
+           SLOT (slotPreMutation (const GEP::System::Object::Id&)));
+  connect (notifier, SIGNAL (signalMutation (const GEP::System::Object::Id&)),
+           SLOT (slotMutation (const GEP::System::Object::Id&)));
 }
 
 /* Destructor */

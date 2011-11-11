@@ -40,8 +40,8 @@ public:
 
 private slots:
   void slotControllerStep ();
-  void slotSelection (const System::Object::Id& before,
-                      const System::Object::Id& after);
+  void slotSelection (const GEP::System::Object::Id& before,
+                      const GEP::System::Object::Id& after);
 
 private:
   System::Controller* _controller;

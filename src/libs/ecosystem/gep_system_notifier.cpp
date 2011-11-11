@@ -43,10 +43,10 @@ void Notifier::setEnabled (bool enabled)
 }
 
 /* Notify individual creation */
-void Notifier::notifyIndividualCreated (const Individual& individual)
+void Notifier::notifyIndividualCreated (const Object::Id& id)
 {
   if (_enabled)
-    emit signalIndividualCreated (individual);
+    emit signalIndividualCreated (id);
 }
 
 /* Notify new controller step */

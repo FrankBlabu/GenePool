@@ -42,8 +42,8 @@ public:
 private slots:
   void slotControllerStep ();
 
-  void slotPreMutation (const System::Object::Id& object);
-  void slotMutation (const System::Object::Id& object);
+  void slotPreMutation (const GEP::System::Object::Id& object);
+  void slotMutation (const GEP::System::Object::Id& object);
 
 private:
   System::Controller* _controller;

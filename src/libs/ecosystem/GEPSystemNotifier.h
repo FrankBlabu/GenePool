@@ -38,7 +38,7 @@ public:
   //
   // Individual creation
   //
-  void notifyIndividualCreated (const Individual& individual);
+  void notifyIndividualCreated (const Object::Id& id);
 
   //
   // Notifier calls for algorithm steps
@@ -65,28 +65,28 @@ signals:
   //
   // Individual creation
   //
-  void signalIndividualCreated (const System::Individual& individual);
+  void signalIndividualCreated (const GEP::System::Object::Id& id);
 
   //
   // Notifier signals for algorithm steps
   //
   void signalControllerStep ();
 
-  void signalSelection (const System::Object::Id& before,
-                        const System::Object::Id& after);
+  void signalSelection (const GEP::System::Object::Id& before,
+                        const GEP::System::Object::Id& after);
 
-  void signalPreCrossover (const System::Object::Id& object1,
-                           const System::Object::Id& object2);
-  void signalCrossover (const System::Object::Id& object1,
-                        const System::Object::Id& object2);
+  void signalPreCrossover (const GEP::System::Object::Id& object1,
+                           const GEP::System::Object::Id& object2);
+  void signalCrossover (const GEP::System::Object::Id& object1,
+                        const GEP::System::Object::Id& object2);
 
-  void signalPreMutation (const System::Object::Id& id);
-  void signalMutation (const System::Object::Id& id);
+  void signalPreMutation (const GEP::System::Object::Id& id);
+  void signalMutation (const GEP::System::Object::Id& id);
 
   //
   // Notifier signales for GUI events
   //
-  void signalIndividualFocusChanged (const System::Object::Id& id);
+  void signalIndividualFocusChanged (const GEP::System::Object::Id& id);
 
 
 private:

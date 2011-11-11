@@ -42,7 +42,7 @@ protected:
     const System::Object::Id& getSelectedId () const;
 
 private slots:
-    void slotIndividualFocusChanged (const System::Object::Id& id);
+    void slotIndividualFocusChanged (const GEP::System::Object::Id& id);
 
 private:
     const System::World* _world;
