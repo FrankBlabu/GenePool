@@ -8,11 +8,11 @@
 #include "GEPSystemNotifier.h"
 #include "GEPSystemWorld.h"
 
-namespace GEP {
-namespace System {
- #include <QtCore/QHash>
+#include <QtCore/QHash>
 #include <math.h>
 
+namespace GEP {
+namespace System {
 
 
 //#**************************************************************************
@@ -50,7 +50,7 @@ PartiallyMatchedCrossoverOperator::~PartiallyMatchedCrossoverOperator ()
 */
 void PartiallyMatchedCrossoverOperator::compute (Population& population)
 {
-  Notifier* notifier = System::Notifier::getNotifier ();
+  CrossoverNotificationList notifications;
 
   //
   // Shuffle population index for random crossover pairs
@@ -116,9 +116,10 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
       IndividualInfo after_first (individual1, _world->getFitness (individual1));
       IndividualInfo after_second (individual2, _world->getFitness (individual2));
 
-      notifier->notifyCrossover (CrossoverNotification (before_first, before_second,
-                                                        after_first, after_second));
+      notifications.append (CrossoverNotification (before_first, before_second, after_first, after_second));
     }
+
+  System::Notifier::getNotifier ()->notifyCrossover (notifications);
 }
 
 

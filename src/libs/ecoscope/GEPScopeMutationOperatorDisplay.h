@@ -8,6 +8,7 @@
 #define __GEP_SCOPE_MUTATION_OPERATOR_DISPLAY_H__
 
 #include <GEPSystemObject.h>
+#include <GEPSystemNotifier.h>
 #include "GEPScopeOperatorDisplay.h"
 
 #include <QtCore/QMap>
@@ -16,7 +17,6 @@ namespace GEP {
 
 namespace System {
 class Controller;
-class MutationNotification;
 }
 
 namespace Scope {
@@ -44,7 +44,7 @@ public:
 private slots:
   void slotControllerStep ();
 
-  void slotMutation (const GEP::System::MutationNotification& notification);
+  void slotMutation (const GEP::System::MutationNotificationList& notifications);
 
 private:
   System::Controller* _controller;

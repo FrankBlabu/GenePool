@@ -11,6 +11,7 @@
 #include <GEPSystemObject.h>
 
 #include <QtCore/QObject>
+#include <QtCore/QList>
 
 namespace GEP {
 namespace System {
@@ -55,6 +56,8 @@ private:
   IndividualInfo _after;
 };
 
+typedef QList<SelectionNotification> SelectionNotificationList;
+
 /*
  * Notification about a mutation
  */
@@ -72,6 +75,8 @@ private:
   IndividualInfo _before;
   IndividualInfo _after;
 };
+
+typedef QList<MutationNotification> MutationNotificationList;
 
 /*
  * Notification about a crossover
@@ -99,6 +104,8 @@ private:
   IndividualInfo _after_first;
   IndividualInfo _after_second;
 };
+
+typedef QList<CrossoverNotification> CrossoverNotificationList;
 
 /*
  * Notifier class for algorithm events
@@ -129,9 +136,9 @@ public:
   //
   void notifyControllerStep ();
 
-  void notifySelection (const SelectionNotification& notification);
-  void notifyCrossover (const CrossoverNotification& notification);
-  void notifyMutation (const MutationNotification& notification);
+  void notifySelection (const SelectionNotificationList& notifications);
+  void notifyCrossover (const CrossoverNotificationList& notifications);
+  void notifyMutation (const MutationNotificationList& notifications);
 
   //
   // Notifier calls for GUI events
@@ -149,9 +156,9 @@ signals:
   //
   void signalControllerStep ();
 
-  void signalSelection (GEP::System::SelectionNotification notification);
-  void signalCrossover (GEP::System::CrossoverNotification notification);
-  void signalMutation (GEP::System::MutationNotification notification);
+  void signalSelection (GEP::System::SelectionNotificationList notifications);
+  void signalCrossover (GEP::System::CrossoverNotificationList notifications);
+  void signalMutation (GEP::System::MutationNotificationList notifications);
 
   //
   // Notifier signales for GUI events
@@ -166,9 +173,8 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE (GEP::System::SelectionNotification);
-Q_DECLARE_METATYPE (GEP::System::MutationNotification);
-Q_DECLARE_METATYPE (GEP::System::CrossoverNotification);
-
+Q_DECLARE_METATYPE (GEP::System::SelectionNotificationList);
+Q_DECLARE_METATYPE (GEP::System::MutationNotificationList);
+Q_DECLARE_METATYPE (GEP::System::CrossoverNotificationList);
 
 #endif

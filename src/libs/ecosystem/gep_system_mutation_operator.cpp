@@ -46,7 +46,7 @@ SwappingMutationOperator::~SwappingMutationOperator ()
 /* Mutate population */
 void SwappingMutationOperator::compute (Population& population)
 {
-  Notifier* notifier = System::Notifier::getNotifier ();
+  MutationNotificationList notifications;
 
   for (int i=0; i < population.getSize (); ++i)
     {
@@ -65,8 +65,10 @@ void SwappingMutationOperator::compute (Population& population)
         }
 
       IndividualInfo after (individual, _world->getFitness (individual));
-      notifier->notifyMutation (MutationNotification (before, after));
+      notifications.append (MutationNotification (before, after));
     }
+
+  System::Notifier::getNotifier ()->notifyMutation (notifications);
 }
 
 }

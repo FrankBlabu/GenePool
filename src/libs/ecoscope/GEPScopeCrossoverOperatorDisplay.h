@@ -42,7 +42,7 @@ public:
 
 private slots:
   void slotControllerStep ();
-  void slotCrossover (const GEP::System::CrossoverNotification& notification);
+  void slotCrossover (const GEP::System::CrossoverNotificationList& notifications);
 
 private:
   System::Controller* _controller;

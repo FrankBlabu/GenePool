@@ -20,9 +20,10 @@ namespace System {
 void InitLibrary ()
 {
   qRegisterMetaType<GEP::System::Object::Id> ("GEP::System::Object::Id");
-  qRegisterMetaType<GEP::System::SelectionNotification> ("GEP::System::SelectionNotification");
-  qRegisterMetaType<GEP::System::MutationNotification> ("GEP::System::MutationNotification");
-  qRegisterMetaType<GEP::System::CrossoverNotification> ("GEP::System::CrossoverNotification");
+
+  qRegisterMetaType<GEP::System::SelectionNotificationList> ("GEP::System::SelectionNotificationList");
+  qRegisterMetaType<GEP::System::MutationNotificationList> ("GEP::System::MutationNotificationList");
+  qRegisterMetaType<GEP::System::CrossoverNotificationList> ("GEP::System::CrossoverNotificationList");
 }
 
 }

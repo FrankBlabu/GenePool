@@ -96,8 +96,8 @@ CrossoverOperatorDisplay::CrossoverOperatorDisplay (System::Controller* controll
   header ()->setResizeMode (COLUMN_FITNESS_AFTER, QHeaderView::ResizeToContents);
 
   connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotControllerStep ()));
-  connect (notifier, SIGNAL (signalCrossover (GEP::System::CrossoverNotification)),
-           SLOT (slotCrossover (const GEP::System::CrossoverNotification&)));
+  connect (notifier, SIGNAL (signalCrossover (GEP::System::CrossoverNotificationList)),
+           SLOT (slotCrossover (const GEP::System::CrossoverNotificationList&)));
 }
 
 /* Destructor */
@@ -116,27 +116,32 @@ void CrossoverOperatorDisplay::slotControllerStep ()
 /*
  * A crossover operation has been performed
  */
-void CrossoverOperatorDisplay::slotCrossover (const System::CrossoverNotification& notification)
+void CrossoverOperatorDisplay::slotCrossover (const System::CrossoverNotificationList& notifications)
 {
-  CrossoverOperatorDisplayItem* item1 = new CrossoverOperatorDisplayItem (notification.getBeforeFirst ().getId (), this);
-  addTopLevelItem (item1);
+  for (int i=0; i < notifications.size (); ++i)
+    {
+      const System::CrossoverNotification& notification = notifications[i];
 
-  item1->setText (COLUMN_ID, QString::number (notification.getBeforeFirst ().getId ()));
-  item1->setText (COLUMN_CONTENT, notification.getBeforeFirst ().getRepresentation ());
-  item1->setText (COLUMN_MATE, QString::number (notification.getBeforeSecond ().getId ()));
-  item1->setText (COLUMN_FITNESS_BEFORE, QString::number (notification.getBeforeFirst ().getFitness ()));
-  item1->setText (COLUMN_CROSSED, notification.getAfterFirst ().getRepresentation ());
-  item1->setText (COLUMN_FITNESS_AFTER, QString::number (notification.getAfterFirst ().getFitness (), 'g', 2));
+      CrossoverOperatorDisplayItem* item1 = new CrossoverOperatorDisplayItem (notification.getBeforeFirst ().getId (), this);
+      addTopLevelItem (item1);
 
-  CrossoverOperatorDisplayItem* item2 = new CrossoverOperatorDisplayItem (notification.getBeforeSecond ().getId (), this);
-  addTopLevelItem (item2);
+      item1->setText (COLUMN_ID, QString::number (notification.getBeforeFirst ().getId ()));
+      item1->setText (COLUMN_CONTENT, notification.getBeforeFirst ().getRepresentation ());
+      item1->setText (COLUMN_MATE, QString::number (notification.getBeforeSecond ().getId ()));
+      item1->setText (COLUMN_FITNESS_BEFORE, QString::number (notification.getBeforeFirst ().getFitness ()));
+      item1->setText (COLUMN_CROSSED, notification.getAfterFirst ().getRepresentation ());
+      item1->setText (COLUMN_FITNESS_AFTER, QString::number (notification.getAfterFirst ().getFitness (), 'g', 2));
 
-  item2->setText (COLUMN_ID, QString::number (notification.getBeforeSecond ().getId ()));
-  item2->setText (COLUMN_CONTENT, notification.getBeforeSecond ().getRepresentation ());
-  item2->setText (COLUMN_MATE, QString::number (notification.getBeforeFirst ().getId ()));
-  item2->setText (COLUMN_FITNESS_BEFORE, QString::number (notification.getBeforeSecond ().getFitness ()));
-  item2->setText (COLUMN_CROSSED, notification.getAfterSecond ().getRepresentation ());
-  item2->setText (COLUMN_FITNESS_AFTER, QString::number (notification.getAfterSecond ().getFitness (), 'g', 2));
+      CrossoverOperatorDisplayItem* item2 = new CrossoverOperatorDisplayItem (notification.getBeforeSecond ().getId (), this);
+      addTopLevelItem (item2);
+
+      item2->setText (COLUMN_ID, QString::number (notification.getBeforeSecond ().getId ()));
+      item2->setText (COLUMN_CONTENT, notification.getBeforeSecond ().getRepresentation ());
+      item2->setText (COLUMN_MATE, QString::number (notification.getBeforeFirst ().getId ()));
+      item2->setText (COLUMN_FITNESS_BEFORE, QString::number (notification.getBeforeSecond ().getFitness ()));
+      item2->setText (COLUMN_CROSSED, notification.getAfterSecond ().getRepresentation ());
+      item2->setText (COLUMN_FITNESS_AFTER, QString::number (notification.getAfterSecond ().getFitness (), 'g', 2));
+    }
 }
 
 }

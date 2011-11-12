@@ -41,7 +41,7 @@ public:
 
 private slots:
   void slotControllerStep ();
-  void slotSelection (const GEP::System::SelectionNotification& notification);
+  void slotSelection (const GEP::System::SelectionNotificationList& notifications);
 
 private:
   System::Controller* _controller;

@@ -56,24 +56,24 @@ void Notifier::notifyControllerStep ()
 }
 
 /* Notify individual selection */
-void Notifier::notifySelection (const SelectionNotification& notification)
+void Notifier::notifySelection (const SelectionNotificationList& notifications)
 {
   if (_enabled)
-    emit signalSelection (notification);
+    emit signalSelection (notifications);
 }
 
 /* Notify that a crossover operation has been performed */
-void Notifier::notifyCrossover (const CrossoverNotification& notification)
+void Notifier::notifyCrossover (const CrossoverNotificationList& notifications)
 {
   if (_enabled)
-    emit signalCrossover (notification);
+    emit signalCrossover (notifications);
 }
 
 /* Notify that a mutation operation has been performed */
-void Notifier::notifyMutation (const MutationNotification& notification)
+void Notifier::notifyMutation (const MutationNotificationList& notifications)
 {
   if (_enabled)
-    emit signalMutation (notification);
+    emit signalMutation (notifications);
 }
 
 /* Notify that the individual focus changed */

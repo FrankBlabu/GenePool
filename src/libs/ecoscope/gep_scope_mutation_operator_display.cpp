@@ -93,8 +93,8 @@ MutationOperatorDisplay::MutationOperatorDisplay (System::Controller* controller
   header ()->setResizeMode (COLUMN_FITNESS_AFTER, QHeaderView::ResizeToContents);
 
   connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotControllerStep ()));
-  connect (notifier, SIGNAL (signalMutation (GEP::System::MutationNotification)),
-           SLOT (slotMutation (const GEP::System::MutationNotification&)));
+  connect (notifier, SIGNAL (signalMutation (GEP::System::MutationNotificationList)),
+           SLOT (slotMutation (const GEP::System::MutationNotificationList&)));
 }
 
 /* Destructor */
@@ -113,19 +113,24 @@ void MutationOperatorDisplay::slotControllerStep ()
 /*
  * Slot called when an individual has been mutated
  */
-void MutationOperatorDisplay::slotMutation (const System::MutationNotification& notification)
+void MutationOperatorDisplay::slotMutation (const System::MutationNotificationList& notifications)
 {
-  const System::IndividualInfo& before = notification.getBefore ();
-  const System::IndividualInfo& after = notification.getAfter ();
+  for (int i=0; i < notifications.size (); ++i)
+    {
+      const System::MutationNotification& notification = notifications[i];
 
-  MutationOperatorDisplayItem* item = new MutationOperatorDisplayItem (before.getId (), this);
-  addTopLevelItem (item);
+      const System::IndividualInfo& before = notification.getBefore ();
+      const System::IndividualInfo& after = notification.getAfter ();
 
-  item->setText (COLUMN_ID, QString::number (before.getId ()));
-  item->setText (COLUMN_BEFORE, before.getRepresentation ());
-  item->setText (COLUMN_FITNESS_BEFORE, QString::number (before.getFitness (), 'g', 8));
-  item->setText (COLUMN_AFTER, after.getRepresentation ());
-  item->setText (COLUMN_FITNESS_AFTER, QString::number (after.getFitness (), 'g', 8));
+      MutationOperatorDisplayItem* item = new MutationOperatorDisplayItem (before.getId (), this);
+      addTopLevelItem (item);
+
+      item->setText (COLUMN_ID, QString::number (before.getId ()));
+      item->setText (COLUMN_BEFORE, before.getRepresentation ());
+      item->setText (COLUMN_FITNESS_BEFORE, QString::number (before.getFitness (), 'g', 8));
+      item->setText (COLUMN_AFTER, after.getRepresentation ());
+      item->setText (COLUMN_FITNESS_AFTER, QString::number (after.getFitness (), 'g', 8));
+    }
 }
 
 }

@@ -65,7 +65,7 @@ RouletteWheelSelectionOperator::~RouletteWheelSelectionOperator ()
 /* Perform selection */
 void RouletteWheelSelectionOperator::compute (Population& population)
 {
-  Notifier* notifier = System::Notifier::getNotifier ();
+  SelectionNotificationList notifications;
 
   //
   // Step 1: Compute fitness list
@@ -109,8 +109,8 @@ void RouletteWheelSelectionOperator::compute (Population& population)
               copied.computeUniqueId ();
               selected.add (copied);
 
-              notifier->notifySelection (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
-                                                                IndividualInfo (copied, _world->getFitness (copied))));
+              notifications.append (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
+                                                           IndividualInfo (copied, _world->getFitness (copied))));
 
               found= true;
             }
@@ -120,6 +120,8 @@ void RouletteWheelSelectionOperator::compute (Population& population)
     }
 
   population = selected;
+
+  System::Notifier::getNotifier ()->notifySelection (notifications);
 }
 
 
@@ -155,7 +157,7 @@ void RemainderStochasticSamplingSelectionOperator::setSelectionMode (SelectionMo
 /* Perform selection */
 void RemainderStochasticSamplingSelectionOperator::compute (Population& population)
 {
-  Notifier* notifier = System::Notifier::getNotifier ();
+  SelectionNotificationList notifications;
 
   //
   // Step 1: Compute individual fitness and fitness sum
@@ -204,8 +206,8 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
           copied.computeUniqueId ();
           selected.add (copied);
 
-          notifier->notifySelection (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
-                                                            IndividualInfo (copied, _world->getFitness (copied))));
+          notifications.append (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
+                                                       IndividualInfo (copied, _world->getFitness (copied))));
 
         }
     }
@@ -241,8 +243,8 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
               copied.computeUniqueId ();
               selected.add (copied);
 
-              notifier->notifySelection (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
-                                                                IndividualInfo (copied, _world->getFitness (copied))));
+              notifications.append (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
+                                                           IndividualInfo (copied, _world->getFitness (copied))));
 
               found = true;
             }
@@ -252,6 +254,8 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
     }
 
   population = selected;
+
+  System::Notifier::getNotifier ()->notifySelection (notifications);
 }
 
 }
