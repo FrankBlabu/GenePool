@@ -13,6 +13,7 @@
 #include <QtGui/QMainWindow>
 
 #include <GEPSystemController.h>
+#include <GEPSystemNotifier.h>
 
 class QState;
 class QStateMachine;
@@ -40,6 +41,7 @@ public:
 
 signals:
   void signalFinished ();
+  void signalAbort ();
 
 protected:
   virtual void keyPressEvent (QKeyEvent* event);
@@ -51,16 +53,18 @@ private slots:
   void slotStateStep ();
   void slotStateFinished ();
 
+  void slotInitialize ();
   void slotQuit ();
   void slotFitnessStatistics ();
 
   void slotUpdateOutput ();
   void slotActiveOperatorDisplayChanged ();
 
+  void slotControllerStep (const GEP::System::ControllerStepNotification& notification);
+
 private:
   void startup ();
   void cleanup ();
-  bool executeStep ();
 
 private:
   System::Controller* _controller;
@@ -71,6 +75,7 @@ private:
 
   QTabWidget* _operator_display_tab;
 
+  QAction* _action_initialize;
   QAction* _action_run;
   QAction* _action_single_step;
   QAction* _action_reset;
@@ -83,8 +88,6 @@ private:
   QState _state_running;
   QState _state_step;
   QState _state_finished;
-
-  bool _aborted;
 };
 
 }

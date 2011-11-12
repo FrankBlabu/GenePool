@@ -49,9 +49,10 @@ public:
 
   virtual double getCurrentFitness (FitnessType_t type) const = 0;
   virtual int getCurrentStep () const = 0;
+  virtual int getNumberOfSteps () const = 0;
 
   virtual void initialize ();
-  virtual bool executeStep () = 0;
+  virtual bool executeNextStep () = 0;
 
   virtual const Population& getPopulation () const = 0;
 
@@ -76,9 +77,10 @@ public:
 
   virtual double getCurrentFitness (Controller::FitnessType_t type) const;
   virtual int getCurrentStep () const;
+  virtual int getNumberOfSteps () const;
 
   virtual void initialize ();
-  virtual bool executeStep ();
+  virtual bool executeNextStep ();
 
   virtual const Population& getPopulation () const;
   void setPopulation (const Population& population);

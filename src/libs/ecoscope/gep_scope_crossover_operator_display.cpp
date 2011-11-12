@@ -95,7 +95,8 @@ CrossoverOperatorDisplay::CrossoverOperatorDisplay (System::Controller* controll
   header ()->setResizeMode (COLUMN_CROSSED, QHeaderView::Stretch);
   header ()->setResizeMode (COLUMN_FITNESS_AFTER, QHeaderView::ResizeToContents);
 
-  connect (notifier, SIGNAL (signalControllerStep ()), SLOT (slotControllerStep ()));
+  connect (notifier, SIGNAL (signalControllerStep (GEP::System::ControllerStepNotification)),
+           SLOT (slotControllerStep (const GEP::System::ControllerStepNotification&)));
   connect (notifier, SIGNAL (signalCrossover (GEP::System::CrossoverNotificationList)),
            SLOT (slotCrossover (const GEP::System::CrossoverNotificationList&)));
 }
@@ -108,8 +109,9 @@ CrossoverOperatorDisplay::~CrossoverOperatorDisplay ()
 /*
  * Slot called when the controller advances one step
  */
-void CrossoverOperatorDisplay::slotControllerStep ()
+void CrossoverOperatorDisplay::slotControllerStep (const GEP::System::ControllerStepNotification& notification)
 {
+  Q_UNUSED (notification);
   clear ();
 }
 

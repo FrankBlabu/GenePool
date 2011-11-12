@@ -13,6 +13,32 @@ namespace GEP {
 namespace System {
 
 //#**************************************************************************
+// CLASS GEP::System::ControllerStepNotifcation
+//#**************************************************************************
+
+/* Constructor */
+ControllerStepNotification::ControllerStepNotification ()
+{
+}
+
+/* Constructor */
+ControllerStepNotification::ControllerStepNotification (Controller* controller)
+  : _step (controller->getCurrentStep ())
+{
+  _fitness.insert (Controller::FitnessType::MINIMUM, controller->getCurrentFitness (Controller::FitnessType::MINIMUM));
+  _fitness.insert (Controller::FitnessType::AVERAGE, controller->getCurrentFitness (Controller::FitnessType::AVERAGE));
+  _fitness.insert (Controller::FitnessType::MAXIMUM, controller->getCurrentFitness (Controller::FitnessType::MAXIMUM));
+}
+
+/* Get fitness of the given type */
+double ControllerStepNotification::getFitness (Controller::FitnessType_t type) const
+{
+  FitnessMap::ConstIterator pos = _fitness.find (type);
+  Q_ASSERT (pos != _fitness.end ());
+  return pos.value ();
+}
+
+//#**************************************************************************
 // CLASS GEP::System::Notifier
 //#**************************************************************************
 
@@ -41,18 +67,11 @@ void Notifier::setEnabled (bool enabled)
   _enabled = enabled;
 }
 
-/* Notify individual creation */
-void Notifier::notifyIndividualCreated (const Object::Id& id)
-{
-  if (_enabled)
-    emit signalIndividualCreated (id);
-}
-
 /* Notify new controller step */
-void Notifier::notifyControllerStep ()
+void Notifier::notifyControllerStep (const ControllerStepNotification& notification)
 {
   if (_enabled)
-    emit signalControllerStep ();
+    emit signalControllerStep (notification);
 }
 
 /* Notify individual selection */

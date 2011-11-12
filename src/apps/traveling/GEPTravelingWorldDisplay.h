@@ -31,10 +31,6 @@ public:
 protected:
     virtual void paintEvent (QPaintEvent* event);
 
-private slots:
-    void slotClear ();
-    void slotAddIndividual (const GEP::System::Object::Id& id);
-
 private:
     const World* _world;
 

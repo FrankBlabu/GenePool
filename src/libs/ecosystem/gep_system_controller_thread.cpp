@@ -7,6 +7,8 @@
 #include "GEPSystemControllerThread.h"
 #include "GEPSystemController.h"
 
+#include <QtCore/QTime>
+
 namespace GEP {
 namespace System {
 
@@ -26,13 +28,19 @@ void ControllerThread::run ()
 {
   bool done = false;
 
+  QTime time = QTime::currentTime ();
+
   while (!done && !_abort)
     {
       int step = _controller->getCurrentStep ();
 
-      done = _controller->executeStep  ();
+      done = _controller->executeNextStep  ();
 
-      emit signalStep (step);
+      if (time.elapsed () >= 500 || done)
+        {
+          emit signalStep (step);
+          time.restart ();
+        }
     }
 
   emit signalDone ();

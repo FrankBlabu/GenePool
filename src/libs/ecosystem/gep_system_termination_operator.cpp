@@ -41,6 +41,14 @@ FixedStepTerminationOperator::~FixedStepTerminationOperator ()
 }
 
 /*
+ * Return the number of necessary steps
+ */
+int FixedStepTerminationOperator::getNumberOfSteps () const
+{
+  return _steps;
+}
+
+/*
  * Compute if the algorithm in done
  */
 bool FixedStepTerminationOperator::compute (const Population& population, int step)

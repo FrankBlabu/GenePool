@@ -40,7 +40,7 @@ public:
   virtual ~SelectionOperatorDisplay ();
 
 private slots:
-  void slotControllerStep ();
+  void slotControllerStep (const GEP::System::ControllerStepNotification& notification);
   void slotSelection (const GEP::System::SelectionNotificationList& notifications);
 
 private:

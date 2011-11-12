@@ -7,6 +7,7 @@
 #ifndef __GEP_SYSTEM_NOTIFIER_H__
 #define __GEP_SYSTEM_NOTIFIER_H__
 
+#include <GEPSystemController.h>
 #include <GEPSystemIndividual.h>
 #include <GEPSystemObject.h>
 
@@ -24,7 +25,6 @@ class Individual;
 class IndividualInfo
 {
 public:
-  IndividualInfo () {}
   IndividualInfo (const Individual& individual, double fitness)
     : _id (individual.getId ()), _representation (individual.toString ()), _fitness (fitness) {}
 
@@ -44,7 +44,6 @@ private:
 class SelectionNotification
 {
 public:
-  SelectionNotification () {}
   SelectionNotification (const IndividualInfo& before, const IndividualInfo& after)
     : _before (before), _after (after) {}
 
@@ -64,7 +63,6 @@ typedef QList<SelectionNotification> SelectionNotificationList;
 class MutationNotification
 {
 public:
-  MutationNotification () {}
   MutationNotification (const IndividualInfo& before, const IndividualInfo& after)
     : _before (before), _after (after) {}
 
@@ -84,7 +82,6 @@ typedef QList<MutationNotification> MutationNotificationList;
 class CrossoverNotification
 {
 public:
-  CrossoverNotification () {}
   CrossoverNotification (const IndividualInfo& before_first,
                          const IndividualInfo& before_second,
                          const IndividualInfo& after_first,
@@ -108,6 +105,25 @@ private:
 typedef QList<CrossoverNotification> CrossoverNotificationList;
 
 /*
+ * Notification about a completed controller step
+ */
+class ControllerStepNotification
+{
+public:
+  ControllerStepNotification ();
+  ControllerStepNotification (Controller* controller);
+
+  int getStep () const { return _step; }
+  double getFitness (Controller::FitnessType_t type) const;
+
+private:
+  int _step;
+
+  typedef QMap<Controller::FitnessType_t, double> FitnessMap;
+  FitnessMap _fitness;
+};
+
+/*
  * Notifier class for algorithm events
  */
 class Notifier : public QObject
@@ -127,14 +143,9 @@ public:
   void setEnabled (bool enabled);
 
   //
-  // Individual creation
-  //
-  void notifyIndividualCreated (const Object::Id& id);
-
-  //
   // Notifier calls for algorithm steps
   //
-  void notifyControllerStep ();
+  void notifyControllerStep (const ControllerStepNotification& notification);
 
   void notifySelection (const SelectionNotificationList& notifications);
   void notifyCrossover (const CrossoverNotificationList& notifications);
@@ -147,14 +158,9 @@ public:
 
 signals:
   //
-  // Individual creation
-  //
-  void signalIndividualCreated (const GEP::System::Object::Id& id);
-
-  //
   // Notifier signals for algorithm steps
   //
-  void signalControllerStep ();
+  void signalControllerStep (GEP::System::ControllerStepNotification notification);
 
   void signalSelection (GEP::System::SelectionNotificationList notifications);
   void signalCrossover (GEP::System::CrossoverNotificationList notifications);
@@ -173,6 +179,7 @@ private:
 }
 }
 
+Q_DECLARE_METATYPE (GEP::System::ControllerStepNotification);
 Q_DECLARE_METATYPE (GEP::System::SelectionNotificationList);
 Q_DECLARE_METATYPE (GEP::System::MutationNotificationList);
 Q_DECLARE_METATYPE (GEP::System::CrossoverNotificationList);

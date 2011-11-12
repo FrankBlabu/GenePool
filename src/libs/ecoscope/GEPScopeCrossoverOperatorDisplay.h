@@ -41,7 +41,7 @@ public:
   virtual ~CrossoverOperatorDisplay ();
 
 private slots:
-  void slotControllerStep ();
+  void slotControllerStep (const GEP::System::ControllerStepNotification& notification);
   void slotCrossover (const GEP::System::CrossoverNotificationList& notifications);
 
 private:

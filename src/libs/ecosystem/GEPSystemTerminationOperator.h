@@ -22,6 +22,7 @@ public:
     TerminationOperator (World* world);
     virtual ~TerminationOperator ();
 
+    virtual int getNumberOfSteps () const = 0;
     virtual bool compute (const Population& population, int step) = 0;
 };
 
@@ -37,6 +38,7 @@ public:
     FixedStepTerminationOperator (World* world, int steps);
     virtual ~FixedStepTerminationOperator ();
 
+    virtual int getNumberOfSteps () const;
     virtual bool compute (const Population& population, int step);
 
 private:

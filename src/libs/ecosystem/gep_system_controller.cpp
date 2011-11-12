@@ -123,6 +123,13 @@ int SinglePopulationController::getCurrentStep () const
   return _current_step;
 }
 
+/* Returns the number of necessary steps */
+int SinglePopulationController::getNumberOfSteps () const
+{
+  Q_ASSERT (_termination_operator != 0);
+  return _termination_operator->getNumberOfSteps ();
+}
+
 /* Returns current fitness value */
 double SinglePopulationController::getCurrentFitness (Controller::FitnessType_t type) const
 {
@@ -172,11 +179,9 @@ void SinglePopulationController::initialize ()
 }
 
 /* Execute algorithm */
-bool SinglePopulationController::executeStep ()
+bool SinglePopulationController::executeNextStep ()
 {
-  Notifier* notifier = System::Notifier::getNotifier ();
-
-  notifier->notifyControllerStep ();
+  System::Notifier::getNotifier ()->notifyControllerStep (this);
 
   //
   // Compute single step
