@@ -94,15 +94,15 @@ GEP::System::Population World::generatePopulation ()
 
   GEP::System::Population population;
 
-  QVariantList sequence;
+  GEP::System::Individual::Chromosome chromosome;
   for (int i=0; i < _number_of_cities; ++i)
-    sequence.push_back (QVariant (i));
+    chromosome.append (i);
 
   for (int i=0; i < _population_size; ++i)
     {
-      GEP::System::ShuffleComparator<QVariant> comparator (sequence);
-      std::sort (sequence.begin (), sequence.end (), comparator);
-      population.add (GEP::Traveling::Individual (sequence));
+      GEP::System::ShuffleComparator<GEP::System::Individual::Gene> comparator (chromosome);
+      std::sort (chromosome.begin (), chromosome.end (), comparator);
+      population.add (GEP::Traveling::Individual (chromosome));
     }
 
   return population;
@@ -125,7 +125,7 @@ const QPointF& World::operator[] (int index) const
 }
 
 /* Compute fitness of a single individual */
-double World::getFitness (const Individual& individual) const
+double World::computeFitness (const Individual& individual) const
 {
   Q_ASSERT (!_cities.empty ());
 

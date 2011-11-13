@@ -15,37 +15,37 @@ namespace System {
 //#**************************************************************************
 
 /* Constructor */
-Individual::Individual (const QVariantList& genes)
+Individual::Individual (const Chromosome& chromosome)
   : Object (),
-    _genes (genes)
+    _chromosome (chromosome)
 {
 }
 
 /* Copy constructor */
 Individual::Individual (const Individual& toCopy)
   : Object (toCopy),
-    _genes (toCopy._genes)
+    _chromosome (toCopy._chromosome)
 {
 }
 
-/* Return number of genes in this individual */
+/* Return number of genes in this individuals chromosome */
 int Individual::getSize () const
 {
-  return _genes.size ();
+  return _chromosome.size ();
 }
 
 /* Access operator */
-QVariant& Individual::operator[] (int index)
+Individual::Gene& Individual::operator[] (int index)
 {
-  Q_ASSERT (index < _genes.size ());
-  return _genes[index];
+  Q_ASSERT (index < _chromosome.size ());
+  return _chromosome[index];
 }
 
 /* Access operator */
-const QVariant& Individual::operator[] (int index) const
+Individual::Gene Individual::operator[] (int index) const
 {
-  Q_ASSERT (index < _genes.size ());
-  return _genes[index];
+  Q_ASSERT (index < _chromosome.size ());
+  return _chromosome[index];
 }
 
 /* Create string representation of this individual */
@@ -54,9 +54,9 @@ QString Individual::toString () const
   QString s;
 
   QString separator;
-  for (int i=0; i < _genes.size (); ++i)
+  for (int i=0; i < _chromosome.size (); ++i)
     {
-      s += separator + convertToString (_genes[i]);
+      s += separator + QString::number (_chromosome[i]);
       separator = ",";
     }
 

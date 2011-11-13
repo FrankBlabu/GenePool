@@ -43,7 +43,7 @@ void TestMain::testMutationOperator ()
 
           int sum = 0;
           for (int k=0; k < individual.getSize (); ++k)
-            sum += individual[k].toInt ();
+            sum += individual[k];
 
           QCOMPARE (sum, expected);
         }

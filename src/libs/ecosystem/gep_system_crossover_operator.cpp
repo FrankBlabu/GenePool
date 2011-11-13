@@ -73,22 +73,22 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
       Q_ASSERT (individual1.getSize () == individual2.getSize ());
       Q_ASSERT (individual1.getSize () > 2);
 
-      IndividualInfo before_first (individual1, _world->getFitness (individual1));
-      IndividualInfo before_second (individual2, _world->getFitness (individual2));
+      IndividualInfo before_first (individual1, _world->computeFitness (individual1));
+      IndividualInfo before_second (individual2, _world->computeFitness (individual2));
 
       int size = individual1.getSize ();
 
       int index1 = static_cast<int> (floor (_random_number_generator.generate () * size)) % size;
       int index2 = index1 + 1 + static_cast<int> (floor (_random_number_generator.generate () * (size - 2))) % (size - 2);
 
-      typedef QHash<QVariant, QVariant> IndexMap;
+      typedef QHash<Individual::Gene, Individual::Gene> IndexMap;
       IndexMap indices1;
       IndexMap indices2;
 
       for (int j = index1; j <= index2; ++j)
         {
-          const QVariant& allel1 = individual1[j % size];
-          const QVariant& allel2 = individual2[j % size];
+          Individual::Gene allel1 = individual1[j % size];
+          Individual::Gene allel2 = individual2[j % size];
 
           indices1.insert (allel2, allel1);
           indices2.insert (allel1, allel2);
@@ -100,8 +100,8 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
         {
           int pos = j % size;
 
-          QVariant value1 = individual1[pos];
-          QVariant value2 = individual2[pos];
+          Individual::Gene value1 = individual1[pos];
+          Individual::Gene value2 = individual2[pos];
 
           for (IndexMap::const_iterator s = indices1.find (value1); s != indices1.end (); s = indices1.find (value1))
             value1 = s.value ();
@@ -113,8 +113,8 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
           individual2[pos] = value2;
         }
 
-      IndividualInfo after_first (individual1, _world->getFitness (individual1));
-      IndividualInfo after_second (individual2, _world->getFitness (individual2));
+      IndividualInfo after_first (individual1, _world->computeFitness (individual1));
+      IndividualInfo after_second (individual2, _world->computeFitness (individual2));
 
       notifications.append (CrossoverNotification (before_first, before_second, after_first, after_second));
     }

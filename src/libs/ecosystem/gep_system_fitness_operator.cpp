@@ -62,7 +62,7 @@ void CachedFitnessOperator::initialize (const Population& population)
   for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
     {
       const Individual& individual = *i;
-      _fitness_cache.insert (individual.getId (), _world->getFitness (individual));
+      _fitness_cache.insert (individual.getId (), _world->computeFitness (individual));
     }
 }
 

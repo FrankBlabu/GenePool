@@ -7,11 +7,6 @@
 #ifndef __GEP_SYSTEM_WORLD_H__
 #define __GEP_SYSTEM_WORLD_H__
 
-#include <QtCore/QVariant>
-
-uint qHash (const QVariant& data);
-QString convertToString (const QVariant& data);
-
 namespace GEP {
 namespace System {
 
@@ -30,7 +25,7 @@ public:
   virtual void generateWorld () = 0;
   virtual Population generatePopulation () = 0;
 
-  virtual double getFitness (const Individual& individual) const = 0;
+  virtual double computeFitness (const Individual& individual) const = 0;
 };
 
 

@@ -109,8 +109,8 @@ void RouletteWheelSelectionOperator::compute (Population& population)
               copied.computeUniqueId ();
               selected.add (copied);
 
-              notifications.append (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
-                                                           IndividualInfo (copied, _world->getFitness (copied))));
+              notifications.append (SelectionNotification (IndividualInfo (individual, _world->computeFitness (individual)),
+                                                           IndividualInfo (copied, _world->computeFitness (copied))));
 
               found= true;
             }
@@ -206,8 +206,8 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
           copied.computeUniqueId ();
           selected.add (copied);
 
-          notifications.append (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
-                                                       IndividualInfo (copied, _world->getFitness (copied))));
+          notifications.append (SelectionNotification (IndividualInfo (individual, _world->computeFitness (individual)),
+                                                       IndividualInfo (copied, _world->computeFitness (copied))));
 
         }
     }
@@ -243,8 +243,8 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
               copied.computeUniqueId ();
               selected.add (copied);
 
-              notifications.append (SelectionNotification (IndividualInfo (individual, _world->getFitness (individual)),
-                                                           IndividualInfo (copied, _world->getFitness (copied))));
+              notifications.append (SelectionNotification (IndividualInfo (individual, _world->computeFitness (individual)),
+                                                           IndividualInfo (copied, _world->computeFitness (copied))));
 
               found = true;
             }

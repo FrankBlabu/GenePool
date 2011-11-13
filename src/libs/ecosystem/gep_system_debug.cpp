@@ -47,9 +47,9 @@ namespace System {
  */
 QDebug operator<< (QDebug out, const Individual& individual)
 {
-  QVector<QVariant> alleles;
+  QVector<Individual::Gene> alleles;
   for (int i=0; i < individual.getSize (); ++i)
-    alleles.push_back (individual[i]);
+    alleles.append (individual[i]);
 
   out.nospace () << "Individual {" << alleles << "}";
   return out;

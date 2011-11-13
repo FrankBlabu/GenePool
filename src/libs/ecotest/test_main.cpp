@@ -45,26 +45,26 @@ GEP::System::Population TestWorld::generatePopulation ()
 
   for (int i=0; i < _population_size; ++i)
     {
-      QVariantList genes;
+      GEP::System::Individual::Chromosome chromosome;
       for (int j=0; j < _individual_size; ++j)
-        genes.push_back (QVariant (j));
+        chromosome.append (j);
 
-      GEP::System::ShuffleComparator<QVariant> comparator (genes);
-      std::sort (genes.begin (), genes.end (), comparator);
+      GEP::System::ShuffleComparator<GEP::System::Individual::Gene> comparator (chromosome);
+      std::sort (chromosome.begin (), chromosome.end (), comparator);
 
-      population.add (GEP::System::Individual (genes));
+      population.add (GEP::System::Individual (chromosome));
     }
 
   return population;
 }
 
 /* Get random number */
-double TestWorld::getFitness (const GEP::System::Individual& individual) const
+double TestWorld::computeFitness (const GEP::System::Individual& individual) const
 {
   double fitness = 0.0;
 
   for (int i=0; i < individual.getSize (); ++i)
-    fitness += (i + 1) * individual[i].toInt ();
+    fitness += (i + 1) * individual[i];
 
   return fmod (fitness, 100.0);
 }

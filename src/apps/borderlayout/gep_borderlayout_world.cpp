@@ -14,6 +14,7 @@
 
 #include <algorithm>
 
+#include <QtCore/QLineF>
 #include <QtCore/QRectF>
 
 namespace GEP {
@@ -232,22 +233,23 @@ GEP::System::Population World::generatePopulation ()
   // Build individual gene sequence consiisting of the area indices plus
   // three boundary separators
   //
-  QVariantList sequence;
+  GEP::System::Individual::Chromosome chromosome;
   for (int i=0; i < _areas.size (); ++i)
-    sequence.push_back (QVariant (i));
+    chromosome.append (i);
 
-  sequence.push_back (-1);
-  sequence.push_back (-2);
-  sequence.push_back (-3);
+  chromosome.append (-1);
+  chromosome.append (-2);
+  chromosome.append (-3);
 
   //
-  // Build a population of randomly shuffled initial gene sequences
+  // Build a population of randomly shuffled initial gene sequences. Each single individual
+  // in this sequence
   //
   for (int i=0; i < _population_size; ++i)
     {
-      GEP::System::ShuffleComparator<QVariant> comparator (sequence);
-      std::sort (sequence.begin (), sequence.end (), comparator);
-      population.add (GEP::System::Individual (sequence));
+      GEP::System::ShuffleComparator<GEP::System::Individual::Gene> comparator (chromosome);
+      std::sort (chromosome.begin (), chromosome.end (), comparator);
+      population.add (GEP::System::Individual (chromosome));
     }
 
   return population;
@@ -271,15 +273,30 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
   double max_bottom_border_offset = 0;
   Side_t side = Side::TOP;
 
+  //
+  // The individual encodes both order and breaking points of the area distribution.
+  //
+  // Example: [3, 2, -1, 1, 7, 4, -2, 5, 8, -3, 6] means that areas '3' and '2' are
+  //          distributed at the top border, than a break happens '-1' so that areas
+  //          '1', '7' and '4' are distributed at the next border.
+  //
   for (int i=0; i < individual.getSize (); ++i)
     {
-      int index = individual[i].toInt ();
+      System::Individual::Gene gene = individual[i];
 
-      if (index >= 0)
+      //
+      // Gene encodes an area index
+      //
+      if (gene >= 0)
         {
-          Area& area = (*areas)[index];
+          Area& area = (*areas)[gene];
           side_areas.append (&area);
 
+          //
+          // Process individual side by side. The concret side order does not need to match the
+          // individual gen splice order. That way, processing top and bottom border first the
+          // necessary spaces for the remaining side border areas can easily be computed.
+          //
           switch (side)
             {
             case Side::TOP:
@@ -309,6 +326,11 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
               break;
             }
         }
+
+      //
+      // Gene encodes a side break. The areas placed so far are now moved for maximum
+      // space efficiency.
+      //
       else
         {
           switch (side)
@@ -379,10 +401,33 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
 }
 
 /* Compute fitness of a single individual */
-double World::getFitness (const Individual& individual) const
+double World::computeFitness (const Individual& individual) const
 {
-  Q_UNUSED (individual);
-  return 0.0;
+  QList<Area> areas (_areas);
+  layoutAreas (individual, &areas);
+
+  //
+  // Criterion 1: Line crosses
+  //
+  int number_of_intersections = 0;
+
+  for (int i=0; i < areas.size (); ++i)
+    {
+      const Area& area1 = areas[i];
+      for (int j=i+1; j < areas.size (); ++j)
+        {
+          const Area& area2 = areas[j];
+
+          QLineF line1 (area1.getConnectorPoint (), area1.getPosition ());
+          QLineF line2 (area2.getConnectorPoint (), area2.getPosition ());
+
+          QPointF intersection_point;
+          if (line1.intersect (line2, &intersection_point) == QLineF::BoundedIntersection)
+            ++number_of_intersections;
+        }
+    }
+
+  return 1000 - number_of_intersections;
 }
 
 /*

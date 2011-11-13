@@ -87,7 +87,7 @@ public:
   virtual GEP::System::Population generatePopulation ();
 
   const QList<Area>& getAreas ()  const;
-  virtual double getFitness (const Individual& individual) const;
+  virtual double computeFitness (const Individual& individual) const;
 
   void layoutAreas (const System::Individual& individual, QList<Area>* areas) const;
 

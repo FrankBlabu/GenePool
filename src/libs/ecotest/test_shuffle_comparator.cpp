@@ -14,25 +14,22 @@
  */
 void TestMain::testShuffleComparator ()
 {
-  QVariantList sequence;
+  GEP::System::Individual::Chromosome chromosome;
   int reference_sum = 0;
 
   for (int i=0; i < 100; ++i)
     {
-      sequence.push_back (QVariant (i));
+      chromosome.append (i);
       reference_sum += i;
     }
 
-  GEP::System::ShuffleComparator<QVariant> comparator (sequence);
-  std::sort (sequence.begin (), sequence.end (), comparator);
+  GEP::System::ShuffleComparator<GEP::System::Individual::Gene> comparator (chromosome);
+  std::sort (chromosome.begin (), chromosome.end (), comparator);
 
   int sorted_sum = 0;
 
-  for (int i=0; i < sequence.size (); ++i)
-    {
-      Q_ASSERT (sequence[i].type () == QVariant::Int);
-      sorted_sum += sequence[i].toInt ();
-    }
+  for (int i=0; i < chromosome.size (); ++i)
+    sorted_sum += chromosome[i];
 
   Q_ASSERT (reference_sum = sorted_sum);
 }

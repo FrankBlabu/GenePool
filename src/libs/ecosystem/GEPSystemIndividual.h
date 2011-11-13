@@ -12,7 +12,6 @@
 #include <QtGlobal>
 #include <QtCore/QList>
 #include <QtCore/QMetaType>
-#include <QtCore/QVariant>
 
 
 namespace GEP {
@@ -24,18 +23,22 @@ namespace System {
 class Individual : public Object
 {
 public:
-    Individual (const QVariantList& genes);
+  typedef int Gene;
+  typedef QList<Gene> Chromosome;
+
+public:
+    Individual (const Chromosome& chromosome);
     Individual (const Individual& toCopy);
 
     int getSize () const;
 
-    QVariant& operator[] (int index);
-    const QVariant& operator[] (int index) const;
+    Gene& operator[] (int index);
+    Gene operator[] (int index) const;
 
     QString toString () const;
 
 protected:
-    QVariantList _genes;
+    Chromosome _chromosome;
 };
 
 

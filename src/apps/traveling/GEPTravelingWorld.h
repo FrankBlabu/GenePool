@@ -50,7 +50,7 @@ public:
   virtual void generateWorld ();
   virtual GEP::System::Population generatePopulation ();
 
-  virtual double getFitness (const Individual& individual) const;
+  virtual double computeFitness (const Individual& individual) const;
 
 private:
   double getDistance (int city1, int city2) const;
