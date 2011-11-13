@@ -265,8 +265,10 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
   struct Side { enum Type_t { TOP=0, BOTTOM=1, LEFT=2, RIGHT=3 }; };
   typedef Side::Type_t Side_t;
 
+  QList<Area*> side_areas;
   double offset = 0;
-  double max_border_offset = 0;
+  double max_top_border_offset = 0;
+  double max_bottom_border_offset = 0;
   Side_t side = Side::TOP;
 
   for (int i=0; i < individual.getSize (); ++i)
@@ -276,6 +278,7 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
       if (index >= 0)
         {
           Area& area = (*areas)[index];
+          side_areas.append (&area);
 
           switch (side)
             {
@@ -283,14 +286,14 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
               area.setPosition (QPointF (field.left () + offset + area.getSize ().width () / 2,
                                          field.top () + area.getSize ().height () / 2));
               offset += area.getSize ().width ();
-              max_border_offset = qMax (max_border_offset, area.getSize ().height ());
+              max_top_border_offset = qMax (max_top_border_offset, area.getSize ().height ());
               break;
 
             case Side::BOTTOM:
               area.setPosition (QPointF (field.right () - offset - area.getSize ().width () / 2,
                                          field.bottom () - area.getSize ().height () / 2));
               offset += area.getSize ().width ();
-              max_border_offset = qMax (max_border_offset, area.getSize ().height ());
+              max_bottom_border_offset = qMax (max_bottom_border_offset, area.getSize ().height ());
               break;
 
             case Side::LEFT:
@@ -312,22 +315,46 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
             {
             case Side::TOP:
               {
+                double space = (field.width () - offset) / (side_areas.size () + 1);
+
+                for (int j=0; j < side_areas.size (); ++j)
+                  {
+                    Area* side_area = side_areas[j];
+                    side_area->setPosition (QPointF (side_area->getPosition ().x () + (j + 1) * space,
+                                                     side_area->getPosition ().y ()));
+                  }
+
                 side = Side::BOTTOM;
-                offset = 0;
               }
               break;
 
             case Side::BOTTOM:
               {
+                double space = (field.width () - offset) / (side_areas.size () + 1);
+
+                for (int j=0; j < side_areas.size (); ++j)
+                  {
+                    Area* side_area = side_areas[j];
+                    side_area->setPosition (QPointF (side_area->getPosition ().x () - (j + 1) * space,
+                                                     side_area->getPosition ().y ()));
+                  }
+
                 side = Side::LEFT;
-                offset = max_border_offset;
               }
               break;
 
             case Side::LEFT:
               {
+                double space = (field.width () - offset - max_top_border_offset - max_bottom_border_offset) / (side_areas.size () + 1);
+
+                for (int j=0; j < side_areas.size (); ++j)
+                  {
+                    Area* side_area = side_areas[j];
+                    side_area->setPosition (QPointF (side_area->getPosition ().x (),
+                                                     side_area->getPosition ().y () - (j + 1) * space));
+                  }
+
                 side = Side::RIGHT;
-                offset = max_border_offset;
               }
               break;
 
@@ -336,9 +363,18 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
               break;
             }
 
-          max_border_offset = 0;
+          offset = 0;
+          side_areas.clear ();
         }
+    }
 
+  double space = (field.width () - offset - max_top_border_offset - max_bottom_border_offset) / (side_areas.size () + 1);
+
+  for (int i=0; i < side_areas.size (); ++i)
+    {
+      Area* side_area = side_areas[i];
+      side_area->setPosition (QPointF (side_area->getPosition ().x (),
+                                       side_area->getPosition ().y () + (i + 1) * space));
     }
 }
 
