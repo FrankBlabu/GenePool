@@ -1,0 +1,8 @@
+syntax: glob
+
+*~
+*.o
+*-build-desktop*
+src/bin/*
+*.pro.user*
+

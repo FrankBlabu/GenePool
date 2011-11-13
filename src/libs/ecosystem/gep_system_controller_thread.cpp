@@ -36,7 +36,7 @@ void ControllerThread::run ()
 
       done = _controller->executeNextStep  ();
 
-      if (time.elapsed () >= 500 || done)
+      if (time.elapsed () >= UPDATE_INTERVAL || done)
         {
           emit signalStep (step);
           time.restart ();

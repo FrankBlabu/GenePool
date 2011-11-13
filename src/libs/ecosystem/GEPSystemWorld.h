@@ -21,7 +21,6 @@ class Population;
 /*
  * World information
  */
-
 class World
 {
 public:

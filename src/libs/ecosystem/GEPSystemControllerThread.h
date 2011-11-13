@@ -36,6 +36,8 @@ public slots:
 private:
     Controller* _controller;
     bool _abort;
+
+    static const int UPDATE_INTERVAL = 500;
 };
 
 }

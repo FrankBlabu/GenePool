@@ -15,15 +15,23 @@
 #define DOUT(CONTENT) while (false) {}
 #endif
 
+class QPointF;
+class QSizeF;
+class QRectF;
+
+/*
+ * Debug output operators
+ */
+QDebug operator<< (QDebug out, const QPointF& point);
+QDebug operator<< (QDebug out, const QSizeF& size);
+QDebug operator<< (QDebug out, const QRectF& rect);
+
 namespace GEP {
 namespace System {
 
 class Individual;
 class Population;
 
-/*
- * Debug output operators
- */
 QDebug operator<< (QDebug out, const Individual& individual);
 QDebug operator<< (QDebug out, const Population& population);
 

@@ -1,0 +1,366 @@
+/*
+ * gep_borderlayout_world.cpp - The world of the border layout problem
+ *
+ * Frank Cieslok, Nov. 2011
+ */
+
+#define GEP_DEBUG
+
+#include <GEPSystemPopulation.h>
+#include <GEPSystemShuffleComparator.h>
+#include <GEPSystemDebug.h>
+
+#include "GEPBorderLayoutWorld.h"
+
+#include <algorithm>
+
+#include <QtCore/QRectF>
+
+namespace GEP {
+namespace BorderLayout {
+
+
+//#**************************************************************************
+// CLASS GEP::BorderLayout::World::Area
+//#**************************************************************************
+
+/* Constructor */
+World::Area::Area ()
+  : _position        (),
+    _size            (),
+    _connector_point ()
+{
+}
+
+/* Copy-Constructor */
+World::Area::Area (const Area& toCopy)
+  : _position        (toCopy._position),
+    _size            (toCopy._size),
+    _connector_point (toCopy._connector_point)
+{
+}
+
+/* Gets the position */
+const QPointF& World::Area::getPosition () const
+{
+  return _position;
+}
+
+/* Sets the position */
+void World::Area::setPosition (const QPointF& position)
+{
+  _position = position;
+}
+
+/* Gets the size */
+const QSizeF& World::Area::getSize () const
+{
+  return _size;
+}
+
+/* Sets the size */
+void World::Area::setSize (const QSizeF& size)
+{
+  _size = size;
+}
+
+/* Gets the connector point position */
+const QPointF& World::Area::getConnectorPoint () const
+{
+  return _connector_point;
+}
+
+/* Sets the connector point position */
+void World::Area::setConnectorPoint (const QPointF& connector_point)
+{
+  _connector_point = connector_point;
+}
+
+/* Get the rectangle occupied by this area */
+QRectF World::Area::getRect () const
+{
+  return QRectF (_position - QPointF (_size.width () / 2, _size.height () / 2), _size);
+}
+
+/* Debug output */
+QDebug operator<< (QDebug out, const World::Area& area)
+{
+  out.nospace () << "Area { position=" << area.getPosition () << ", "
+                 << "size=" << area.getSize () << ", "
+                 << "connector=" << area.getConnectorPoint () << " }";
+  return out;
+}
+
+
+//#**************************************************************************
+// CLASS GEP::BorderLayout::World
+//#**************************************************************************
+
+/* Constructor */
+World::World ()
+  : GEP::System::World (),
+    _random_number_generator (),
+    _field_size              (),
+    _connector_field_size    (),
+    _number_of_areas         (0),
+    _minimum_area_size       (0.0),
+    _maximum_area_size       (0.0),
+    _population_size         (0),
+    _areas                   ()
+{
+}
+
+/* Gets the field size */
+const QSizeF& World::getFieldSize () const
+{
+  return _field_size;
+}
+
+/* Sets the field size */
+void World::setFieldSize (const QSizeF& field_size)
+{
+  _field_size = field_size;
+}
+
+/* Gets the inner connector field size */
+const QSizeF& World::getConnectorFieldSize () const
+{
+  return _connector_field_size;
+}
+
+/* Sets the inner connector field size */
+void World::setConnectorFieldSize (const QSizeF& connector_field_size)
+{
+  _connector_field_size = connector_field_size;
+}
+
+/* Gets the number of areas */
+int World::getNumberOfAreas () const
+{
+  return _number_of_areas;
+}
+
+/* Sets the number of areas */
+void World::setNumberOfAreas (int number_of_areas)
+{
+  _number_of_areas = number_of_areas;
+}
+
+/* Gets the minimum area size */
+double World::getMinimumAreaSize () const
+{
+  return _minimum_area_size;
+}
+
+/* Sets the minimum area size */
+void World::setMinimumAreaSize (double minimum_area_size)
+{
+  _minimum_area_size = minimum_area_size;
+}
+
+/* Gets the maximum area size */
+double World::getMaximumAreaSize () const
+{
+  return _maximum_area_size;
+}
+
+/* Sets the maximum area size */
+void World::setMaximumAreaSize (double maximum_area_size)
+{
+  _maximum_area_size = maximum_area_size;
+}
+
+/* Gets the population size */
+int World::getPopulationSize () const
+{
+  return _population_size;
+}
+
+/* Sets the population size */
+void World::setPopulationSize (int population_size)
+{
+  _population_size = population_size;
+}
+
+/* Return the areas contained in this world */
+const QList<World::Area>& World::getAreas () const
+{
+  return _areas;
+}
+
+/* Generate world */
+void World::generateWorld ()
+{
+  Q_ASSERT (_field_size.isValid ());
+  Q_ASSERT (_connector_field_size.isValid ());
+  Q_ASSERT (_connector_field_size.width () <= _field_size.width ());
+  Q_ASSERT (_connector_field_size.height () <= _field_size.height ());
+  Q_ASSERT (_number_of_areas > 0);
+  Q_ASSERT (_minimum_area_size > 0);
+  Q_ASSERT (_maximum_area_size > 0);
+  Q_ASSERT (_population_size > 0);
+
+  //
+  // Clear current world
+  //
+  _areas.clear ();
+
+  //
+  // Create random areas to be layouted
+  //
+  for (int i=0; i < _number_of_areas; ++i)
+    {
+      Area area;
+
+      area.setSize (QSizeF (getRandom (_minimum_area_size, _maximum_area_size),
+                            getRandom (_minimum_area_size, _maximum_area_size)));
+      area.setPosition (QPointF (area.getSize ().width () / 2 + getRandom (0, _field_size.width () - area.getSize ().width ()),
+                                 area.getSize ().height () / 2 + getRandom (0, _field_size.height () - area.getSize ().height ())));
+      area.setConnectorPoint (QPointF ((_field_size.width () - _connector_field_size.width ()) / 2 + getRandom (0, _connector_field_size.width ()),
+                                       (_field_size.height () - _connector_field_size.height ()) / 2 + getRandom (0, _connector_field_size.height ())));
+
+      _areas.append (area);
+    }
+}
+
+/* Generate random world population */
+GEP::System::Population World::generatePopulation ()
+{
+  GEP::System::Population population;
+
+  //
+  // Build individual gene sequence consiisting of the area indices plus
+  // three boundary separators
+  //
+  QVariantList sequence;
+  for (int i=0; i < _areas.size (); ++i)
+    sequence.push_back (QVariant (i));
+
+  sequence.push_back (-1);
+  sequence.push_back (-2);
+  sequence.push_back (-3);
+
+  //
+  // Build a population of randomly shuffled initial gene sequences
+  //
+  for (int i=0; i < _population_size; ++i)
+    {
+      GEP::System::ShuffleComparator<QVariant> comparator (sequence);
+      std::sort (sequence.begin (), sequence.end (), comparator);
+      population.add (GEP::System::Individual (sequence));
+    }
+
+  return population;
+}
+
+/*
+ * Layout a given set of areas according to an individual
+ */
+void World::layoutAreas (const System::Individual& individual, QList<Area>* areas) const
+{
+  Q_ASSERT (_field_size.isValid ());
+
+  QRectF field (QPointF (0, 0), _field_size);
+
+  struct Side { enum Type_t { TOP=0, BOTTOM=1, LEFT=2, RIGHT=3 }; };
+  typedef Side::Type_t Side_t;
+
+  double offset = 0;
+  double max_border_offset = 0;
+  Side_t side = Side::TOP;
+
+  for (int i=0; i < individual.getSize (); ++i)
+    {
+      int index = individual[i].toInt ();
+
+      if (index >= 0)
+        {
+          Area& area = (*areas)[index];
+
+          switch (side)
+            {
+            case Side::TOP:
+              area.setPosition (QPointF (field.left () + offset + area.getSize ().width () / 2,
+                                         field.top () + area.getSize ().height () / 2));
+              offset += area.getSize ().width ();
+              max_border_offset = qMax (max_border_offset, area.getSize ().height ());
+              break;
+
+            case Side::BOTTOM:
+              area.setPosition (QPointF (field.right () - offset - area.getSize ().width () / 2,
+                                         field.bottom () - area.getSize ().height () / 2));
+              offset += area.getSize ().width ();
+              max_border_offset = qMax (max_border_offset, area.getSize ().height ());
+              break;
+
+            case Side::LEFT:
+              area.setPosition (QPointF (field.left () + area.getSize ().width () / 2,
+                                         field.bottom () - offset - area.getSize ().height () / 2));
+              offset += area.getSize ().height ();
+              break;
+
+            case Side::RIGHT:
+              area.setPosition (QPointF (field.right () - area.getSize ().width () / 2,
+                                         field.top () + offset + area.getSize ().height () / 2));
+              offset += area.getSize ().height ();
+              break;
+            }
+        }
+      else
+        {
+          switch (side)
+            {
+            case Side::TOP:
+              {
+                side = Side::BOTTOM;
+                offset = 0;
+              }
+              break;
+
+            case Side::BOTTOM:
+              {
+                side = Side::LEFT;
+                offset = max_border_offset;
+              }
+              break;
+
+            case Side::LEFT:
+              {
+                side = Side::RIGHT;
+                offset = max_border_offset;
+              }
+              break;
+
+            case Side::RIGHT:
+              Q_ASSERT (false && "Side separator index corrupted");
+              break;
+            }
+
+          max_border_offset = 0;
+        }
+
+    }
+}
+
+/* Compute fitness of a single individual */
+double World::getFitness (const Individual& individual) const
+{
+  Q_UNUSED (individual);
+  return 0.0;
+}
+
+/*
+ * Generate random number
+ *
+ * \param minimum Minimum value
+ * \param maximum Maximum value
+ */
+double World::getRandom (double minimum, double maximum) const
+{
+  return minimum + (maximum - minimum) * _random_number_generator.generate () ;
+}
+
+}
+}
+
+

@@ -8,12 +8,39 @@
 #include "GEPSystemIndividual.h"
 #include "GEPSystemPopulation.h"
 
+#include <QtCore/QPointF>
+#include <QtCore/QSizeF>
+#include <QtCore/QRectF>
+
+/*
+ * Print point
+ */
+QDebug operator<< (QDebug out, const QPointF& point)
+{
+  out.nospace () << "(" << point.x () << ", " << point.y () << ")";
+  return out;
+}
+
+/*
+ * Print size
+ */
+QDebug operator<< (QDebug out, const QSizeF& size)
+{
+  out.nospace () << "(" << size.width () << ", " << size.height () << ")";
+  return out;
+}
+
+/*
+ * Print rectangle
+ */
+QDebug operator<< (QDebug out, const QRectF& rect)
+{
+  out.nospace () << "[" << rect.topLeft () << ", " << rect.bottomRight () << "]";
+  return out;
+}
+
 namespace GEP {
 namespace System {
-
-//#**************************************************************************
-// NAMESPACE GEP::System::Debug
-//#**************************************************************************
 
 /*
  * Print single individual
@@ -25,7 +52,7 @@ QDebug operator<< (QDebug out, const Individual& individual)
     alleles.push_back (individual[i]);
 
   out.nospace () << "Individual {" << alleles << "}";
-  return out.space();
+  return out;
 }
 
 /*
@@ -33,7 +60,7 @@ QDebug operator<< (QDebug out, const Individual& individual)
  */
 QDebug operator<< (QDebug out, const Population& population)
 {
-  out << "Population {\n";
+  out.nospace () << "Population {\n";
 
   for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
     out << *i << "\n";
