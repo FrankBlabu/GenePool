@@ -50,7 +50,7 @@ GEP::System::Population TestWorld::generatePopulation ()
         chromosome.append (j);
 
       GEP::System::ShuffleComparator<GEP::System::Individual::Gene> comparator (chromosome);
-      std::sort (chromosome.begin (), chromosome.end (), comparator);
+      qSort (chromosome.begin (), chromosome.end (), comparator);
 
       population.add (GEP::System::Individual (chromosome));
     }

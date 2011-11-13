@@ -215,8 +215,8 @@ void SinglePopulationController::updateFitness ()
       const Individual& individual = *i;
       double fitness = _fitness_operator->compute (individual);
 
-      _minimum_fitness = std::min (_minimum_fitness, fitness);
-      _maximum_fitness = std::max (_maximum_fitness, fitness);
+      _minimum_fitness = qMin (_minimum_fitness, fitness);
+      _maximum_fitness = qMax (_maximum_fitness, fitness);
       _average_fitness += fitness;
     }
 

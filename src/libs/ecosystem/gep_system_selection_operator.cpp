@@ -80,7 +80,7 @@ void RouletteWheelSelectionOperator::compute (Population& population)
       double fitness = _fitness_operator->compute (individual);
 
       fitness_sum += fitness;
-      segments.push_back (WheelSegment (individual.getId (), fitness_sum));
+      segments.append (WheelSegment (individual.getId (), fitness_sum));
     }
 
   for (int i=0; i < segments.size (); ++i)

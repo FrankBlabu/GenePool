@@ -81,11 +81,11 @@ SelectionOperatorDisplay::SelectionOperatorDisplay (System::Controller* controll
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
   QStringList header_names;
-  header_names.push_back ("Id");
-  header_names.push_back ("Content");
-  header_names.push_back ("Fitness");
-  header_names.push_back ("Times selected");
-  header_names.push_back ("New ids");
+  header_names.append ("Id");
+  header_names.append ("Content");
+  header_names.append ("Fitness");
+  header_names.append ("Times selected");
+  header_names.append ("New ids");
 
   setHeaderLabels (header_names);
 

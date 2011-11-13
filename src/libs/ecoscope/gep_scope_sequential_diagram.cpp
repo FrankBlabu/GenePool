@@ -39,11 +39,11 @@ SequentialDiagram::SequentialDiagram (QWidget* parent)
 {
   if (_default_colors.isEmpty ())
     {
-      _default_colors.push_back (Qt::red);
-      _default_colors.push_back (Qt::green);
-      _default_colors.push_back (Qt::blue);
-      _default_colors.push_back (Qt::yellow);
-      _default_colors.push_back (Qt::cyan);
+      _default_colors.append (Qt::red);
+      _default_colors.append (Qt::green);
+      _default_colors.append (Qt::blue);
+      _default_colors.append (Qt::yellow);
+      _default_colors.append (Qt::cyan);
     }
 }
 
@@ -82,11 +82,11 @@ void SequentialDiagram::addPoint (int id, const QPointF& point)
 
   Q_ASSERT (line._points.isEmpty () || point.x () > line._points.back ().x ());
 
-  line._points.push_back (point);
-  _range_x.first = std::min (_range_x.first, point.x ());
-  _range_x.second = std::max (_range_x.second, point.x ());
-  _range_y.first = std::min (_range_y.first, point.y ());
-  _range_y.second = std::max (_range_y.second, point.y ());
+  line._points.append (point);
+  _range_x.first = qMin (_range_x.first, point.x ());
+  _range_x.second = qMax (_range_x.second, point.x ());
+  _range_y.first = qMin (_range_y.first, point.y ());
+  _range_y.second = qMax (_range_y.second, point.y ());
 }
 
 /*
@@ -114,8 +114,8 @@ void SequentialDiagram::paintEvent (QPaintEvent* event)
             {
               const QPointF& point = line._points[i];
 
-              polyline.push_back (QPointF ((point.x () - _range_x.first) * scale_x,
-                                           height () - (point.y () - _range_y.first) * scale_y));
+              polyline.append (QPointF ((point.x () - _range_x.first) * scale_x,
+                                        height () - (point.y () - _range_y.first) * scale_y));
             }
 
           painter.setPen (line._color);

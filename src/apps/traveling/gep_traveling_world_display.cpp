@@ -55,10 +55,10 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
     {
       const QPointF& city = (*_world)[i];
 
-      range_x.first = std::min (range_x.first, city.x ());
-      range_x.second = std::max (range_x.second, city.x ());
-      range_y.first = std::min (range_y.first, city.y ());
-      range_y.second = std::max (range_y.second, city.y ());
+      range_x.first = qMin (range_x.first, city.x ());
+      range_x.second = qMax (range_x.second, city.x ());
+      range_y.first = qMin (range_y.first, city.y ());
+      range_y.second = qMax (range_y.second, city.y ());
     }
 
   double scale_x = width () / (range_x.second - range_x.first);
@@ -70,8 +70,8 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
   for (int i=0; i < _world->getSize (); ++i)
     {
       const QPointF& city = (*_world)[i];
-      _cities.push_back (QPointF ((city.x () - range_x.first) * scale_x,
-                                  (city.y () - range_y.first) * scale_y));
+      _cities.append (QPointF ((city.x () - range_x.first) * scale_x,
+                               (city.y () - range_y.first) * scale_y));
 
     }
 
@@ -91,14 +91,14 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
         {
           QPointF pos = (*_world)[individual[i].toInt ()];
 
-          line.push_back (QPointF ((pos.x () - range_x.first) * scale_x,
-                                   (pos.y () - range_y.first) * scale_y));
+          line.append (QPointF ((pos.x () - range_x.first) * scale_x,
+                                (pos.y () - range_y.first) * scale_y));
         }
 
       switch (display_mode)
         {
         case GEP::Scope::WorldDisplay::DisplayMode::ALL:
-          _individuals.push_back (line);
+          _individuals.append (line);
           break;
 
         case GEP::Scope::WorldDisplay::DisplayMode::BEST:
@@ -107,7 +107,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
             if (fitness > range_fitness.second)
               {
                 _individuals.clear ();
-                _individuals.push_back (line);
+                _individuals.append (line);
                 range_fitness.second = fitness;
               }
           }
@@ -119,7 +119,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
             if (fitness < range_fitness.first)
               {
                 _individuals.clear ();
-                _individuals.push_back (line);
+                _individuals.append (line);
                 range_fitness.first = fitness;
               }
           }
@@ -128,7 +128,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
         case GEP::Scope::WorldDisplay::DisplayMode::SELECTED:
           {
             if (individual.getId () == getSelectedId ())
-              _individuals.push_back (line);
+              _individuals.append (line);
           }
           break;
         }

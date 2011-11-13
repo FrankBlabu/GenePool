@@ -77,7 +77,7 @@ PopulationFitnessIndex::PopulationFitnessIndex (const Population& population, Fi
   computeIndexMap (population);
 
   PopulationFitnessIndexComparator comparator (population, fitness_operator);
-  std::sort (_sorted_ids.begin (), _sorted_ids.end (), comparator);
+  qSort (_sorted_ids.begin (), _sorted_ids.end (), comparator);
 }
 
 /* Constructor */
@@ -87,7 +87,7 @@ PopulationFitnessIndex::PopulationFitnessIndex (const Population& population, co
   computeIndexMap (population);
 
   PopulationFitnessIndexComparator comparator (fitness_map);
-  std::sort (_sorted_ids.begin (), _sorted_ids.end (), comparator);
+  qSort (_sorted_ids.begin (), _sorted_ids.end (), comparator);
 }
 
 /*
@@ -120,7 +120,7 @@ void PopulationFitnessIndex::computeIndexMap (const Population& population)
   for (Population::ConstIterator i = population.begin (); i != population.end (); ++i, ++count)
     {
       const Individual& individual = *i;
-      _sorted_ids.push_back (individual.getId ());
+      _sorted_ids.append (individual.getId ());
       _index_map.insert (individual.getId (), count);
     }
 }

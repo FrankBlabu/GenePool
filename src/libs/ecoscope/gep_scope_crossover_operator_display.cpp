@@ -79,12 +79,12 @@ CrossoverOperatorDisplay::CrossoverOperatorDisplay (System::Controller* controll
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
   QStringList header_names;
-  header_names.push_back ("Id");
-  header_names.push_back ("Content");
-  header_names.push_back ("Mate");
-  header_names.push_back ("Fitness (before)");
-  header_names.push_back ("Crossed");
-  header_names.push_back ("Fitness (after)");
+  header_names.append ("Id");
+  header_names.append ("Content");
+  header_names.append ("Mate");
+  header_names.append ("Fitness (before)");
+  header_names.append ("Crossed");
+  header_names.append ("Fitness (after)");
 
   setHeaderLabels (header_names);
 

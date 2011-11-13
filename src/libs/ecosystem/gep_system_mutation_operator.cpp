@@ -60,7 +60,7 @@ void SwappingMutationOperator::compute (Population& population)
           if (_random_number_generator.generate () <= _probability)
             {
               int k = static_cast<int> (floor (_random_number_generator.generate () * (size - 1))) % (size - 1);
-              std::swap (individual[j], individual[k % size]);
+              qSwap (individual[j], individual[k % size]);
             }
         }
 

@@ -71,7 +71,7 @@ void World::generateWorld ()
   // Randomly place cities
   //
   for (int i=0; i < _number_of_cities; ++i)
-    _cities.push_back (QPointF (random_number_generator.generate (), random_number_generator.generate ()));
+    _cities.append (QPointF (random_number_generator.generate (), random_number_generator.generate ()));
 
   //
   // Compute largest city distance to get a fitness bias
@@ -80,7 +80,7 @@ void World::generateWorld ()
 
   for (int i=0; i < _cities.size (); ++i)
     for (int j=i+1; j < _cities.size (); ++j)
-      max_distance = std::max (max_distance, getDistance (i, j));
+      max_distance = qMax (max_distance, getDistance (i, j));
 
   _fitness_bias = _cities.size () * max_distance;
 }
@@ -101,7 +101,7 @@ GEP::System::Population World::generatePopulation ()
   for (int i=0; i < _population_size; ++i)
     {
       GEP::System::ShuffleComparator<GEP::System::Individual::Gene> comparator (chromosome);
-      std::sort (chromosome.begin (), chromosome.end (), comparator);
+      qSort (chromosome.begin (), chromosome.end (), comparator);
       population.add (GEP::Traveling::Individual (chromosome));
     }
 

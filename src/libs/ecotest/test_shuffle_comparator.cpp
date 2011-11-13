@@ -24,7 +24,7 @@ void TestMain::testShuffleComparator ()
     }
 
   GEP::System::ShuffleComparator<GEP::System::Individual::Gene> comparator (chromosome);
-  std::sort (chromosome.begin (), chromosome.end (), comparator);
+  qSort (chromosome.begin (), chromosome.end (), comparator);
 
   int sorted_sum = 0;
 

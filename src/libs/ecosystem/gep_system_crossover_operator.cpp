@@ -57,10 +57,10 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
   //
   QList<int> shuffled_index;
   for (int i=0; i < population.getSize (); ++i)
-    shuffled_index.push_back (i);
+    shuffled_index.append (i);
 
   ShuffleComparator<int> comparator (shuffled_index);
-  std::sort (shuffled_index.begin (), shuffled_index.end (), comparator);
+  qSort (shuffled_index.begin (), shuffled_index.end (), comparator);
 
   //
   // Crossover of individual pairs
@@ -93,7 +93,7 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
           indices1.insert (allel2, allel1);
           indices2.insert (allel1, allel2);
 
-          std::swap (individual1[j % size], individual2[j % size]);
+          qSwap (individual1[j % size], individual2[j % size]);
         }
 
       for (int j=index2+1; j % size > index2 || j % size < index1; ++j)

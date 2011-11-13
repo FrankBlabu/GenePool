@@ -78,11 +78,11 @@ MutationOperatorDisplay::MutationOperatorDisplay (System::Controller* controller
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
   QStringList header_names;
-  header_names.push_back ("Id");
-  header_names.push_back ("Before");
-  header_names.push_back ("Fitness before");
-  header_names.push_back ("After");
-  header_names.push_back ("Fitness after");
+  header_names.append ("Id");
+  header_names.append ("Before");
+  header_names.append ("Fitness before");
+  header_names.append ("After");
+  header_names.append ("Fitness after");
 
   setHeaderLabels (header_names);
 

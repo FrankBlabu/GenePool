@@ -248,7 +248,7 @@ GEP::System::Population World::generatePopulation ()
   for (int i=0; i < _population_size; ++i)
     {
       GEP::System::ShuffleComparator<GEP::System::Individual::Gene> comparator (chromosome);
-      std::sort (chromosome.begin (), chromosome.end (), comparator);
+      qSort (chromosome.begin (), chromosome.end (), comparator);
       population.add (GEP::System::Individual (chromosome));
     }
 
