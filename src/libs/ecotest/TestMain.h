@@ -28,6 +28,7 @@ public:
     virtual void generateWorld ();
     virtual GEP::System::Population generatePopulation ();
 
+    virtual FitnessType_t getFitnessType () const;
     virtual double computeFitness (const GEP::System::Individual& individual) const;
 
 private:

@@ -58,6 +58,12 @@ GEP::System::Population TestWorld::generatePopulation ()
   return population;
 }
 
+/* Get fitness direction type */
+TestWorld::FitnessType_t TestWorld::getFitnessType () const
+{
+  return FitnessType::HIGHER_IS_BETTER;
+}
+
 /* Get random number */
 double TestWorld::computeFitness (const GEP::System::Individual& individual) const
 {

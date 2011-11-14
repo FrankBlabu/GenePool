@@ -31,16 +31,13 @@ namespace System {
 class PopulationFitnessIndex
 {
 public:
-  PopulationFitnessIndex (const Population& population, FitnessOperatorPtr fitness_operator);
-
   typedef QMap<Object::Id, double> FitnessMap;
+
+public:
   PopulationFitnessIndex (const Population& population, const FitnessMap& fitness_map);
 
   int getSize () const;
   const Individual& getIndividual (int index) const;
-
-private:
-  void computeIndexMap (const Population& population);
 
 private:
   const Population& _population;

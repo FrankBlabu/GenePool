@@ -23,19 +23,14 @@ namespace {
 class PopulationFitnessIndexComparator
 {
 public:
-  PopulationFitnessIndexComparator (const Controller* controller);
+  typedef PopulationFitnessIndex::FitnessMap FitnessMap;
+  PopulationFitnessIndexComparator (const FitnessMap& fitness_map);
 
   inline bool operator () (const Object::Id& id1, const Object::Id& id2) const;
 
 private:
-  const Controller* _controller;
+  const FitnessMap& _fitness_map;
 };
-
-/* Constructor */
-PopulationFitnessIndexComparator::PopulationFitnessIndexComparator (const Controller* controller)
-  : _controller (controller)
-{
-}
 
 /* Constructor */
 PopulationFitnessIndexComparator::PopulationFitnessIndexComparator (const FitnessMap& fitness_map)
@@ -46,7 +41,13 @@ PopulationFitnessIndexComparator::PopulationFitnessIndexComparator (const Fitnes
 /* Comparison operator */
 inline bool PopulationFitnessIndexComparator::operator () (const Object::Id& id1, const Object::Id& id2) const
 {
-  return _controller->getFitness (id1) > _controller->getFitness (id2);
+  FitnessMap::ConstIterator i = _fitness_map.find (id1);
+  Q_ASSERT (i != _fitness_map.end ());
+
+  FitnessMap::ConstIterator j = _fitness_map.find (id2);
+  Q_ASSERT (j != _fitness_map.end ());
+
+  return i.value () > j.value ();
 }
 
 }
@@ -57,20 +58,16 @@ inline bool PopulationFitnessIndexComparator::operator () (const Object::Id& id1
 //#**************************************************************************
 
 /* Constructor */
-PopulationFitnessIndex::PopulationFitnessIndex (const Population& population, FitnessOperatorPtr fitness_operator)
-  : _population (population)
-{
-  computeIndexMap (population);
-
-  PopulationFitnessIndexComparator comparator (population, fitness_operator);
-  qSort (_sorted_ids.begin (), _sorted_ids.end (), comparator);
-}
-
-/* Constructor */
 PopulationFitnessIndex::PopulationFitnessIndex (const Population& population, const FitnessMap& fitness_map)
   : _population (population)
 {
-  computeIndexMap (population);
+  int count = 0;
+  for (Population::ConstIterator i = population.begin (); i != population.end (); ++i, ++count)
+    {
+      const Individual& individual = *i;
+      _sorted_ids.append (individual.getId ());
+      _index_map.insert (individual.getId (), count);
+    }
 
   PopulationFitnessIndexComparator comparator (fitness_map);
   qSort (_sorted_ids.begin (), _sorted_ids.end (), comparator);
@@ -97,19 +94,6 @@ int PopulationFitnessIndex::getSize () const
   return _population.getSize ();
 }
 
-/*
- * Compute internal index map
- */
-void PopulationFitnessIndex::computeIndexMap (const Population& population)
-{
-  int count = 0;
-  for (Population::ConstIterator i = population.begin (); i != population.end (); ++i, ++count)
-    {
-      const Individual& individual = *i;
-      _sorted_ids.append (individual.getId ());
-      _index_map.insert (individual.getId (), count);
-    }
-}
 
 }
 }
