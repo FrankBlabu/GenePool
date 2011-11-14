@@ -65,6 +65,8 @@ public:
 public:
   World ();
 
+  const QList<Area>& getAreas ()  const;
+
   const QSizeF& getFieldSize () const;
   void setFieldSize (const QSizeF& field_size);
 
@@ -86,7 +88,7 @@ public:
   virtual void generateWorld ();
   virtual GEP::System::Population generatePopulation ();
 
-  const QList<Area>& getAreas ()  const;
+  virtual FitnessType_t getFitnessType () const;
   virtual double computeFitness (const Individual& individual) const;
 
   void layoutAreas (const System::Individual& individual, QList<Area>* areas) const;

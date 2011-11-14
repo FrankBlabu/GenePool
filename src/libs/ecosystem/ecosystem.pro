@@ -11,6 +11,8 @@ TEMPLATE = lib
 CONFIG  += sharedlib thread
 DESTDIR = $$(HOME)/lib
 
+INCLUDEPATH += /local/applications/boost/include
+
 SOURCES += \
     gep_system_controller.cpp \
     gep_system_crossover_operator.cpp \

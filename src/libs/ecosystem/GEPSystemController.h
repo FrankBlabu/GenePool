@@ -44,10 +44,10 @@ public:
   TerminationOperatorPtr getTerminationOperator () const;
   void setTerminationOperator (TerminationOperatorPtr termination_operator);
 
-  struct FitnessType { enum Type_t { MINIMUM, MAXIMUM, AVERAGE }; };
-  typedef FitnessType::Type_t FitnessType_t;
+  struct FitnessStatistics { enum Type_t { MINIMUM, MAXIMUM, AVERAGE }; };
+  typedef FitnessStatistics::Type_t FitnessStatistics_t;
 
-  virtual double getCurrentFitness (FitnessType_t type) const = 0;
+  virtual double getCurrentFitness (FitnessStatistics_t type) const = 0;
   virtual int getCurrentStep () const = 0;
   virtual int getNumberOfSteps () const = 0;
 
@@ -55,6 +55,7 @@ public:
   virtual bool executeNextStep () = 0;
 
   virtual const Population& getPopulation () const = 0;
+  virtual double getFitness (const Individual& individual) const = 0;
 
 protected:
   World* _world;
@@ -75,7 +76,7 @@ class SinglePopulationController : public Controller
 public:
   SinglePopulationController (World* world);
 
-  virtual double getCurrentFitness (Controller::FitnessType_t type) const;
+  virtual double getCurrentFitness (FitnessStatistics_t type) const;
   virtual int getCurrentStep () const;
   virtual int getNumberOfSteps () const;
 
@@ -84,6 +85,8 @@ public:
 
   virtual const Population& getPopulation () const;
   void setPopulation (const Population& population);
+
+  virtual double getFitness (const Individual& individual) const;
 
 private:
   void updateFitness ();
@@ -96,6 +99,9 @@ private:
   double _minimum_fitness;
   double _maximum_fitness;
   double _average_fitness;
+
+  typedef QMap<Object::Id, double> FitnessMap;
+  FitnessMap _fitness;
 };
 
 

@@ -400,6 +400,12 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
     }
 }
 
+/* Return type of fitness this world provides */
+World::FitnessType_t World::getFitnessType () const
+{
+  return FitnessType::HIGHER_IS_WORSE;
+}
+
 /* Compute fitness of a single individual */
 double World::computeFitness (const Individual& individual) const
 {
@@ -427,7 +433,7 @@ double World::computeFitness (const Individual& individual) const
         }
     }
 
-  return 1000 - number_of_intersections;
+  return number_of_intersections;
 }
 
 /*

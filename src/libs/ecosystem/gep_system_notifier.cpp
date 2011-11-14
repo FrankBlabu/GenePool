@@ -25,13 +25,13 @@ ControllerStepNotification::ControllerStepNotification ()
 ControllerStepNotification::ControllerStepNotification (Controller* controller)
   : _step (controller->getCurrentStep ())
 {
-  _fitness.insert (Controller::FitnessType::MINIMUM, controller->getCurrentFitness (Controller::FitnessType::MINIMUM));
-  _fitness.insert (Controller::FitnessType::AVERAGE, controller->getCurrentFitness (Controller::FitnessType::AVERAGE));
-  _fitness.insert (Controller::FitnessType::MAXIMUM, controller->getCurrentFitness (Controller::FitnessType::MAXIMUM));
+  _fitness.insert (Controller::FitnessStatistics::MINIMUM, controller->getCurrentFitness (Controller::FitnessStatistics::MINIMUM));
+  _fitness.insert (Controller::FitnessStatistics::AVERAGE, controller->getCurrentFitness (Controller::FitnessStatistics::AVERAGE));
+  _fitness.insert (Controller::FitnessStatistics::MAXIMUM, controller->getCurrentFitness (Controller::FitnessStatistics::MAXIMUM));
 }
 
 /* Get fitness of the given type */
-double ControllerStepNotification::getFitness (Controller::FitnessType_t type) const
+double ControllerStepNotification::getFitness (Controller::FitnessStatistics_t type) const
 {
   FitnessMap::ConstIterator pos = _fitness.find (type);
   Q_ASSERT (pos != _fitness.end ());

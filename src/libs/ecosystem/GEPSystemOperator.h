@@ -23,6 +23,9 @@ public:
     Operator (World* world);
 
 protected:
+    World* getWorld () const;
+
+protected:
     World* _world;
 };
 

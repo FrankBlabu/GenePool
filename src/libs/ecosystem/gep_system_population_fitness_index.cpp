@@ -23,26 +23,18 @@ namespace {
 class PopulationFitnessIndexComparator
 {
 public:
-  typedef QSharedPointer<FitnessOperator> FitnessOperatorPtr;
-  PopulationFitnessIndexComparator (const Population& population, FitnessOperatorPtr fitness_operator);
-
-  typedef QMap<Object::Id, double> FitnessMap;
-  PopulationFitnessIndexComparator (const FitnessMap& fitness_map);
+  PopulationFitnessIndexComparator (const Controller* controller);
 
   inline bool operator () (const Object::Id& id1, const Object::Id& id2) const;
 
 private:
-  FitnessMap _fitness_map;
+  const Controller* _controller;
 };
 
 /* Constructor */
-PopulationFitnessIndexComparator::PopulationFitnessIndexComparator (const Population& population, FitnessOperatorPtr fitness_operator)
+PopulationFitnessIndexComparator::PopulationFitnessIndexComparator (const Controller* controller)
+  : _controller (controller)
 {
-  for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
-    {
-      const Individual& individual = *i;
-      _fitness_map.insert (individual.getId (), fitness_operator->compute (individual));
-    }
 }
 
 /* Constructor */
@@ -54,13 +46,7 @@ PopulationFitnessIndexComparator::PopulationFitnessIndexComparator (const Fitnes
 /* Comparison operator */
 inline bool PopulationFitnessIndexComparator::operator () (const Object::Id& id1, const Object::Id& id2) const
 {
-  FitnessMap::const_iterator i = _fitness_map.find (id1);
-  Q_ASSERT (i != _fitness_map.end ());
-
-  FitnessMap::const_iterator j = _fitness_map.find (id2);
-  Q_ASSERT (j != _fitness_map.end ());
-
-  return i.value () > j.value ();
+  return _controller->getFitness (id1) > _controller->getFitness (id2);
 }
 
 }

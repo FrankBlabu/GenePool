@@ -31,55 +31,10 @@ FitnessOperator::~FitnessOperator ()
 }
 
 /* Initialite fitness computation for a population */
-void FitnessOperator::initialize (const Population& population)
+void FitnessOperator::initialize (const FitnessMap& fitness_map)
 {
-  Q_UNUSED (population);
+  Q_UNUSED (fitness_map);
 }
-
-
-//#**************************************************************************
-// CLASS GEP::System::CachedFitnessOperator
-//#**************************************************************************
-
-/* Constructor */
-CachedFitnessOperator::CachedFitnessOperator (World* world)
-  : FitnessOperator (world)
-{
-}
-
-/* Destructor */
-CachedFitnessOperator::~CachedFitnessOperator ()
-{
-}
-
-/* Initialite fitness computation for a population */
-void CachedFitnessOperator::initialize (const Population& population)
-{
-  Q_ASSERT (population.getSize () > 0);
-
-  _fitness_cache.clear ();
-
-  for (Population::ConstIterator i = population.begin (); i != population.end (); ++i)
-    {
-      const Individual& individual = *i;
-      _fitness_cache.insert (individual.getId (), _world->computeFitness (individual));
-    }
-}
-
-/* Normalize cached fitness values */
-void CachedFitnessOperator::normalizeFitness ()
-{
-  Q_ASSERT (!_fitness_cache.isEmpty ());
-
-  double fitness_sum = 0.0;
-
-  for (FitnessMap::ConstIterator i = _fitness_cache.begin (); i != _fitness_cache.end (); ++i)
-    fitness_sum += i.value ();
-
-  for (FitnessMap::Iterator i = _fitness_cache.begin (); i != _fitness_cache.end (); ++i)
-    i.value () /= fitness_sum;
-}
-
 
 //#**************************************************************************
 // CLASS GEP::System::LinearStaticScaledFitnessOperator
@@ -87,9 +42,11 @@ void CachedFitnessOperator::normalizeFitness ()
 
 /* Constructor */
 LinearStaticScaledFitnessOperator::LinearStaticScaledFitnessOperator (World* world, double offset, double scale)
-  : CachedFitnessOperator (world),
-    _offset (offset),
-    _scale  (scale)
+  : FitnessOperator (world),
+    _offset          (offset),
+    _scale           (scale),
+    _minimum_fitness (0.0),
+    _maximum_fitness (0.0)
 {
 }
 
@@ -99,19 +56,23 @@ LinearStaticScaledFitnessOperator::~LinearStaticScaledFitnessOperator ()
 }
 
 /* Initialite fitness computation for a population */
-void LinearStaticScaledFitnessOperator::initialize (const Population& population)
+void LinearStaticScaledFitnessOperator::initialize (const FitnessMap& fitness_map)
 {
-  CachedFitnessOperator::initialize (population);
-  normalizeFitness ();
+  _minimum_fitness = -std::numeric_limits<double>::max ();
+  _maximum_fitness = std::numeric_limits<double>::max ();
+
+  for (FitnessMap::ConstIterator i = fitness_map.begin (); i != fitness_map.end (); ++i)
+    {
+      double fitness = _offset + i.value () * _scale;
+      _minimum_fitness = qMin (_minimum_fitness, fitness);
+      _maximum_fitness = qMax (_maximum_fitness, fitness);
+    }
 }
 
 /* Compute fitness for a population */
-double LinearStaticScaledFitnessOperator::compute (const Individual& individual)
+double LinearStaticScaledFitnessOperator::compute (double fitness) const
 {
-  FitnessMap::const_iterator pos = _fitness_cache.find (individual.getId ());
-  Q_ASSERT (pos != _fitness_cache.end ());
-
-  return _offset + pos.value () * _scale;
+  return ((_offset + fitness * _scale) - _minimum_fitness) / (_maximum_fitness - _minimum_fitness);
 }
 
 
@@ -121,8 +82,10 @@ double LinearStaticScaledFitnessOperator::compute (const Individual& individual)
 
 /* Constructor */
 LinearDynamicScaledFitnessOperator::LinearDynamicScaledFitnessOperator (World* world, double scale)
-  : CachedFitnessOperator  (world),
-    _scale (scale)
+  : FitnessOperator (world),
+    _scale           (scale),
+    _minimum_fitness (0.0),
+    _maximum_fitness (0.0)
 {
 }
 
@@ -132,19 +95,23 @@ LinearDynamicScaledFitnessOperator::~LinearDynamicScaledFitnessOperator ()
 }
 
 /* Initialite fitness computation for a population */
-void LinearDynamicScaledFitnessOperator::initialize (const Population& population)
+void LinearDynamicScaledFitnessOperator::initialize (const FitnessMap& fitness_map)
 {
-  CachedFitnessOperator::initialize (population);
-  normalizeFitness ();
+  _minimum_fitness = -std::numeric_limits<double>::max ();
+  _maximum_fitness = std::numeric_limits<double>::max ();
+
+  for (FitnessMap::ConstIterator i = fitness_map.begin (); i != fitness_map.end (); ++i)
+    {
+      double fitness = i.value () * i.value () * _scale;
+      _minimum_fitness = qMin (_minimum_fitness, fitness);
+      _maximum_fitness = qMax (_maximum_fitness, fitness);
+    }
 }
 
 /* Compute fitness for a population */
-double LinearDynamicScaledFitnessOperator::compute (const Individual& individual)
+double LinearDynamicScaledFitnessOperator::compute (double fitness) const
 {
-  FitnessMap::const_iterator pos = _fitness_cache.find (individual.getId ());
-  Q_ASSERT (pos != _fitness_cache.end ());
-
-  return pos.value () * pos.value () * _scale;
+  return ((fitness * fitness * _scale) - _minimum_fitness) / (_maximum_fitness - _minimum_fitness);
 }
 
 }

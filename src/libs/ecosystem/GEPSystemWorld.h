@@ -25,6 +25,10 @@ public:
   virtual void generateWorld () = 0;
   virtual Population generatePopulation () = 0;
 
+  struct FitnessType { enum Type_t { HIGHER_IS_BETTER, HIGHER_IS_WORSE }; };
+  typedef FitnessType::Type_t FitnessType_t;
+
+  virtual FitnessType_t getFitnessType () const = 0;
   virtual double computeFitness (const Individual& individual) const = 0;
 };
 

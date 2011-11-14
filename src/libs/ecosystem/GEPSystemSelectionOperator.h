@@ -19,6 +19,8 @@
 namespace GEP {
 namespace System {
 
+class Controller;
+
 /*
  * Base class for selection operators
  */
@@ -28,7 +30,7 @@ public:
   SelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
   virtual ~SelectionOperator ();
 
-  virtual void compute (Population& population) = 0;
+  virtual void compute (const Controller* controller, Population& population) = 0;
 
 protected:
   FitnessOperatorPtr _fitness_operator;
@@ -45,7 +47,7 @@ public:
   RouletteWheelSelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
   virtual ~RouletteWheelSelectionOperator ();
 
-  virtual void compute (Population& population);
+  virtual void compute (const Controller* controller, Population& population);
 
 private:
   struct WheelSegment
@@ -76,7 +78,7 @@ public:
   SelectionMode_t getSelectionMode () const;
   void setSelectionMode (SelectionMode_t selection_mode);
 
-  virtual void compute (Population& population);
+  virtual void compute (const Controller* controller, Population& population);
 
 private:
   SelectionMode_t _selection_mode;

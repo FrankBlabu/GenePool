@@ -5,6 +5,8 @@
  */
 
 #include "GEPSystemOperator.h"
+#include "GEPSystemController.h"
+#include "GEPSystemWorld.h"
 
 #include <QtGlobal>
 
@@ -20,6 +22,13 @@ Operator::Operator (World* world)
   : _world (world)
 {
 }
+
+/* Get world */
+World* Operator::getWorld () const
+{
+  return _world;
+}
+
 
 }
 }

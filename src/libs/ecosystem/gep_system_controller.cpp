@@ -131,19 +131,19 @@ int SinglePopulationController::getNumberOfSteps () const
 }
 
 /* Returns current fitness value */
-double SinglePopulationController::getCurrentFitness (Controller::FitnessType_t type) const
+double SinglePopulationController::getCurrentFitness (Controller::FitnessStatistics_t type) const
 {
   double fitness = 0.0;
 
   switch (type)
     {
-    case Controller::FitnessType::MINIMUM:
+    case Controller::FitnessStatistics::MINIMUM:
       fitness = _minimum_fitness;
       break;
-    case Controller::FitnessType::MAXIMUM:
+    case Controller::FitnessStatistics::MAXIMUM:
       fitness = _maximum_fitness;
       break;
-    case Controller::FitnessType::AVERAGE:
+    case Controller::FitnessStatistics::AVERAGE:
       fitness = _average_fitness;
       break;
     }
@@ -186,7 +186,7 @@ bool SinglePopulationController::executeNextStep ()
   //
   // Compute single step
   //
-  _selection_operator->compute (_population);
+  _selection_operator->compute (this, _population);
   updateFitness ();
 
   _crossover_operator->compute (_population);
@@ -198,22 +198,64 @@ bool SinglePopulationController::executeNextStep ()
   return _termination_operator->compute (_population, ++_current_step);
 }
 
+/*
+ * Return cached fitness of an individual
+ */
+double SinglePopulationController::getFitness (const Individual& individual) const
+{
+  FitnessMap::ConstIterator pos = _fitness.find (individual.getId ());
+  Q_ASSERT (pos != _fitness.end ());
+  return pos.value ();
+}
+
 
 /*
  * Compute current population fitness
  */
 void SinglePopulationController::updateFitness ()
 {
+  _fitness.clear ();
+
   _minimum_fitness = std::numeric_limits<double>::max ();
-  _maximum_fitness = 0.0;
+  _maximum_fitness = -std::numeric_limits<double>::max ();
   _average_fitness = 0.0;
 
-  _fitness_operator->initialize (_population);
+  //
+  // Compute raw fitness
+  //
+  FitnessMap raw_fitness;
+  double minimum_raw_fitness = std::numeric_limits<double>::max ();
+  double maximum_raw_fitness = -std::numeric_limits<double>::max ();
 
   for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i)
     {
       const Individual& individual = *i;
-      double fitness = _fitness_operator->compute (individual);
+      double fitness = _world->computeFitness (individual);
+
+      raw_fitness.insert (individual.getId (), fitness);
+      minimum_raw_fitness = qMin (minimum_raw_fitness, fitness);
+      maximum_raw_fitness = qMax (maximum_raw_fitness, fitness);
+    }
+
+  //
+  // Normalize raw fitness
+  //
+  for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i)
+    {
+      const Individual& individual = *i;
+
+      FitnessMap::ConstIterator pos = raw_fitness.find (individual.getId ());
+      Q_ASSERT (pos != raw_fitness.end ());
+
+      _fitness.insert (individual.getId (), (pos.value () - minimum_raw_fitness) / (maximum_raw_fitness - minimum_raw_fitness));
+    }
+
+  _fitness_operator->initialize (_fitness);
+
+  for (FitnessMap::Iterator i = _fitness.begin (); i != _fitness.end (); ++i)
+    {
+      double fitness = _fitness_operator->compute (i.value ());
+      i.value () = fitness;
 
       _minimum_fitness = qMin (_minimum_fitness, fitness);
       _maximum_fitness = qMax (_maximum_fitness, fitness);
@@ -221,6 +263,14 @@ void SinglePopulationController::updateFitness ()
     }
 
   _average_fitness /= _population.getSize ();
+
+  switch (_world->getFitnessType ())
+    {
+    case World::FitnessType::HIGHER_IS_BETTER:
+      break;
+    case World::FitnessType::HIGHER_IS_WORSE:
+      break;
+    }
 }
 
 }

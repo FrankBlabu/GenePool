@@ -24,65 +24,53 @@ public:
     FitnessOperator (World* world);
     virtual ~FitnessOperator ();
 
-    virtual void initialize (const Population& population);
-    virtual double compute (const Individual& individual) = 0;
+    typedef QMap<Object::Id, double> FitnessMap;
+
+    virtual void initialize (const FitnessMap& fitness_map);
+    virtual double compute (double fitness) const = 0;
 };
 
 typedef QSharedPointer<FitnessOperator> FitnessOperatorPtr;
-
-/*
- * Base class for cached fitness operators
- */
-class CachedFitnessOperator : public FitnessOperator
-{
-public:
-    CachedFitnessOperator (World* world);
-    virtual ~CachedFitnessOperator ();
-
-    virtual void initialize (const Population& population);
-    virtual double compute (const Individual& individual) = 0;
-
-protected:
-    void normalizeFitness ();
-
-protected:
-    typedef QMap<Object::Id, double> FitnessMap;
-    FitnessMap _fitness_cache;
-};
 
 
 /*
  * Linear static scaled fitness operator
  */
-class LinearStaticScaledFitnessOperator : public CachedFitnessOperator
+class LinearStaticScaledFitnessOperator : public FitnessOperator
 {
 public:
   LinearStaticScaledFitnessOperator (World* world, double offset, double scale);
   virtual ~LinearStaticScaledFitnessOperator ();
 
-  virtual void initialize (const Population& population);
-  virtual double compute (const Individual& individual);
+  virtual void initialize (const FitnessMap& fitness_map);
+  virtual double compute (double fitness) const;
 
 private:
   double _offset;
   double _scale;
+
+  double _minimum_fitness;
+  double _maximum_fitness;
 };
 
 
 /*
  * Linear dynamic scaled fitness operator
  */
-class LinearDynamicScaledFitnessOperator : public CachedFitnessOperator
+class LinearDynamicScaledFitnessOperator : public FitnessOperator
 {
 public:
   LinearDynamicScaledFitnessOperator (World* world, double scale);
   virtual ~LinearDynamicScaledFitnessOperator ();
 
-  virtual void initialize (const Population& population);
-  virtual double compute (const Individual& individual);
+  virtual void initialize (const FitnessMap& fitness_map);
+  virtual double compute (double fitness) const;
 
 private:
   double _scale;
+
+  double _minimum_fitness;
+  double _maximum_fitness;
 };
 
 

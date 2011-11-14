@@ -63,7 +63,7 @@ RouletteWheelSelectionOperator::~RouletteWheelSelectionOperator ()
 }
 
 /* Perform selection */
-void RouletteWheelSelectionOperator::compute (Population& population)
+void RouletteWheelSelectionOperator::compute (const Controller* controller, Population& population)
 {
   SelectionNotificationList notifications;
 
@@ -77,7 +77,7 @@ void RouletteWheelSelectionOperator::compute (Population& population)
     {
       const Individual& individual = *i;
 
-      double fitness = _fitness_operator->compute (individual);
+      double fitness = controller->getFitness (individual);
 
       fitness_sum += fitness;
       segments.append (WheelSegment (individual.getId (), fitness_sum));
@@ -155,7 +155,7 @@ void RemainderStochasticSamplingSelectionOperator::setSelectionMode (SelectionMo
 
 
 /* Perform selection */
-void RemainderStochasticSamplingSelectionOperator::compute (Population& population)
+void RemainderStochasticSamplingSelectionOperator::compute (const Controller* controller, Population& population)
 {
   SelectionNotificationList notifications;
 
@@ -170,7 +170,7 @@ void RemainderStochasticSamplingSelectionOperator::compute (Population& populati
     {
       const Individual& individual = *i;
 
-      double fitness = _fitness_operator->compute (individual);
+      double fitness = controller->getFitness (individual);
 
       fitness_map.insert (individual.getId (), fitness);
       fitness_sum += fitness;

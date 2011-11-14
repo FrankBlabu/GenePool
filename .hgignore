@@ -1,8 +1,5 @@
 syntax: glob
 
+Makefile
+*.user
 *~
-*.o
-*-build-desktop*
-src/bin/*
-*.pro.user*
-

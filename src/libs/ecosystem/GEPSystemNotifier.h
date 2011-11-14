@@ -114,12 +114,12 @@ public:
   ControllerStepNotification (Controller* controller);
 
   int getStep () const { return _step; }
-  double getFitness (Controller::FitnessType_t type) const;
+  double getFitness (Controller::FitnessStatistics_t type) const;
 
 private:
   int _step;
 
-  typedef QMap<Controller::FitnessType_t, double> FitnessMap;
+  typedef QMap<Controller::FitnessStatistics_t, double> FitnessMap;
   FitnessMap _fitness;
 };
 
