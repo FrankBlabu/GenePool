@@ -3,3 +3,6 @@ syntax: glob
 Makefile
 *.user
 *~
+*.o
+*//moc*.cpp
+*//moc*.o

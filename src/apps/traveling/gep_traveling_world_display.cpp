@@ -89,7 +89,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
 
       for (int i=0; i < individual.getSize (); ++i)
         {
-          QPointF pos = (*_world)[individual[i].toInt ()];
+          QPointF pos = (*_world)[individual[i]];
 
           line.append (QPointF ((pos.x () - range_x.first) * scale_x,
                                 (pos.y () - range_y.first) * scale_y));

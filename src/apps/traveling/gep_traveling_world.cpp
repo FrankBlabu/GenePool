@@ -25,8 +25,7 @@ World::World ()
   : GEP::System::World (),
     _number_of_cities (0),
     _population_size  (0),
-    _cities           (),
-    _fitness_bias     (0.0)
+    _cities           ()
 {
 }
 
@@ -72,17 +71,6 @@ void World::generateWorld ()
   //
   for (int i=0; i < _number_of_cities; ++i)
     _cities.append (QPointF (random_number_generator.generate (), random_number_generator.generate ()));
-
-  //
-  // Compute largest city distance to get a fitness bias
-  //
-  double max_distance = 0.0;
-
-  for (int i=0; i < _cities.size (); ++i)
-    for (int j=i+1; j < _cities.size (); ++j)
-      max_distance = qMax (max_distance, getDistance (i, j));
-
-  _fitness_bias = _cities.size () * max_distance;
 }
 
 /* Generate random world population */
@@ -124,6 +112,12 @@ const QPointF& World::operator[] (int index) const
   return _cities[index];
 }
 
+/* Get the directory type of the fitness value */
+World::FitnessType_t World::getFitnessType () const
+{
+  return FitnessType::HIGHER_IS_WORSE;
+}
+
 /* Compute fitness of a single individual */
 double World::computeFitness (const Individual& individual) const
 {
@@ -132,9 +126,9 @@ double World::computeFitness (const Individual& individual) const
   double distance = 0.0;
 
   for (int i=0; i + 1 < individual.getSize (); ++i)
-    distance += getDistance (individual[i].toInt (), individual[i + 1].toInt ());
+    distance += getDistance (individual[i], individual[i + 1]);
 
-  return _fitness_bias - distance;
+  return distance;
 }
 
 /* Compute distance between two cities */
