@@ -15,6 +15,7 @@ namespace GEP {
 
 namespace System {
 class Controller;
+class IndividualInfo;
 }
 
 namespace Scope {
@@ -50,6 +51,7 @@ public:
 
 protected:
   System::Controller* getController () const;
+  QString getFitnessRepresentation (const System::IndividualInfo& info) const;
 
 private slots:
   void slotSelectionChanged ();

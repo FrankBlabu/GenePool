@@ -27,13 +27,10 @@ class Controller;
 class SelectionOperator : public Operator
 {
 public:
-  SelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
+  SelectionOperator ();
   virtual ~SelectionOperator ();
 
   virtual void compute (const Controller* controller, Population& population) = 0;
-
-protected:
-  FitnessOperatorPtr _fitness_operator;
 };
 
 typedef QSharedPointer<SelectionOperator> SelectionOperatorPtr;
@@ -44,7 +41,7 @@ typedef QSharedPointer<SelectionOperator> SelectionOperatorPtr;
 class RouletteWheelSelectionOperator : public SelectionOperator
 {
 public:
-  RouletteWheelSelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
+  RouletteWheelSelectionOperator ();
   virtual ~RouletteWheelSelectionOperator ();
 
   virtual void compute (const Controller* controller, Population& population);
@@ -69,7 +66,7 @@ private:
 class RemainderStochasticSamplingSelectionOperator : public SelectionOperator
 {
 public:
-  RemainderStochasticSamplingSelectionOperator (World* world, FitnessOperatorPtr fitness_operator);
+  RemainderStochasticSamplingSelectionOperator ();
   virtual ~RemainderStochasticSamplingSelectionOperator ();
 
   struct SelectionMode { enum Type_t { TAKE_AWAY, PUT_BACK }; };

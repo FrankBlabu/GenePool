@@ -16,16 +16,18 @@
 namespace GEP {
 namespace System {
 
+class Controller;
+
 /*
  * Base class for Mutation operators
  */
 class MutationOperator : public Operator
 {
 public:
-    MutationOperator (World* world);
+    MutationOperator ();
     virtual ~MutationOperator ();
 
-    virtual void compute (Population& population) = 0;
+    virtual void compute (const Controller* controller, Population& population) = 0;
 };
 
 typedef QSharedPointer<MutationOperator> MutationOperatorPtr;
@@ -37,10 +39,10 @@ typedef QSharedPointer<MutationOperator> MutationOperatorPtr;
 class SwappingMutationOperator : public MutationOperator
 {
 public:
-    SwappingMutationOperator (World* world, double probability);
+    SwappingMutationOperator (double probability);
     virtual ~SwappingMutationOperator ();
 
-    virtual void compute (Population& population);
+    virtual void compute (const Controller* controller, Population& population);
 
 private:
     RandomNumberGenerator _random_number_generator;

@@ -4,9 +4,9 @@
  * Frank Cieslok, Aug. 2011
  */
 
+#include "GEPSystemController.h"
 #include "GEPSystemCrossoverOperator.h"
 #include "GEPSystemNotifier.h"
-#include "GEPSystemWorld.h"
 
 #include <QtCore/QHash>
 #include <math.h>
@@ -20,8 +20,8 @@ namespace System {
 //#**************************************************************************
 
 /* Constructor */
-CrossoverOperator::CrossoverOperator (World* world)
-  : Operator (world)
+CrossoverOperator::CrossoverOperator ()
+  : Operator ()
 {
 }
 
@@ -36,8 +36,8 @@ CrossoverOperator::~CrossoverOperator ()
 //#**************************************************************************
 
 /* Constructor */
-PartiallyMatchedCrossoverOperator::PartiallyMatchedCrossoverOperator (World* world)
-  : CrossoverOperator (world)
+PartiallyMatchedCrossoverOperator::PartiallyMatchedCrossoverOperator ()
+  : CrossoverOperator ()
 {
 }
 
@@ -48,7 +48,7 @@ PartiallyMatchedCrossoverOperator::~PartiallyMatchedCrossoverOperator ()
 /*
  * Compute crossover set
 */
-void PartiallyMatchedCrossoverOperator::compute (Population& population)
+void PartiallyMatchedCrossoverOperator::compute (const Controller* controller, Population& population)
 {
   CrossoverNotificationList notifications;
 
@@ -73,8 +73,8 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
       Q_ASSERT (individual1.getSize () == individual2.getSize ());
       Q_ASSERT (individual1.getSize () > 2);
 
-      IndividualInfo before_first (individual1, _world->computeFitness (individual1));
-      IndividualInfo before_second (individual2, _world->computeFitness (individual2));
+      IndividualInfo before_first (individual1, controller->getFitness (individual1));
+      IndividualInfo before_second (individual2, controller->getFitness (individual2));
 
       int size = individual1.getSize ();
 
@@ -113,8 +113,8 @@ void PartiallyMatchedCrossoverOperator::compute (Population& population)
           individual2[pos] = value2;
         }
 
-      IndividualInfo after_first (individual1, _world->computeFitness (individual1));
-      IndividualInfo after_second (individual2, _world->computeFitness (individual2));
+      IndividualInfo after_first (individual1);
+      IndividualInfo after_second (individual2);
 
       notifications.append (CrossoverNotification (before_first, before_second, after_first, after_second));
     }

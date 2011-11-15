@@ -140,7 +140,7 @@ void SelectionOperatorDisplay::slotSelection (const System::SelectionNotificatio
 
       item->setText (COLUMN_ID, QString::number (selected.getId ()));
       item->setText (COLUMN_CONTENT, selected.getRepresentation ());
-      item->setText (COLUMN_FITNESS, QString::number (selected.getFitness (), 'g', 8));
+      item->setText (COLUMN_FITNESS, getFitnessRepresentation (selected));
 
       QString selected_text = item->text (COLUMN_NEW_IDS);
       if (selected_text.isEmpty ())

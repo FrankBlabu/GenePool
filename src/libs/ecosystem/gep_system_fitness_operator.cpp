@@ -20,8 +20,8 @@ namespace System {
 //#**************************************************************************
 
 /* Constructor */
-FitnessOperator::FitnessOperator (World* world)
-  : Operator (world)
+FitnessOperator::FitnessOperator ()
+  : Operator ()
 {
 }
 
@@ -41,8 +41,8 @@ void FitnessOperator::initialize (const FitnessMap& fitness_map)
 //#**************************************************************************
 
 /* Constructor */
-LinearStaticScaledFitnessOperator::LinearStaticScaledFitnessOperator (World* world, double offset, double scale)
-  : FitnessOperator (world),
+LinearStaticScaledFitnessOperator::LinearStaticScaledFitnessOperator (double offset, double scale)
+  : FitnessOperator (),
     _offset          (offset),
     _scale           (scale),
     _minimum_fitness (0.0),
@@ -58,8 +58,8 @@ LinearStaticScaledFitnessOperator::~LinearStaticScaledFitnessOperator ()
 /* Initialite fitness computation for a population */
 void LinearStaticScaledFitnessOperator::initialize (const FitnessMap& fitness_map)
 {
-  _minimum_fitness = -std::numeric_limits<double>::max ();
-  _maximum_fitness = std::numeric_limits<double>::max ();
+  _minimum_fitness = std::numeric_limits<double>::max ();
+  _maximum_fitness = -std::numeric_limits<double>::max ();
 
   for (FitnessMap::ConstIterator i = fitness_map.begin (); i != fitness_map.end (); ++i)
     {
@@ -81,8 +81,8 @@ double LinearStaticScaledFitnessOperator::compute (double fitness) const
 //#**************************************************************************
 
 /* Constructor */
-LinearDynamicScaledFitnessOperator::LinearDynamicScaledFitnessOperator (World* world, double scale)
-  : FitnessOperator (world),
+LinearDynamicScaledFitnessOperator::LinearDynamicScaledFitnessOperator (double scale)
+  : FitnessOperator (),
     _scale           (scale),
     _minimum_fitness (0.0),
     _maximum_fitness (0.0)
@@ -97,8 +97,8 @@ LinearDynamicScaledFitnessOperator::~LinearDynamicScaledFitnessOperator ()
 /* Initialite fitness computation for a population */
 void LinearDynamicScaledFitnessOperator::initialize (const FitnessMap& fitness_map)
 {
-  _minimum_fitness = -std::numeric_limits<double>::max ();
-  _maximum_fitness = std::numeric_limits<double>::max ();
+  _minimum_fitness = std::numeric_limits<double>::max ();
+  _maximum_fitness = -std::numeric_limits<double>::max ();
 
   for (FitnessMap::ConstIterator i = fitness_map.begin (); i != fitness_map.end (); ++i)
     {

@@ -25,8 +25,12 @@ class Individual;
 class IndividualInfo
 {
 public:
-  IndividualInfo (const Individual& individual, double fitness)
-    : _id (individual.getId ()), _representation (individual.toString ()), _fitness (fitness) {}
+  static const double UNKNOWN_FITNESS;
+
+public:
+  IndividualInfo (const Individual& individual);
+  IndividualInfo (const Individual& individual, double fitness);
+  IndividualInfo (const IndividualInfo& toCopy);
 
   const Object::Id& getId () const { return _id; }
   const QString& getRepresentation () const { return _representation; }
@@ -114,13 +118,11 @@ public:
   ControllerStepNotification (Controller* controller);
 
   int getStep () const { return _step; }
-  double getFitness (Controller::FitnessStatistics_t type) const;
+  double getAverageFitness () const { return _average_fitness; }
 
 private:
   int _step;
-
-  typedef QMap<Controller::FitnessStatistics_t, double> FitnessMap;
-  FitnessMap _fitness;
+  double _average_fitness;
 };
 
 /*

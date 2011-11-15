@@ -18,15 +18,8 @@ namespace System {
 //#**************************************************************************
 
 /* Constructor */
-Operator::Operator (World* world)
-  : _world (world)
+Operator::Operator ()
 {
-}
-
-/* Get world */
-World* Operator::getWorld () const
-{
-  return _world;
 }
 
 

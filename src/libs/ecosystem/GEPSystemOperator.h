@@ -7,8 +7,6 @@
 #ifndef __GEP_SYSTEM_OPERATOR_H__
 #define __GEP_SYSTEM_OPERATOR_H__
 
-#include "GEPSystemWorld.h"
-
 #include <QtCore/QSharedPointer>
 
 namespace GEP {
@@ -20,13 +18,7 @@ namespace System {
 class Operator
 {
 public:
-    Operator (World* world);
-
-protected:
-    World* getWorld () const;
-
-protected:
-    World* _world;
+    Operator ();
 };
 
 }

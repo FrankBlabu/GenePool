@@ -129,9 +129,9 @@ void MutationOperatorDisplay::slotMutation (const System::MutationNotificationLi
 
       item->setText (COLUMN_ID, QString::number (before.getId ()));
       item->setText (COLUMN_BEFORE, before.getRepresentation ());
-      item->setText (COLUMN_FITNESS_BEFORE, QString::number (before.getFitness (), 'g', 8));
+      item->setText (COLUMN_FITNESS_BEFORE, getFitnessRepresentation (before));
       item->setText (COLUMN_AFTER, after.getRepresentation ());
-      item->setText (COLUMN_FITNESS_AFTER, QString::number (after.getFitness (), 'g', 8));
+      item->setText (COLUMN_FITNESS_AFTER, getFitnessRepresentation (after));
     }
 }
 

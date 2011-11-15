@@ -14,8 +14,8 @@ namespace System {
 //#**************************************************************************
 
 /* Constructor */
-TerminationOperator::TerminationOperator (World* world)
-: Operator (world)
+TerminationOperator::TerminationOperator ()
+: Operator ()
 {
 }
 
@@ -29,8 +29,8 @@ TerminationOperator::~TerminationOperator ()
 //#**************************************************************************
 
 /* Constructor */
-FixedStepTerminationOperator::FixedStepTerminationOperator (World* world, int steps)
-  : TerminationOperator (world),
+FixedStepTerminationOperator::FixedStepTerminationOperator (int steps)
+  : TerminationOperator (),
     _steps              (steps)
 {
 }
@@ -51,8 +51,9 @@ int FixedStepTerminationOperator::getNumberOfSteps () const
 /*
  * Compute if the algorithm in done
  */
-bool FixedStepTerminationOperator::compute (const Population& population, int step)
+bool FixedStepTerminationOperator::compute (const Controller* controller, const Population& population, int step)
 {
+  Q_UNUSED (controller);
   Q_UNUSED (population);
   return step >= _steps;
 }

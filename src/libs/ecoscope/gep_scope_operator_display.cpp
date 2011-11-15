@@ -85,6 +85,13 @@ System::Controller* OperatorDisplay::getController () const
   return _controller;
 }
 
+/* Create representation for an individuals fitness value */
+QString OperatorDisplay::getFitnessRepresentation (const System::IndividualInfo& info) const
+{
+  return info.getFitness () != System::IndividualInfo::UNKNOWN_FITNESS ?
+        QString::number (info.getFitness (), 'g', 8) : QString ("-");
+}
+
 /* Called if the item selection changed */
 void OperatorDisplay::slotSelectionChanged ()
 {

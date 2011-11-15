@@ -17,8 +17,8 @@ namespace System {
 //#**************************************************************************
 
 /* Constructor */
-MutationOperator::MutationOperator (World* world)
-  : Operator (world)
+MutationOperator::MutationOperator ()
+  : Operator ()
 {
 }
 
@@ -32,8 +32,8 @@ MutationOperator::~MutationOperator ()
 //#**************************************************************************
 
 /* Constructor */
-SwappingMutationOperator::SwappingMutationOperator (World* world, double probability)
-  : MutationOperator (world),
+SwappingMutationOperator::SwappingMutationOperator (double probability)
+  : MutationOperator (),
     _probability (probability)
 {
 }
@@ -44,7 +44,7 @@ SwappingMutationOperator::~SwappingMutationOperator ()
 }
 
 /* Mutate population */
-void SwappingMutationOperator::compute (Population& population)
+void SwappingMutationOperator::compute (const Controller* controller, Population& population)
 {
   MutationNotificationList notifications;
 
@@ -53,7 +53,7 @@ void SwappingMutationOperator::compute (Population& population)
       Individual& individual = population[i];
       int size = individual.getSize ();
 
-      IndividualInfo before (individual, _world->computeFitness (individual));
+      IndividualInfo before (individual, controller->getFitness (individual));
 
       for (int j=0; j < size; ++j)
         {
@@ -64,7 +64,7 @@ void SwappingMutationOperator::compute (Population& population)
             }
         }
 
-      IndividualInfo after (individual, _world->computeFitness (individual));
+      IndividualInfo after (individual);
       notifications.append (MutationNotification (before, after));
     }
 

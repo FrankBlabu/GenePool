@@ -19,16 +19,18 @@
 namespace GEP {
 namespace System {
 
+class Controller;
+
 /*
  * Base class for Crossover operators
  */
 class CrossoverOperator : public Operator
 {
 public:
-    CrossoverOperator (World* world);
+    CrossoverOperator ();
     virtual ~CrossoverOperator ();
 
-    virtual void compute (Population& population) = 0;
+    virtual void compute (const Controller* controller, Population& population) = 0;
 };
 
 typedef QSharedPointer<CrossoverOperator> CrossoverOperatorPtr;
@@ -39,10 +41,10 @@ typedef QSharedPointer<CrossoverOperator> CrossoverOperatorPtr;
 class PartiallyMatchedCrossoverOperator : public CrossoverOperator
 {
 public:
-    PartiallyMatchedCrossoverOperator (World* world);
+    PartiallyMatchedCrossoverOperator ();
     virtual ~PartiallyMatchedCrossoverOperator ();
 
-    virtual void compute (Population& population);
+    virtual void compute (const Controller* controller, Population& population);
 
 private:
     RandomNumberGenerator _random_number_generator;

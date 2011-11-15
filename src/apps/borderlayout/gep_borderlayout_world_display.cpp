@@ -56,7 +56,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
 
         case GEP::Scope::WorldDisplay::DisplayMode::BEST:
           {
-            double fitness = _world->computeFitness (individual);
+            double fitness = controller->getFitness (individual);
             if (fitness > maximum_fitness)
               {
                 _individuals.clear ();
@@ -68,7 +68,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
 
         case GEP::Scope::WorldDisplay::DisplayMode::WORST:
           {
-            double fitness = _world->computeFitness (individual);
+            double fitness = controller->getFitness (individual);
             if (fitness < minimum_fitness)
               {
                 _individuals.clear ();

@@ -9,8 +9,42 @@
 #include "GEPSystemNotifier.h"
 #include "GEPSystemDebug.h"
 
+#include <limits>
+
 namespace GEP {
 namespace System {
+
+//#**************************************************************************
+// CLASS GEP::System::IndividualInfo
+//#**************************************************************************
+
+/* Unknown fitness constant [STATIC] */
+const double IndividualInfo::UNKNOWN_FITNESS = std::numeric_limits<double>::max ();
+
+/* Constructor */
+IndividualInfo::IndividualInfo (const Individual& individual)
+  : _id             (individual.getId ()),
+    _representation (individual.toString ()),
+    _fitness        (UNKNOWN_FITNESS)
+{
+}
+
+/* Constructor */
+IndividualInfo::IndividualInfo (const Individual& individual, double fitness)
+  : _id             (individual.getId ()),
+    _representation (individual.toString ()),
+    _fitness        (fitness)
+{
+}
+
+/* Copy-Constructor */
+IndividualInfo::IndividualInfo (const IndividualInfo& toCopy)
+  : _id             (toCopy._id),
+    _representation (toCopy._representation),
+    _fitness        (toCopy._fitness)
+{
+}
+
 
 //#**************************************************************************
 // CLASS GEP::System::ControllerStepNotifcation
@@ -23,20 +57,11 @@ ControllerStepNotification::ControllerStepNotification ()
 
 /* Constructor */
 ControllerStepNotification::ControllerStepNotification (Controller* controller)
-  : _step (controller->getCurrentStep ())
+  : _step            (controller->getCurrentStep ()),
+    _average_fitness (controller->getCurrentAverageFitness ())
 {
-  _fitness.insert (Controller::FitnessStatistics::MINIMUM, controller->getCurrentFitness (Controller::FitnessStatistics::MINIMUM));
-  _fitness.insert (Controller::FitnessStatistics::AVERAGE, controller->getCurrentFitness (Controller::FitnessStatistics::AVERAGE));
-  _fitness.insert (Controller::FitnessStatistics::MAXIMUM, controller->getCurrentFitness (Controller::FitnessStatistics::MAXIMUM));
 }
 
-/* Get fitness of the given type */
-double ControllerStepNotification::getFitness (Controller::FitnessStatistics_t type) const
-{
-  FitnessMap::ConstIterator pos = _fitness.find (type);
-  Q_ASSERT (pos != _fitness.end ());
-  return pos.value ();
-}
 
 //#**************************************************************************
 // CLASS GEP::System::Notifier

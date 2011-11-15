@@ -15,13 +15,15 @@
 namespace GEP {
 namespace System {
 
+class Controller;
+
 /*
  * Base class for fitness operators
  */
 class FitnessOperator : public Operator
 {
 public:
-    FitnessOperator (World* world);
+    FitnessOperator ();
     virtual ~FitnessOperator ();
 
     typedef QMap<Object::Id, double> FitnessMap;
@@ -39,7 +41,7 @@ typedef QSharedPointer<FitnessOperator> FitnessOperatorPtr;
 class LinearStaticScaledFitnessOperator : public FitnessOperator
 {
 public:
-  LinearStaticScaledFitnessOperator (World* world, double offset, double scale);
+  LinearStaticScaledFitnessOperator (double offset, double scale);
   virtual ~LinearStaticScaledFitnessOperator ();
 
   virtual void initialize (const FitnessMap& fitness_map);
@@ -60,7 +62,7 @@ private:
 class LinearDynamicScaledFitnessOperator : public FitnessOperator
 {
 public:
-  LinearDynamicScaledFitnessOperator (World* world, double scale);
+  LinearDynamicScaledFitnessOperator (double scale);
   virtual ~LinearDynamicScaledFitnessOperator ();
 
   virtual void initialize (const FitnessMap& fitness_map);

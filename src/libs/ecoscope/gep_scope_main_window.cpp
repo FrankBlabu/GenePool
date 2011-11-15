@@ -338,9 +338,7 @@ void MainWindow::slotFitnessStatistics ()
 void MainWindow::slotUpdateOutput ()
 {
   _content->_step->setText (QString::number (_controller->getCurrentStep ()));
-  _content->_minimum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessStatistics::MINIMUM), 'f', 8));
-  _content->_average_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessStatistics::AVERAGE), 'f', 8));
-  _content->_maximum_fitness->setText (QString::number (_controller->getCurrentFitness (GEP::System::Controller::FitnessStatistics::MAXIMUM), 'f', 8));
+  _content->_average_fitness->setText (QString::number (_controller->getCurrentAverageFitness (), 'f', 8));
 
   _fitness_diagram->repaint ();
 
@@ -366,9 +364,7 @@ void MainWindow::slotActiveOperatorDisplayChanged ()
  */
 void MainWindow::slotControllerStep (const GEP::System::ControllerStepNotification& notification)
 {
-  _fitness_diagram->addPoint (0, QPointF (notification.getStep (), notification.getFitness (GEP::System::Controller::FitnessStatistics::MINIMUM)));
-  _fitness_diagram->addPoint (1, QPointF (notification.getStep (), notification.getFitness (GEP::System::Controller::FitnessStatistics::AVERAGE)));
-  _fitness_diagram->addPoint (2, QPointF (notification.getStep (), notification.getFitness (GEP::System::Controller::FitnessStatistics::MAXIMUM)));
+  _fitness_diagram->addPoint (0, QPointF (notification.getStep (), notification.getAverageFitness ()));
 }
 
 }

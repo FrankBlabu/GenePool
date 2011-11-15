@@ -18,9 +18,8 @@ namespace System {
 //#**************************************************************************
 
 /* Constructor */
-SelectionOperator::SelectionOperator (World* world, FitnessOperatorPtr fitness_operator)
-  : Operator          (world),
-    _fitness_operator (fitness_operator)
+SelectionOperator::SelectionOperator ()
+  : Operator ()
 {
 }
 
@@ -52,8 +51,8 @@ RouletteWheelSelectionOperator::WheelSegment::WheelSegment (const WheelSegment& 
 //#**************************************************************************
 
 /* Constructor */
-RouletteWheelSelectionOperator::RouletteWheelSelectionOperator (World* world, FitnessOperatorPtr fitness_operator)
-  : SelectionOperator (world, fitness_operator)
+RouletteWheelSelectionOperator::RouletteWheelSelectionOperator ()
+  : SelectionOperator ()
 {
 }
 
@@ -109,8 +108,8 @@ void RouletteWheelSelectionOperator::compute (const Controller* controller, Popu
               copied.computeUniqueId ();
               selected.add (copied);
 
-              notifications.append (SelectionNotification (IndividualInfo (individual, _world->computeFitness (individual)),
-                                                           IndividualInfo (copied, _world->computeFitness (copied))));
+              notifications.append (SelectionNotification (IndividualInfo (individual, controller->getFitness (individual)),
+                                                           IndividualInfo (copied)));
 
               found= true;
             }
@@ -130,8 +129,8 @@ void RouletteWheelSelectionOperator::compute (const Controller* controller, Popu
 //#**************************************************************************
 
 /* Constructor */
-RemainderStochasticSamplingSelectionOperator::RemainderStochasticSamplingSelectionOperator (World* world, FitnessOperatorPtr fitness_operator)
-  : SelectionOperator (world, fitness_operator),
+RemainderStochasticSamplingSelectionOperator::RemainderStochasticSamplingSelectionOperator ()
+  : SelectionOperator (),
     _selection_mode (SelectionMode::TAKE_AWAY)
 {
 }
@@ -206,8 +205,8 @@ void RemainderStochasticSamplingSelectionOperator::compute (const Controller* co
           copied.computeUniqueId ();
           selected.add (copied);
 
-          notifications.append (SelectionNotification (IndividualInfo (individual, _world->computeFitness (individual)),
-                                                       IndividualInfo (copied, _world->computeFitness (copied))));
+          notifications.append (SelectionNotification (IndividualInfo (individual, controller->getFitness (individual)),
+                                                       IndividualInfo (copied)));
 
         }
     }
@@ -243,8 +242,8 @@ void RemainderStochasticSamplingSelectionOperator::compute (const Controller* co
               copied.computeUniqueId ();
               selected.add (copied);
 
-              notifications.append (SelectionNotification (IndividualInfo (individual, _world->computeFitness (individual)),
-                                                           IndividualInfo (copied, _world->computeFitness (copied))));
+              notifications.append (SelectionNotification (IndividualInfo (individual, controller->getFitness (individual)),
+                                                           IndividualInfo (copied)));
 
               found = true;
             }
