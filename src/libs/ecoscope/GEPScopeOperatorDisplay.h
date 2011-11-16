@@ -29,16 +29,16 @@ class OperatorDisplayColorBar
 {
 public:
   OperatorDisplayColorBar ();
-  OperatorDisplayColorBar (int value, int max_value, const QColor& color);
+  OperatorDisplayColorBar (double value, double max_value, const QColor& color);
   OperatorDisplayColorBar (const OperatorDisplayColorBar& toCopy);
 
-  int getValue () const;
-  int getMaximumValue () const;
+  double getValue () const;
+  double getMaximumValue () const;
   const QColor& getColor () const;
 
 private:
-  int _value;
-  int _max_value;
+  double _value;
+  double _max_value;
   QColor _color;
 };
 

@@ -34,7 +34,7 @@ OperatorDisplayColorBar::OperatorDisplayColorBar ()
 }
 
 /* Constructor */
-OperatorDisplayColorBar::OperatorDisplayColorBar (int value, int max_value, const QColor& color)
+OperatorDisplayColorBar::OperatorDisplayColorBar (double value, double max_value, const QColor& color)
   : _value     (value),
     _max_value (max_value),
     _color     (color)
@@ -50,13 +50,13 @@ OperatorDisplayColorBar::OperatorDisplayColorBar (const OperatorDisplayColorBar&
 }
 
 /* Get current value */
-int OperatorDisplayColorBar::getValue () const
+double OperatorDisplayColorBar::getValue () const
 {
   return _value;
 }
 
 /* Get current maximum value */
-int OperatorDisplayColorBar::getMaximumValue () const
+double OperatorDisplayColorBar::getMaximumValue () const
 {
   return _max_value;
 }

@@ -114,6 +114,9 @@ void MutationOperatorDisplay::slotControllerStep (const GEP::System::ControllerS
  */
 void MutationOperatorDisplay::slotMutation (const System::MutationNotificationList& notifications)
 {
+  QColor bar_color = Qt::green;
+  bar_color.setAlphaF (0.3);
+
   for (int i=0; i < notifications.size (); ++i)
     {
       const System::MutationNotification& notification = notifications[i];
@@ -127,6 +130,8 @@ void MutationOperatorDisplay::slotMutation (const System::MutationNotificationLi
       item->setText (COLUMN_ID, QString::number (before.getId ()));
       item->setData (COLUMN_INDIVIDUAL_BEFORE, Qt::DisplayRole, qVariantFromValue (before));
       item->setText (COLUMN_FITNESS_BEFORE, getFitnessRepresentation (before));
+      item->setData (COLUMN_FITNESS_BEFORE, Qt::BackgroundRole,
+                     qVariantFromValue (OperatorDisplayColorBar (before.getFitness (), 1.0, bar_color)));
       item->setData (COLUMN_INDIVIDUAL_AFTER, Qt::DisplayRole,
                      qVariantFromValue (OperatorDisplayIndividualDifference (before, after)));
     }

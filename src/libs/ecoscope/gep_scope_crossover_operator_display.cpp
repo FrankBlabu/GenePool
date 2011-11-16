@@ -126,6 +126,9 @@ void CrossoverOperatorDisplay::slotControllerStep (const GEP::System::Controller
  */
 void CrossoverOperatorDisplay::slotCrossover (const System::CrossoverNotificationList& notifications)
 {
+  QColor bar_color = Qt::green;
+  bar_color.setAlphaF (0.3);
+
   for (int i=0; i < notifications.size (); ++i)
     {
       const System::CrossoverNotification& notification = notifications[i];
@@ -136,9 +139,15 @@ void CrossoverOperatorDisplay::slotCrossover (const System::CrossoverNotificatio
       item->setText (COLUMN_MATE1_ID, QString::number (notification.getBeforeFirst ().getId ()));
       item->setData (COLUMN_MATE1_INDIVIDUAL, Qt::DisplayRole, qVariantFromValue (notification.getBeforeFirst ()));
       item->setText (COLUMN_MATE1_FITNESS, getFitnessRepresentation (notification.getBeforeFirst ()));
+      item->setData (COLUMN_MATE1_FITNESS, Qt::BackgroundRole,
+                     qVariantFromValue (OperatorDisplayColorBar (notification.getBeforeFirst ().getFitness (), 1.0, bar_color)));
+
       item->setText (COLUMN_MATE2_ID, QString::number (notification.getBeforeSecond ().getId ()));
       item->setData (COLUMN_MATE2_INDIVIDUAL, Qt::DisplayRole, qVariantFromValue (notification.getBeforeSecond ()));
       item->setText (COLUMN_MATE2_FITNESS, getFitnessRepresentation (notification.getBeforeSecond ()));
+      item->setData (COLUMN_MATE2_FITNESS, Qt::BackgroundRole,
+                     qVariantFromValue (OperatorDisplayColorBar (notification.getBeforeSecond ().getFitness (), 1.0, bar_color)));
+
       item->setData (COLUMN_CROSSED1_INDIVIDUAL, Qt::DisplayRole,
                      qVariantFromValue (OperatorDisplayIndividualDifference (notification.getBeforeFirst (), notification.getAfterFirst ())));
       item->setData (COLUMN_CROSSED2_INDIVIDUAL, Qt::DisplayRole,

@@ -128,6 +128,9 @@ void SelectionOperatorDisplay::slotSelection (const System::SelectionNotificatio
   //
   // Add notifications to items
   //
+  QColor bar_color = Qt::green;
+  bar_color.setAlphaF (0.3);
+
   for (int i=0; i < notifications.size (); ++i)
     {
       const System::SelectionNotification& notification = notifications[i];
@@ -149,6 +152,8 @@ void SelectionOperatorDisplay::slotSelection (const System::SelectionNotificatio
       item->setText (COLUMN_ID, QString::number (selected.getId ()));
       item->setData (COLUMN_INDIVIDUAL, Qt::DisplayRole, qVariantFromValue (selected));
       item->setText (COLUMN_FITNESS, getFitnessRepresentation (selected));
+      item->setData (COLUMN_FITNESS, Qt::BackgroundRole,
+                     qVariantFromValue (OperatorDisplayColorBar (selected.getFitness (), 1.0, bar_color)));
 
       QString selected_text = item->text (COLUMN_NEW_IDS);
       if (selected_text.isEmpty ())
@@ -173,9 +178,6 @@ void SelectionOperatorDisplay::slotSelection (const System::SelectionNotificatio
       const QTreeWidgetItem* item = i.value ();
       max_selections = qMax (max_selections, item->text (COLUMN_NEW_IDS).count (",") + 1);
     }
-
-  QColor bar_color = Qt::green;
-  bar_color.setAlphaF (0.3);
 
   for (ItemMap::ConstIterator i = _items.begin (); i != _items.end (); ++i)
     {
