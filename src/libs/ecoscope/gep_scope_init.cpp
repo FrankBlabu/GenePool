@@ -18,6 +18,7 @@ namespace Scope {
  */
 void InitLibrary ()
 {
+  qRegisterMetaType<GEP::Scope::OperatorDisplayColorBar> ("GEP::Scope::OperatorDisplayColorBar");
   qRegisterMetaType<GEP::Scope::OperatorDisplayIndividualDifference> ("GEP::Scope::OperatorDisplayIndividualDifference");
 }
 

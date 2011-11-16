@@ -129,7 +129,6 @@ void MutationOperatorDisplay::slotMutation (const System::MutationNotificationLi
       item->setText (COLUMN_FITNESS_BEFORE, getFitnessRepresentation (before));
       item->setData (COLUMN_INDIVIDUAL_AFTER, Qt::DisplayRole,
                      qVariantFromValue (OperatorDisplayIndividualDifference (before, after)));
-
     }
 }
 

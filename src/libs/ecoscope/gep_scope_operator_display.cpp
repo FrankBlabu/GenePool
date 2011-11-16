@@ -26,6 +26,53 @@ namespace Scope {
 //#**************************************************************************
 
 /* Constructor */
+OperatorDisplayColorBar::OperatorDisplayColorBar ()
+  : _value     (0),
+    _max_value (0),
+    _color     (Qt::black)
+{
+}
+
+/* Constructor */
+OperatorDisplayColorBar::OperatorDisplayColorBar (int value, int max_value, const QColor& color)
+  : _value     (value),
+    _max_value (max_value),
+    _color     (color)
+{
+}
+
+/* Copy constructor */
+OperatorDisplayColorBar::OperatorDisplayColorBar (const OperatorDisplayColorBar& toCopy)
+  : _value     (toCopy._value),
+    _max_value (toCopy._max_value),
+    _color     (toCopy._color)
+{
+}
+
+/* Get current value */
+int OperatorDisplayColorBar::getValue () const
+{
+  return _value;
+}
+
+/* Get current maximum value */
+int OperatorDisplayColorBar::getMaximumValue () const
+{
+  return _max_value;
+}
+
+/* Get current color */
+const QColor& OperatorDisplayColorBar::getColor () const
+{
+  return _color;
+}
+
+
+//#**************************************************************************
+// CLASS GEP::Scope::OperatorDisplayIndividualDifference
+//#**************************************************************************
+
+/* Constructor */
 OperatorDisplayIndividualDifference::OperatorDisplayIndividualDifference ()
 {
 }
@@ -35,6 +82,13 @@ OperatorDisplayIndividualDifference::OperatorDisplayIndividualDifference (const 
                                                                           const System::IndividualInfo& after)
   : _before (before),
     _after  (after)
+{
+}
+
+/* Copy constructor */
+OperatorDisplayIndividualDifference::OperatorDisplayIndividualDifference (const OperatorDisplayIndividualDifference& toCopy)
+  : _before (toCopy._before),
+    _after  (toCopy._after)
 {
 }
 
@@ -107,8 +161,25 @@ OperatorDisplayItemDelegate::~OperatorDisplayItemDelegate ()
 /* Paint item */
 void OperatorDisplayItemDelegate::paint (QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
+  //
+  // Step 1: Background
+  //
   drawBackground (painter, option, index);
 
+  QVariant background = index.data (Qt::BackgroundRole);
+  if (background.userType () == qMetaTypeId<OperatorDisplayColorBar> ())
+    {
+      OperatorDisplayColorBar color_bar = background.value<OperatorDisplayColorBar> ();
+
+      QRectF rect = option.rect;
+      rect.setWidth (qMax ((rect.width () - 2), 0.0) * color_bar.getValue () / color_bar.getMaximumValue ());
+
+      painter->fillRect (rect, color_bar.getColor ());
+    }
+
+  //
+  // Step 2: Content
+  //
   QString text;
   QVariant data = index.data (Qt::DisplayRole);
 

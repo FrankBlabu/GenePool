@@ -10,6 +10,7 @@
 #include <GEPSystemObject.h>
 #include <GEPSystemNotifier.h>
 
+#include <QtGui/QColor>
 #include <QtGui/QTreeWidget>
 
 namespace GEP {
@@ -22,6 +23,26 @@ class IndividualInfo;
 namespace Scope {
 
 /*
+ * Type represention for a color bar
+ */
+class OperatorDisplayColorBar
+{
+public:
+  OperatorDisplayColorBar ();
+  OperatorDisplayColorBar (int value, int max_value, const QColor& color);
+  OperatorDisplayColorBar (const OperatorDisplayColorBar& toCopy);
+
+  int getValue () const;
+  int getMaximumValue () const;
+  const QColor& getColor () const;
+
+private:
+  int _value;
+  int _max_value;
+  QColor _color;
+};
+
+/*
  * Type represention the difference of two individuals
  */
 class OperatorDisplayIndividualDifference
@@ -30,6 +51,7 @@ public:
   OperatorDisplayIndividualDifference ();
   OperatorDisplayIndividualDifference (const System::IndividualInfo& before,
                                        const System::IndividualInfo& after);
+  OperatorDisplayIndividualDifference (const OperatorDisplayIndividualDifference& toCopy);
 
   const System::IndividualInfo& getBefore () const;
   const System::IndividualInfo& getAfter () const;
@@ -83,6 +105,7 @@ private:
 }
 }
 
+Q_DECLARE_METATYPE (GEP::Scope::OperatorDisplayColorBar);
 Q_DECLARE_METATYPE (GEP::Scope::OperatorDisplayIndividualDifference);
 
 #endif

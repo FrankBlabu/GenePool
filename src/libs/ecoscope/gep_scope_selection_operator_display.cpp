@@ -4,11 +4,14 @@
  * Frank Cieslok, Sep. 2011
  */
 
+#define GEP_DEBUG
+
 #include "GEPScopeSelectionOperatorDisplay.h"
 #include "GEPScopeTools.h"
 #include "GEPSystemController.h"
 #include "GEPSystemNotifier.h"
 #include "GEPSystemWorld.h"
+#include "GEPSystemDebug.h"
 
 #include <QtGui/QHeaderView>
 
@@ -112,7 +115,9 @@ SelectionOperatorDisplay::~SelectionOperatorDisplay ()
 void SelectionOperatorDisplay::slotControllerStep (const GEP::System::ControllerStepNotification& notification)
 {
   Q_UNUSED (notification);
+
   clear ();
+  _items.clear ();
 }
 
 /*
@@ -120,6 +125,9 @@ void SelectionOperatorDisplay::slotControllerStep (const GEP::System::Controller
  */
 void SelectionOperatorDisplay::slotSelection (const System::SelectionNotificationList& notifications)
 {
+  //
+  // Add notifications to items
+  //
   for (int i=0; i < notifications.size (); ++i)
     {
       const System::SelectionNotification& notification = notifications[i];
@@ -153,6 +161,27 @@ void SelectionOperatorDisplay::slotSelection (const System::SelectionNotificatio
           item->setText (COLUMN_TIMES_SELECTED, QString::number (selected_text.count (",") + 2));
           item->setText (COLUMN_NEW_IDS, selected_text + "," + QString::number (notification.getAfter ().getId ()));
         }
+    }
+
+  //
+  // Determine maximum number of selections and generate color bars
+  //
+  int max_selections = 0;
+
+  for (ItemMap::ConstIterator i = _items.begin (); i != _items.end (); ++i)
+    {
+      const QTreeWidgetItem* item = i.value ();
+      max_selections = qMax (max_selections, item->text (COLUMN_NEW_IDS).count (",") + 1);
+    }
+
+  QColor bar_color = Qt::green;
+  bar_color.setAlphaF (0.3);
+
+  for (ItemMap::ConstIterator i = _items.begin (); i != _items.end (); ++i)
+    {
+      QTreeWidgetItem* item = i.value ();
+      item->setData (COLUMN_TIMES_SELECTED, Qt::BackgroundRole,
+                     qVariantFromValue (OperatorDisplayColorBar (item->text (COLUMN_NEW_IDS).count (",") + 1, max_selections, bar_color)));
     }
 }
 
