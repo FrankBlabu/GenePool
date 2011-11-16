@@ -139,7 +139,7 @@ void SelectionOperatorDisplay::slotSelection (const System::SelectionNotificatio
         item = pos.value ();
 
       item->setText (COLUMN_ID, QString::number (selected.getId ()));
-      item->setText (COLUMN_INDIVIDUAL, selected.getRepresentation ());
+      item->setData (COLUMN_INDIVIDUAL, Qt::DisplayRole, qVariantFromValue (selected));
       item->setText (COLUMN_FITNESS, getFitnessRepresentation (selected));
 
       QString selected_text = item->text (COLUMN_NEW_IDS);

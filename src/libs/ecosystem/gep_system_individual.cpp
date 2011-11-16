@@ -29,9 +29,15 @@ Individual::Individual (const Individual& toCopy)
 }
 
 /* Return number of genes in this individuals chromosome */
-int Individual::getSize () const
+int Individual::getNumberOfGenes () const
 {
   return _chromosome.size ();
+}
+
+/* Return individuals chromosome */
+const Individual::Chromosome& Individual::getChromosome () const
+{
+  return _chromosome;
 }
 
 /* Access operator */
@@ -46,21 +52,6 @@ Individual::Gene Individual::operator[] (int index) const
 {
   Q_ASSERT (index < _chromosome.size ());
   return _chromosome[index];
-}
-
-/* Create string representation of this individual */
-QString Individual::toString () const
-{
-  QString s;
-
-  QString separator;
-  for (int i=0; i < _chromosome.size (); ++i)
-    {
-      s += separator + QString::number (_chromosome[i]);
-      separator = ",";
-    }
-
-  return s;
 }
 
 }

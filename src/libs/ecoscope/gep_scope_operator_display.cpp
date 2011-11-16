@@ -14,9 +14,40 @@
 #include <GEPSystemDebug.h>
 
 #include <QtGui/QHeaderView>
+#include <QtGui/QItemDelegate>
 
 namespace GEP {
 namespace Scope {
+
+//#**************************************************************************
+// CLASS GEP::Scope::OperatorDisplayIndividualDifference
+//#**************************************************************************
+
+/* Constructor */
+OperatorDisplayIndividualDifference::OperatorDisplayIndividualDifference ()
+{
+}
+
+/* Constructor */
+OperatorDisplayIndividualDifference::OperatorDisplayIndividualDifference (const System::IndividualInfo& before,
+                                                                          const System::IndividualInfo& after)
+  : _before (before),
+    _after  (after)
+{
+}
+
+/* Get 'before' individual */
+const System::IndividualInfo& OperatorDisplayIndividualDifference::getBefore () const
+{
+  return _before;
+}
+
+/* Get 'after' individual */
+const System::IndividualInfo& OperatorDisplayIndividualDifference::getAfter () const
+{
+  return _after;
+}
+
 
 //#**************************************************************************
 // CLASS GEP::Scope::OperatorDisplayItem
@@ -40,6 +71,76 @@ const System::Object::Id& OperatorDisplayItem::getId () const
   return _id;
 }
 
+//#**************************************************************************
+// CLASS GEP::Scope::OperatorDisplayItemDelegate
+//#**************************************************************************
+
+/*
+ * Delegate for the items of a operator display
+ */
+class OperatorDisplayItemDelegate : public QItemDelegate
+{
+public:
+  OperatorDisplayItemDelegate (QObject* parent);
+  virtual ~OperatorDisplayItemDelegate ();
+
+  virtual void paint (QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+private:
+  QString toString (const System::Individual::Chromosome& chromosome) const;
+};
+
+/* Constructor */
+OperatorDisplayItemDelegate::OperatorDisplayItemDelegate (QObject* parent)
+  : QItemDelegate (parent)
+{
+}
+
+/* Destructor */
+OperatorDisplayItemDelegate::~OperatorDisplayItemDelegate ()
+{
+}
+
+/* Paint item */
+void OperatorDisplayItemDelegate::paint (QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+  drawBackground (painter, option, index);
+
+  QString text;
+  QVariant data = index.data (Qt::DisplayRole);
+
+  if (data.userType () == qMetaTypeId<System::IndividualInfo> ())
+    {
+      System::IndividualInfo info = data.value<System::IndividualInfo> ();
+      text = toString (info.getChromosome ());
+    }
+  else if (data.userType () == qMetaTypeId<OperatorDisplayIndividualDifference> ())
+    {
+      OperatorDisplayIndividualDifference diff = data.value<OperatorDisplayIndividualDifference> ();
+      text = toString (diff.getAfter ().getChromosome ());
+
+    }
+  else
+    text = data.toString ();
+
+  drawDisplay (painter, option, option.rect, text);
+}
+
+/* Convert a chromosome into a string representation */
+QString OperatorDisplayItemDelegate::toString (const System::Individual::Chromosome& chromosome) const
+{
+  QString text;
+
+  QString separator = "";
+  for (int i=0; i < chromosome.size (); ++i)
+    {
+      text += separator + QString::number (chromosome[i]);
+      separator = ",";
+    }
+
+  return text;
+}
+
 
 //#**************************************************************************
 // CLASS GEP::Scope::OperatorDisplay
@@ -55,6 +156,7 @@ OperatorDisplay::OperatorDisplay (System::Controller* controller, QWidget* paren
   setRootIsDecorated (false);
   setSortingEnabled (true);
   setSelectionMode (SingleSelection);
+  setItemDelegate (new OperatorDisplayItemDelegate (this));
 
   connect (this, SIGNAL (itemSelectionChanged ()), SLOT (slotSelectionChanged ()));
 }

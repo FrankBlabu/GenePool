@@ -8,6 +8,7 @@
 #define __GEP_SCOPE_OPERATOR_DISPLAY_H__
 
 #include <GEPSystemObject.h>
+#include <GEPSystemNotifier.h>
 
 #include <QtGui/QTreeWidget>
 
@@ -19,6 +20,24 @@ class IndividualInfo;
 }
 
 namespace Scope {
+
+/*
+ * Type represention the difference of two individuals
+ */
+class OperatorDisplayIndividualDifference
+{
+public:
+  OperatorDisplayIndividualDifference ();
+  OperatorDisplayIndividualDifference (const System::IndividualInfo& before,
+                                       const System::IndividualInfo& after);
+
+  const System::IndividualInfo& getBefore () const;
+  const System::IndividualInfo& getAfter () const;
+
+private:
+  System::IndividualInfo _before;
+  System::IndividualInfo _after;
+};
 
 /*
  * Item for the operator displays
@@ -63,5 +82,7 @@ private:
 
 }
 }
+
+Q_DECLARE_METATYPE (GEP::Scope::OperatorDisplayIndividualDifference);
 
 #endif

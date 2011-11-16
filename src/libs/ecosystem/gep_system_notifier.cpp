@@ -22,26 +22,34 @@ namespace System {
 const double IndividualInfo::UNKNOWN_FITNESS = std::numeric_limits<double>::max ();
 
 /* Constructor */
+IndividualInfo::IndividualInfo ()
+  : _id         (),
+    _chromosome (),
+    _fitness    (UNKNOWN_FITNESS)
+{
+}
+
+/* Constructor */
 IndividualInfo::IndividualInfo (const Individual& individual)
-  : _id             (individual.getId ()),
-    _representation (individual.toString ()),
-    _fitness        (UNKNOWN_FITNESS)
+  : _id         (individual.getId ()),
+    _chromosome (individual.getChromosome ()),
+    _fitness    (UNKNOWN_FITNESS)
 {
 }
 
 /* Constructor */
 IndividualInfo::IndividualInfo (const Individual& individual, double fitness)
-  : _id             (individual.getId ()),
-    _representation (individual.toString ()),
-    _fitness        (fitness)
+  : _id         (individual.getId ()),
+    _chromosome (individual.getChromosome ()),
+    _fitness    (fitness)
 {
 }
 
 /* Copy-Constructor */
 IndividualInfo::IndividualInfo (const IndividualInfo& toCopy)
-  : _id             (toCopy._id),
-    _representation (toCopy._representation),
-    _fitness        (toCopy._fitness)
+  : _id         (toCopy._id),
+    _chromosome (toCopy._chromosome),
+    _fitness    (toCopy._fitness)
 {
 }
 

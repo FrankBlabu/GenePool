@@ -70,13 +70,13 @@ void PartiallyMatchedCrossoverOperator::compute (const Controller* controller, P
       Individual& individual1 = population[shuffled_index[i * 2]];
       Individual& individual2 = population[shuffled_index[i * 2 + 1]];
 
-      Q_ASSERT (individual1.getSize () == individual2.getSize ());
-      Q_ASSERT (individual1.getSize () > 2);
+      Q_ASSERT (individual1.getNumberOfGenes () == individual2.getNumberOfGenes ());
+      Q_ASSERT (individual1.getNumberOfGenes () > 2);
 
       IndividualInfo before_first (individual1, controller->getFitness (individual1));
       IndividualInfo before_second (individual2, controller->getFitness (individual2));
 
-      int size = individual1.getSize ();
+      int size = individual1.getNumberOfGenes ();
 
       int index1 = static_cast<int> (floor (_random_number_generator.generate () * size)) % size;
       int index2 = index1 + 1 + static_cast<int> (floor (_random_number_generator.generate () * (size - 2))) % (size - 2);

@@ -51,7 +51,7 @@ void SwappingMutationOperator::compute (const Controller* controller, Population
   for (int i=0; i < population.getSize (); ++i)
     {
       Individual& individual = population[i];
-      int size = individual.getSize ();
+      int size = individual.getNumberOfGenes ();
 
       IndividualInfo before (individual, controller->getFitness (individual));
 

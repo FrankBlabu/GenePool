@@ -134,13 +134,15 @@ void CrossoverOperatorDisplay::slotCrossover (const System::CrossoverNotificatio
       addTopLevelItem (item);
 
       item->setText (COLUMN_MATE1_ID, QString::number (notification.getBeforeFirst ().getId ()));
-      item->setText (COLUMN_MATE1_INDIVIDUAL, notification.getBeforeFirst ().getRepresentation ());
+      item->setData (COLUMN_MATE1_INDIVIDUAL, Qt::DisplayRole, qVariantFromValue (notification.getBeforeFirst ()));
       item->setText (COLUMN_MATE1_FITNESS, getFitnessRepresentation (notification.getBeforeFirst ()));
       item->setText (COLUMN_MATE2_ID, QString::number (notification.getBeforeSecond ().getId ()));
-      item->setText (COLUMN_MATE2_INDIVIDUAL, notification.getBeforeSecond ().getRepresentation ());
+      item->setData (COLUMN_MATE2_INDIVIDUAL, Qt::DisplayRole, qVariantFromValue (notification.getBeforeSecond ()));
       item->setText (COLUMN_MATE2_FITNESS, getFitnessRepresentation (notification.getBeforeSecond ()));
-      item->setText (COLUMN_CROSSED1_INDIVIDUAL, notification.getAfterFirst ().getRepresentation ());
-      item->setText (COLUMN_CROSSED2_INDIVIDUAL, notification.getAfterSecond ().getRepresentation ());
+      item->setData (COLUMN_CROSSED1_INDIVIDUAL, Qt::DisplayRole,
+                     qVariantFromValue (OperatorDisplayIndividualDifference (notification.getBeforeFirst (), notification.getAfterFirst ())));
+      item->setData (COLUMN_CROSSED2_INDIVIDUAL, Qt::DisplayRole,
+                     qVariantFromValue (OperatorDisplayIndividualDifference (notification.getBeforeSecond (), notification.getAfterSecond ())));
     }
 }
 

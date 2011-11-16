@@ -125,7 +125,7 @@ double World::computeFitness (const Individual& individual) const
 
   double distance = 0.0;
 
-  for (int i=0; i + 1 < individual.getSize (); ++i)
+  for (int i=0; i + 1 < individual.getNumberOfGenes (); ++i)
     distance += getDistance (individual[i], individual[i + 1]);
 
   return distance;

@@ -280,7 +280,7 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
   //          distributed at the top border, than a break happens '-1' so that areas
   //          '1', '7' and '4' are distributed at the next border.
   //
-  for (int i=0; i < individual.getSize (); ++i)
+  for (int i=0; i < individual.getNumberOfGenes (); ++i)
     {
       System::Individual::Gene gene = individual[i];
 

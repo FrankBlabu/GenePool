@@ -87,7 +87,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
 
       QPolygonF line;
 
-      for (int i=0; i < individual.getSize (); ++i)
+      for (int i=0; i < individual.getNumberOfGenes (); ++i)
         {
           QPointF pos = (*_world)[individual[i]];
 

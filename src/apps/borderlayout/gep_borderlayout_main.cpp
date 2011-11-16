@@ -16,6 +16,7 @@
 #include <GEPSystemMutationOperator.h>
 #include <GEPSystemSelectionOperator.h>
 #include <GEPSystemShuffleComparator.h>
+#include <GEPScopeInit.h>
 #include <GEPScopeMainWindow.h>
 
 //#**************************************************************************
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
     QApplication app (argc, argv);
 
     GEP::System::InitLibrary ();
+    GEP::Scope::InitLibrary ();
 
     //
     // Setup world and controller

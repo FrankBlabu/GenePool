@@ -30,12 +30,11 @@ public:
     Individual (const Chromosome& chromosome);
     Individual (const Individual& toCopy);
 
-    int getSize () const;
+    int getNumberOfGenes () const;
+    const Chromosome& getChromosome () const;
 
     Gene& operator[] (int index);
     Gene operator[] (int index) const;
-
-    QString toString () const;
 
 protected:
     Chromosome _chromosome;

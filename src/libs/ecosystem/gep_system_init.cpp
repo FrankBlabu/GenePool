@@ -21,6 +21,7 @@ void InitLibrary ()
 {
   qRegisterMetaType<GEP::System::Object::Id> ("GEP::System::Object::Id");
 
+  qRegisterMetaType<GEP::System::IndividualInfo> ("GEP::System::IndividualInfo");
   qRegisterMetaType<GEP::System::ControllerStepNotification> ("GEP::System::ControllerStepNotification");
   qRegisterMetaType<GEP::System::SelectionNotificationList> ("GEP::System::SelectionNotificationList");
   qRegisterMetaType<GEP::System::MutationNotificationList> ("GEP::System::MutationNotificationList");

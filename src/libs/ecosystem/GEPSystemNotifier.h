@@ -28,17 +28,18 @@ public:
   static const double UNKNOWN_FITNESS;
 
 public:
+  IndividualInfo ();
   IndividualInfo (const Individual& individual);
   IndividualInfo (const Individual& individual, double fitness);
   IndividualInfo (const IndividualInfo& toCopy);
 
   const Object::Id& getId () const { return _id; }
-  const QString& getRepresentation () const { return _representation; }
+  const Individual::Chromosome& getChromosome () const { return _chromosome; }
   double getFitness () const { return _fitness; }
 
 private:
   Object::Id _id;
-  QString _representation;
+  Individual::Chromosome _chromosome;
   double _fitness;
 };
 
@@ -181,6 +182,7 @@ private:
 }
 }
 
+Q_DECLARE_METATYPE (GEP::System::IndividualInfo);
 Q_DECLARE_METATYPE (GEP::System::ControllerStepNotification);
 Q_DECLARE_METATYPE (GEP::System::SelectionNotificationList);
 Q_DECLARE_METATYPE (GEP::System::MutationNotificationList);
