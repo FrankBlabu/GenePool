@@ -15,6 +15,8 @@
 
 #include <QtGui/QHeaderView>
 #include <QtGui/QItemDelegate>
+#include <QtGui/QPainter>
+
 
 namespace GEP {
 namespace Scope {
@@ -85,6 +87,7 @@ public:
   virtual ~OperatorDisplayItemDelegate ();
 
   virtual void paint (QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  virtual QSize sizeHint (const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
 private:
   QString toString (const System::Individual::Chromosome& chromosome) const;
@@ -117,13 +120,80 @@ void OperatorDisplayItemDelegate::paint (QPainter* painter, const QStyleOptionVi
   else if (data.userType () == qMetaTypeId<OperatorDisplayIndividualDifference> ())
     {
       OperatorDisplayIndividualDifference diff = data.value<OperatorDisplayIndividualDifference> ();
-      text = toString (diff.getAfter ().getChromosome ());
 
+      const System::Individual::Chromosome& before = diff.getBefore ().getChromosome ();
+      const System::Individual::Chromosome& after = diff.getAfter ().getChromosome ();
+
+      Q_ASSERT (before.length () == after.length ());
+
+      QString separator;
+      QColor marker_color = Qt::red;
+      marker_color.setAlphaF (0.3);
+
+      int start_offset = -1;
+
+      for (int i=0; i < before.length (); ++i)
+        {
+          const System::Individual::Gene& gene_before = before[i];
+          const System::Individual::Gene& gene_after = after[i];
+
+          if (gene_before != gene_after)
+            {
+              text += separator;
+
+              if (start_offset == -1)
+                start_offset = option.fontMetrics.width (text);
+
+              text += QString::number (gene_after);
+            }
+          else if (start_offset != -1)
+            {
+              int end_offset = option.fontMetrics.width (text);
+              painter->fillRect (QRect (QPoint (option.rect.left () + start_offset, option.rect.top ()),
+                                        QPoint (option.rect.left () + end_offset, option.rect.bottom ())),
+                                 marker_color);
+
+              start_offset = -1;
+              text += separator + QString::number (gene_after);
+            }
+          else
+            text += separator + QString::number (gene_after);
+
+          separator = ",";
+        }
+
+      if (start_offset != -1)
+        {
+          int end_offset = option.fontMetrics.width (text);
+          painter->fillRect (QRect (QPoint (option.rect.left () + start_offset, option.rect.top ()),
+                                    QPoint (option.rect.left () + end_offset, option.rect.bottom ())),
+                             marker_color);
+        }
     }
   else
     text = data.toString ();
 
-  drawDisplay (painter, option, option.rect, text);
+  painter->drawText (option.rect, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, text);
+}
+
+/* Compute size hint */
+QSize OperatorDisplayItemDelegate::sizeHint (const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+  QSize size;
+
+  QVariant data = index.data (Qt::DisplayRole);
+
+  if (data.userType () == qMetaTypeId<OperatorDisplayIndividualDifference> ())
+    {
+      OperatorDisplayIndividualDifference diff = data.value<OperatorDisplayIndividualDifference> ();
+      QString text = toString (diff.getAfter ().getChromosome ());
+
+      size = option.fontMetrics.size (Qt::TextSingleLine, text);
+    }
+  else
+    size = QItemDelegate::sizeHint (option, index);
+
+  return size;
 }
 
 /* Convert a chromosome into a string representation */
