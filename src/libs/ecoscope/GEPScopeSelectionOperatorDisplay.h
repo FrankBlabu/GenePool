@@ -30,7 +30,7 @@ class SelectionOperatorDisplay : public OperatorDisplay
 
 public:
   static const int COLUMN_ID             = 0;
-  static const int COLUMN_CONTENT        = 1;
+  static const int COLUMN_INDIVIDUAL     = 1;
   static const int COLUMN_FITNESS        = 2;
   static const int COLUMN_TIMES_SELECTED = 3;
   static const int COLUMN_NEW_IDS        = 4;

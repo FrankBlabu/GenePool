@@ -29,12 +29,14 @@ class CrossoverOperatorDisplay : public OperatorDisplay
   Q_OBJECT
 
 public:
-  static const int COLUMN_ID             = 0;
-  static const int COLUMN_CONTENT        = 1;
-  static const int COLUMN_MATE           = 2;
-  static const int COLUMN_FITNESS_BEFORE = 3;
-  static const int COLUMN_CROSSED        = 4;
-  static const int COLUMN_FITNESS_AFTER  = 5;
+  static const int COLUMN_MATE1_ID            = 0;
+  static const int COLUMN_MATE1_INDIVIDUAL    = 1;
+  static const int COLUMN_MATE1_FITNESS       = 2;
+  static const int COLUMN_MATE2_ID            = 3;
+  static const int COLUMN_MATE2_INDIVIDUAL    = 4;
+  static const int COLUMN_MATE2_FITNESS       = 5;
+  static const int COLUMN_CROSSED1_INDIVIDUAL = 6;
+  static const int COLUMN_CROSSED2_INDIVIDUAL = 7;
 
 public:
   CrossoverOperatorDisplay (System::Controller* controller, QWidget* parent);

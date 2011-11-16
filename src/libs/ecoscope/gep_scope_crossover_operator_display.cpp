@@ -51,15 +51,17 @@ bool CrossoverOperatorDisplayItem::operator< (const QTreeWidgetItem& other) cons
 
   switch (column)
     {
-    case CrossoverOperatorDisplay::COLUMN_ID:
-    case CrossoverOperatorDisplay::COLUMN_CONTENT:
-    case CrossoverOperatorDisplay::COLUMN_MATE:
-    case CrossoverOperatorDisplay::COLUMN_CROSSED:
+    case CrossoverOperatorDisplay::COLUMN_MATE1_ID:
+    case CrossoverOperatorDisplay::COLUMN_MATE1_INDIVIDUAL:
+    case CrossoverOperatorDisplay::COLUMN_MATE2_ID:
+    case CrossoverOperatorDisplay::COLUMN_MATE2_INDIVIDUAL:
+    case CrossoverOperatorDisplay::COLUMN_CROSSED1_INDIVIDUAL:
+    case CrossoverOperatorDisplay::COLUMN_CROSSED2_INDIVIDUAL:
       less = text (column) < other.text (column);
       break;
 
-    case CrossoverOperatorDisplay::COLUMN_FITNESS_BEFORE:
-    case CrossoverOperatorDisplay::COLUMN_FITNESS_AFTER:
+    case CrossoverOperatorDisplay::COLUMN_MATE1_FITNESS:
+    case CrossoverOperatorDisplay::COLUMN_MATE2_FITNESS:
       less = text (column).toDouble () < other.text (column).toDouble ();
       break;
     }
@@ -79,21 +81,25 @@ CrossoverOperatorDisplay::CrossoverOperatorDisplay (System::Controller* controll
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
   QStringList header_names;
-  header_names.append ("Id");
-  header_names.append ("Content");
-  header_names.append ("Mate");
-  header_names.append ("Fitness (before)");
-  header_names.append ("Crossed");
-  header_names.append ("Fitness (after)");
+  header_names.append (tr ("Mate 1 (Id)"));
+  header_names.append (tr ("Mate 1 (Individual)"));
+  header_names.append (tr ("Mate 1 (Fitness)"));
+  header_names.append (tr ("Mate 2 (Id)"));
+  header_names.append (tr ("Mate 2 (individual)"));
+  header_names.append (tr ("Mate 2 (Fitness)"));
+  header_names.append (tr ("Crossed 1 (Individual)"));
+  header_names.append (tr ("Crossed 2 (Individual)"));
 
   setHeaderLabels (header_names);
 
-  header ()->setResizeMode (COLUMN_ID, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_CONTENT, QHeaderView::Stretch);
-  header ()->setResizeMode (COLUMN_MATE, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_FITNESS_BEFORE, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_CROSSED, QHeaderView::Stretch);
-  header ()->setResizeMode (COLUMN_FITNESS_AFTER, QHeaderView::ResizeToContents);
+  header ()->setResizeMode (COLUMN_MATE1_ID, QHeaderView::ResizeToContents);
+  header ()->setResizeMode (COLUMN_MATE1_INDIVIDUAL, QHeaderView::Stretch);
+  header ()->setResizeMode (COLUMN_MATE1_FITNESS, QHeaderView::ResizeToContents);
+  header ()->setResizeMode (COLUMN_MATE2_ID, QHeaderView::ResizeToContents);
+  header ()->setResizeMode (COLUMN_MATE2_INDIVIDUAL, QHeaderView::Stretch);
+  header ()->setResizeMode (COLUMN_MATE2_FITNESS, QHeaderView::ResizeToContents);
+  header ()->setResizeMode (COLUMN_CROSSED1_INDIVIDUAL, QHeaderView::Stretch);
+  header ()->setResizeMode (COLUMN_CROSSED2_INDIVIDUAL, QHeaderView::Stretch);
 
   connect (notifier, SIGNAL (signalControllerStep (GEP::System::ControllerStepNotification)),
            SLOT (slotControllerStep (const GEP::System::ControllerStepNotification&)));
@@ -124,25 +130,17 @@ void CrossoverOperatorDisplay::slotCrossover (const System::CrossoverNotificatio
     {
       const System::CrossoverNotification& notification = notifications[i];
 
-      CrossoverOperatorDisplayItem* item1 = new CrossoverOperatorDisplayItem (notification.getBeforeFirst ().getId (), this);
-      addTopLevelItem (item1);
+      CrossoverOperatorDisplayItem* item = new CrossoverOperatorDisplayItem (notification.getBeforeFirst ().getId (), this);
+      addTopLevelItem (item);
 
-      item1->setText (COLUMN_ID, QString::number (notification.getBeforeFirst ().getId ()));
-      item1->setText (COLUMN_CONTENT, notification.getBeforeFirst ().getRepresentation ());
-      item1->setText (COLUMN_MATE, QString::number (notification.getBeforeSecond ().getId ()));
-      item1->setText (COLUMN_FITNESS_BEFORE, getFitnessRepresentation (notification.getBeforeFirst ()));
-      item1->setText (COLUMN_CROSSED, notification.getAfterFirst ().getRepresentation ());
-      item1->setText (COLUMN_FITNESS_AFTER, getFitnessRepresentation (notification.getAfterFirst ()));
-
-      CrossoverOperatorDisplayItem* item2 = new CrossoverOperatorDisplayItem (notification.getBeforeSecond ().getId (), this);
-      addTopLevelItem (item2);
-
-      item2->setText (COLUMN_ID, QString::number (notification.getBeforeSecond ().getId ()));
-      item2->setText (COLUMN_CONTENT, notification.getBeforeSecond ().getRepresentation ());
-      item2->setText (COLUMN_MATE, QString::number (notification.getBeforeFirst ().getId ()));
-      item2->setText (COLUMN_FITNESS_BEFORE, getFitnessRepresentation (notification.getBeforeSecond ()));
-      item2->setText (COLUMN_CROSSED, notification.getAfterSecond ().getRepresentation ());
-      item2->setText (COLUMN_FITNESS_AFTER, getFitnessRepresentation (notification.getAfterSecond ()));
+      item->setText (COLUMN_MATE1_ID, QString::number (notification.getBeforeFirst ().getId ()));
+      item->setText (COLUMN_MATE1_INDIVIDUAL, notification.getBeforeFirst ().getRepresentation ());
+      item->setText (COLUMN_MATE1_FITNESS, getFitnessRepresentation (notification.getBeforeFirst ()));
+      item->setText (COLUMN_MATE2_ID, QString::number (notification.getBeforeSecond ().getId ()));
+      item->setText (COLUMN_MATE2_INDIVIDUAL, notification.getBeforeSecond ().getRepresentation ());
+      item->setText (COLUMN_MATE2_FITNESS, getFitnessRepresentation (notification.getBeforeSecond ()));
+      item->setText (COLUMN_CROSSED1_INDIVIDUAL, notification.getAfterFirst ().getRepresentation ());
+      item->setText (COLUMN_CROSSED2_INDIVIDUAL, notification.getAfterSecond ().getRepresentation ());
     }
 }
 

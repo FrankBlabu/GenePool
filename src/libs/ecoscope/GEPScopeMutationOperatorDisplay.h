@@ -31,11 +31,10 @@ class MutationOperatorDisplay : public OperatorDisplay
   Q_OBJECT
 
 public:
-  static const int COLUMN_ID             = 0;
-  static const int COLUMN_BEFORE         = 1;
-  static const int COLUMN_FITNESS_BEFORE = 2;
-  static const int COLUMN_AFTER          = 3;
-  static const int COLUMN_FITNESS_AFTER  = 4;
+  static const int COLUMN_ID                = 0;
+  static const int COLUMN_INDIVIDUAL_BEFORE = 1;
+  static const int COLUMN_FITNESS_BEFORE    = 2;
+  static const int COLUMN_INDIVIDUAL_AFTER  = 3;
 
 public:
   MutationOperatorDisplay (System::Controller* controller, QWidget* parent);

@@ -53,7 +53,7 @@ bool SelectionOperatorDisplayItem::operator< (const QTreeWidgetItem& other) cons
     {
     case SelectionOperatorDisplay::COLUMN_ID:
     case SelectionOperatorDisplay::COLUMN_NEW_IDS:
-    case SelectionOperatorDisplay::COLUMN_CONTENT:
+    case SelectionOperatorDisplay::COLUMN_INDIVIDUAL:
       less = text (column) < other.text (column);
       break;
 
@@ -81,16 +81,16 @@ SelectionOperatorDisplay::SelectionOperatorDisplay (System::Controller* controll
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
   QStringList header_names;
-  header_names.append ("Id");
-  header_names.append ("Content");
-  header_names.append ("Fitness");
-  header_names.append ("Times selected");
-  header_names.append ("New ids");
+  header_names.append (tr ("Id"));
+  header_names.append (tr ("Individual"));
+  header_names.append (tr ("Fitness"));
+  header_names.append (tr ("Times selected"));
+  header_names.append (tr ("New ids"));
 
   setHeaderLabels (header_names);
 
   header ()->setResizeMode (COLUMN_ID, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_CONTENT, QHeaderView::Stretch);
+  header ()->setResizeMode (COLUMN_INDIVIDUAL, QHeaderView::Stretch);
   header ()->setResizeMode (COLUMN_FITNESS, QHeaderView::ResizeToContents);
   header ()->setResizeMode (COLUMN_TIMES_SELECTED, QHeaderView::ResizeToContents);
   header ()->setResizeMode (COLUMN_NEW_IDS, QHeaderView::ResizeToContents);
@@ -139,7 +139,7 @@ void SelectionOperatorDisplay::slotSelection (const System::SelectionNotificatio
         item = pos.value ();
 
       item->setText (COLUMN_ID, QString::number (selected.getId ()));
-      item->setText (COLUMN_CONTENT, selected.getRepresentation ());
+      item->setText (COLUMN_INDIVIDUAL, selected.getRepresentation ());
       item->setText (COLUMN_FITNESS, getFitnessRepresentation (selected));
 
       QString selected_text = item->text (COLUMN_NEW_IDS);

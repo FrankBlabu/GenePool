@@ -52,13 +52,12 @@ bool MutationOperatorDisplayItem::operator< (const QTreeWidgetItem& other) const
   switch (column)
     {
     case MutationOperatorDisplay::COLUMN_ID:
-    case MutationOperatorDisplay::COLUMN_BEFORE:
-    case MutationOperatorDisplay::COLUMN_AFTER:
+    case MutationOperatorDisplay::COLUMN_INDIVIDUAL_BEFORE:
+    case MutationOperatorDisplay::COLUMN_INDIVIDUAL_AFTER:
       less = text (column) < other.text (column);
       break;
 
     case MutationOperatorDisplay::COLUMN_FITNESS_BEFORE:
-    case MutationOperatorDisplay::COLUMN_FITNESS_AFTER:
       less = text (column).toDouble () < other.text (column).toDouble ();
       break;
     }
@@ -78,19 +77,17 @@ MutationOperatorDisplay::MutationOperatorDisplay (System::Controller* controller
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
   QStringList header_names;
-  header_names.append ("Id");
-  header_names.append ("Before");
-  header_names.append ("Fitness before");
-  header_names.append ("After");
-  header_names.append ("Fitness after");
+  header_names.append (tr ("Id"));
+  header_names.append (tr ("Individual (before)"));
+  header_names.append (tr ("Fitness before"));
+  header_names.append (tr ("Individual (after)"));
 
   setHeaderLabels (header_names);
 
   header ()->setResizeMode (COLUMN_ID, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_BEFORE, QHeaderView::Stretch);
+  header ()->setResizeMode (COLUMN_INDIVIDUAL_BEFORE, QHeaderView::Stretch);
   header ()->setResizeMode (COLUMN_FITNESS_BEFORE, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_AFTER, QHeaderView::Stretch);
-  header ()->setResizeMode (COLUMN_FITNESS_AFTER, QHeaderView::ResizeToContents);
+  header ()->setResizeMode (COLUMN_INDIVIDUAL_AFTER, QHeaderView::Stretch);
 
   connect (notifier, SIGNAL (signalControllerStep (GEP::System::ControllerStepNotification)),
            SLOT (slotControllerStep (const GEP::System::ControllerStepNotification&)));
@@ -128,10 +125,9 @@ void MutationOperatorDisplay::slotMutation (const System::MutationNotificationLi
       addTopLevelItem (item);
 
       item->setText (COLUMN_ID, QString::number (before.getId ()));
-      item->setText (COLUMN_BEFORE, before.getRepresentation ());
+      item->setText (COLUMN_INDIVIDUAL_BEFORE, before.getRepresentation ());
       item->setText (COLUMN_FITNESS_BEFORE, getFitnessRepresentation (before));
-      item->setText (COLUMN_AFTER, after.getRepresentation ());
-      item->setText (COLUMN_FITNESS_AFTER, getFitnessRepresentation (after));
+      item->setText (COLUMN_INDIVIDUAL_AFTER, after.getRepresentation ());
     }
 }
 

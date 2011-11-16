@@ -70,51 +70,41 @@ MainWindowContent::~MainWindowContent ()
 /* Constructor */
 MainWindow::MainWindow (System::Controller* controller)
 : QMainWindow (),
-  _controller         (controller),
-  _content            (0),
-  _world_display      (0),
-  _fitness_diagram    (0),
-  _action_initialize  (0),
-  _action_run         (0),
-  _action_single_step (0),
-  _action_reset       (0),
-  _action_quit        (0),
-  _state_machine      (),
-  _state_initialized  (),
-  _state_running      (),
-  _state_step         (),
-  _state_finished     ()
+  _controller                (controller),
+  _content                   (0),
+  _world_display             (0),
+  _fitness_diagram           (0),
+  _action_initialize         (new QAction (tr ("&Initialize"), this)),
+  _action_run                (new QAction (tr ("&Run"), this)),
+  _action_single_step        (new QAction (tr ("&Step"), this)),
+  _action_reset              (new QAction (tr ("Reset"), this)),
+  _action_quit               (new QAction (tr ("&Quit"), this)),
+  _action_fitness_statistics (new QAction (tr ("&Fitness statistics"), this)),
+  _state_machine             (),
+  _state_initialized         (),
+  _state_running             (),
+  _state_step                (),
+  _state_finished            ()
 {
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
   //
   // Menu setup
   //
-  QMenu* file_menu = menuBar ()->addMenu ("&File");
-
-  _action_quit = new QAction ("&Quit", file_menu);
-  connect (_action_quit, SIGNAL (triggered ()), SLOT (slotQuit ()));
+  QMenu* file_menu = menuBar ()->addMenu (tr ("&File"));
   file_menu->addAction (_action_quit);
 
-  QMenu* execute_menu = menuBar ()->addMenu ("&Execute");
-
-  _action_initialize = new QAction ("&Initialize", execute_menu);
+  QMenu* execute_menu = menuBar ()->addMenu (tr ("&Execute"));
   execute_menu->addAction (_action_initialize);
-
-  _action_run = new QAction ("&Run", execute_menu);
   execute_menu->addAction (_action_run);
-
-  _action_single_step = new QAction ("&Step", execute_menu);
   execute_menu->addAction (_action_single_step);
-
-  _action_reset = new QAction ("Reset", execute_menu);
   execute_menu->addAction (_action_reset);
 
-  QMenu* tools_menu = menuBar ()->addMenu ("&Tools");
-
-  _action_fitness_statistics = new QAction ("&Fitness statistics", tools_menu);
-  connect (_action_fitness_statistics, SIGNAL (triggered ()), SLOT (slotFitnessStatistics ()));
+  QMenu* tools_menu = menuBar ()->addMenu (tr ("&Tools"));
   tools_menu->addAction (_action_fitness_statistics);
+
+  connect (_action_quit, SIGNAL (triggered ()), SLOT (slotQuit ()));
+  connect (_action_fitness_statistics, SIGNAL (triggered ()), SLOT (slotFitnessStatistics ()));
 
   //
   // Toolbar setup
@@ -133,15 +123,14 @@ MainWindow::MainWindow (System::Controller* controller)
 
   _fitness_diagram = Tools::addWidgetToParent (new SequentialDiagram (_content->_diagram_frame));
 
-  //_content->_display_content->addItem ("Selected", WorldDisplay::DisplayMode::SELECTED);
-  _content->_display_content->addItem ("Best", WorldDisplay::DisplayMode::BEST);
-  _content->_display_content->addItem ("Worst", WorldDisplay::DisplayMode::WORST);
-  _content->_display_content->addItem ("All", WorldDisplay::DisplayMode::ALL);
+  _content->_display_content->addItem (tr ("Best"), WorldDisplay::DisplayMode::BEST);
+  _content->_display_content->addItem (tr ("Worst"), WorldDisplay::DisplayMode::WORST);
+  _content->_display_content->addItem (tr ("All"), WorldDisplay::DisplayMode::ALL);
 
   _operator_display_tab = Tools::addWidgetToParent (new QTabWidget (_content->_population_frame));
-  _operator_display_tab->addTab (new SelectionOperatorDisplay (controller, _operator_display_tab), "Selection");
-  _operator_display_tab->addTab (new CrossoverOperatorDisplay (controller, _operator_display_tab), "Crossover");
-  _operator_display_tab->addTab (new MutationOperatorDisplay (controller, _operator_display_tab), "Mutation");
+  _operator_display_tab->addTab (new SelectionOperatorDisplay (controller, _operator_display_tab), tr ("Selection"));
+  _operator_display_tab->addTab (new CrossoverOperatorDisplay (controller, _operator_display_tab), tr ("Crossover"));
+  _operator_display_tab->addTab (new MutationOperatorDisplay (controller, _operator_display_tab), tr ("Mutation"));
 
   //
   // State machine setup
@@ -237,7 +226,7 @@ void MainWindow::slotStateInitialized ()
   _fitness_diagram->clear ();
   _controller->initialize ();
 
-  statusBar ()->showMessage ("Ready");
+  statusBar ()->showMessage (tr ("Ready"));
   slotUpdateOutput ();
 }
 
@@ -252,7 +241,7 @@ void MainWindow::slotStateRunning ()
   _action_reset->setEnabled (false);
 
   QProgressDialog progress_dialog (this);
-  progress_dialog.setLabelText ("Computing...");
+  progress_dialog.setLabelText (tr ("Computing..."));
   progress_dialog.setRange (0, _controller->getNumberOfSteps ());
 
   System::ControllerThread thread (_controller);
@@ -282,7 +271,7 @@ void MainWindow::slotStateStep ()
 
   if (!_controller->executeNextStep ())
     {
-      statusBar ()->showMessage ("Executing step " + QString::number (_controller->getCurrentStep ()));
+      statusBar ()->showMessage (tr ("Executing step %1").arg (_controller->getCurrentStep ()));
       slotUpdateOutput ();
     }
   else
@@ -299,7 +288,7 @@ void MainWindow::slotStateFinished ()
   _action_single_step->setEnabled (false);
   _action_reset->setEnabled (true);
 
-  statusBar ()->showMessage ("Finished");
+  statusBar ()->showMessage (tr ("Finished"));
   slotUpdateOutput ();
 }
 
