@@ -54,8 +54,8 @@ private slots:
   void slotStateFinished ();
 
   void slotInitialize ();
+  void slotReset ();
   void slotQuit ();
-  void slotFitnessStatistics ();
 
   void slotUpdateOutput ();
   void slotActiveOperatorDisplayChanged ();
@@ -81,13 +81,13 @@ private:
   QAction* _action_reset;
   QAction* _action_quit;
 
-  QAction* _action_fitness_statistics;
-
   QStateMachine _state_machine;
   QState _state_initialized;
   QState _state_running;
   QState _state_step;
   QState _state_finished;
+
+  double _initial_fitness;
 };
 
 }

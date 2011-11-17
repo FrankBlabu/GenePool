@@ -41,7 +41,7 @@ public:
   virtual ~MutationOperatorDisplay ();
 
 private slots:
-  void slotControllerStep (const GEP::System::ControllerStepNotification& notification);
+  void slotReset ();
   void slotMutation (const GEP::System::MutationNotificationList& notifications);
 
 private:

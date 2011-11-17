@@ -89,8 +89,8 @@ MutationOperatorDisplay::MutationOperatorDisplay (System::Controller* controller
   header ()->setResizeMode (COLUMN_FITNESS_BEFORE, QHeaderView::ResizeToContents);
   header ()->setResizeMode (COLUMN_INDIVIDUAL_AFTER, QHeaderView::Stretch);
 
-  connect (notifier, SIGNAL (signalControllerStep (GEP::System::ControllerStepNotification)),
-           SLOT (slotControllerStep (const GEP::System::ControllerStepNotification&)));
+  connect (notifier, SIGNAL (signalControllerStepStart (GEP::System::ControllerStepNotification)), SLOT (slotReset ()));
+  connect (notifier, SIGNAL (signalReset ()), SLOT (slotReset ()));
   connect (notifier, SIGNAL (signalMutation (GEP::System::MutationNotificationList)),
            SLOT (slotMutation (const GEP::System::MutationNotificationList&)));
 }
@@ -101,11 +101,10 @@ MutationOperatorDisplay::~MutationOperatorDisplay ()
 }
 
 /*
- * Slot called when the controller advances one step
+ * Slot called on world reset
  */
-void MutationOperatorDisplay::slotControllerStep (const GEP::System::ControllerStepNotification& notification)
+void MutationOperatorDisplay::slotReset ()
 {
-  Q_UNUSED (notification);
   clear ();
 }
 

@@ -98,8 +98,8 @@ SelectionOperatorDisplay::SelectionOperatorDisplay (System::Controller* controll
   header ()->setResizeMode (COLUMN_TIMES_SELECTED, QHeaderView::ResizeToContents);
   header ()->setResizeMode (COLUMN_NEW_IDS, QHeaderView::ResizeToContents);
 
-  connect (notifier, SIGNAL (signalControllerStep (GEP::System::ControllerStepNotification)),
-           SLOT (slotControllerStep (const GEP::System::ControllerStepNotification&)));
+  connect (notifier, SIGNAL (signalControllerStepStart (GEP::System::ControllerStepNotification)), SLOT (slotReset ()));
+  connect (notifier, SIGNAL (signalReset ()), SLOT (slotReset ()));
   connect (notifier, SIGNAL (signalSelection (GEP::System::SelectionNotificationList)),
            SLOT (slotSelection (GEP::System::SelectionNotificationList)));
 }
@@ -110,12 +110,10 @@ SelectionOperatorDisplay::~SelectionOperatorDisplay ()
 }
 
 /*
- * Slot called when the controller advances one step
+ * Slot called on world reset
  */
-void SelectionOperatorDisplay::slotControllerStep (const GEP::System::ControllerStepNotification& notification)
+void SelectionOperatorDisplay::slotReset ()
 {
-  Q_UNUSED (notification);
-
   clear ();
   _items.clear ();
 }

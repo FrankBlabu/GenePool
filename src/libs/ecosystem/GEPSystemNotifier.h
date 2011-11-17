@@ -148,7 +148,9 @@ public:
   //
   // Notifier calls for algorithm steps
   //
-  void notifyControllerStep (const ControllerStepNotification& notification);
+  void notifyControllerStepStart (const ControllerStepNotification& notification);
+  void notifyControllerStepEnd (const ControllerStepNotification& notification);
+  void notifyReset ();
 
   void notifySelection (const SelectionNotificationList& notifications);
   void notifyCrossover (const CrossoverNotificationList& notifications);
@@ -163,7 +165,9 @@ signals:
   //
   // Notifier signals for algorithm steps
   //
-  void signalControllerStep (GEP::System::ControllerStepNotification notification);
+  void signalControllerStepStart (GEP::System::ControllerStepNotification notification);
+  void signalControllerStepEnd (GEP::System::ControllerStepNotification notification);
+  void signalReset ();
 
   void signalSelection (GEP::System::SelectionNotificationList notifications);
   void signalCrossover (GEP::System::CrossoverNotificationList notifications);

@@ -100,11 +100,25 @@ void Notifier::setEnabled (bool enabled)
   _enabled = enabled;
 }
 
-/* Notify new controller step */
-void Notifier::notifyControllerStep (const ControllerStepNotification& notification)
+/* Notify emerging controller step */
+void Notifier::notifyControllerStepStart (const ControllerStepNotification& notification)
 {
   if (_enabled)
-    emit signalControllerStep (notification);
+    emit signalControllerStepStart (notification);
+}
+
+/* Notify completed controller step */
+void Notifier::notifyControllerStepEnd (const ControllerStepNotification& notification)
+{
+  if (_enabled)
+    emit signalControllerStepEnd (notification);
+}
+
+/* Notify world reset */
+void Notifier::notifyReset ()
+{
+  if (_enabled)
+    emit signalReset ();
 }
 
 /* Notify individual selection */

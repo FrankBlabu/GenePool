@@ -164,12 +164,17 @@ void SinglePopulationController::initialize ()
   _current_step = 0;
 
   updateFitness ();
+
+  System::Notifier::getNotifier ()->notifyControllerStepStart (this);
+  System::Notifier::getNotifier ()->notifyControllerStepEnd (this);
+
+  ++_current_step;
 }
 
 /* Execute algorithm */
 bool SinglePopulationController::executeNextStep ()
 {
-  System::Notifier::getNotifier ()->notifyControllerStep (this);
+  System::Notifier::getNotifier ()->notifyControllerStepStart (this);
 
   //
   // Compute single step
@@ -182,6 +187,8 @@ bool SinglePopulationController::executeNextStep ()
 
   _mutation_operator->compute (this, _population);
   updateFitness ();
+
+  System::Notifier::getNotifier ()->notifyControllerStepEnd (this);
 
   return _termination_operator->compute (this, _population, ++_current_step);
 }

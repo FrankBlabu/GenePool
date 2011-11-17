@@ -7,7 +7,6 @@
 #define GEP_DEBUG
 
 #include "GEPScopeMainWindow.h"
-#include "GEPScopeFitnessStatisticsDialog.h"
 #include "GEPScopeSequentialDiagram.h"
 #include "GEPScopeCrossoverOperatorDisplay.h"
 #include "GEPScopeMutationOperatorDisplay.h"
@@ -70,21 +69,21 @@ MainWindowContent::~MainWindowContent ()
 /* Constructor */
 MainWindow::MainWindow (System::Controller* controller)
 : QMainWindow (),
-  _controller                (controller),
-  _content                   (0),
-  _world_display             (0),
-  _fitness_diagram           (0),
-  _action_initialize         (new QAction (tr ("&Initialize"), this)),
-  _action_run                (new QAction (tr ("&Run"), this)),
-  _action_single_step        (new QAction (tr ("&Step"), this)),
-  _action_reset              (new QAction (tr ("Reset"), this)),
-  _action_quit               (new QAction (tr ("&Quit"), this)),
-  _action_fitness_statistics (new QAction (tr ("&Fitness statistics"), this)),
-  _state_machine             (),
-  _state_initialized         (),
-  _state_running             (),
-  _state_step                (),
-  _state_finished            ()
+  _controller         (controller),
+  _content            (0),
+  _world_display      (0),
+  _fitness_diagram    (0),
+  _action_initialize  (new QAction (tr ("&Initialize"), this)),
+  _action_run         (new QAction (tr ("&Run"), this)),
+  _action_single_step (new QAction (tr ("&Step"), this)),
+  _action_reset       (new QAction (tr ("Reset"), this)),
+  _action_quit        (new QAction (tr ("&Quit"), this)),
+  _state_machine      (),
+  _state_initialized  (),
+  _state_running      (),
+  _state_step         (),
+  _state_finished     (),
+  _initial_fitness    (0.0)
 {
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
@@ -99,12 +98,6 @@ MainWindow::MainWindow (System::Controller* controller)
   execute_menu->addAction (_action_run);
   execute_menu->addAction (_action_single_step);
   execute_menu->addAction (_action_reset);
-
-  QMenu* tools_menu = menuBar ()->addMenu (tr ("&Tools"));
-  tools_menu->addAction (_action_fitness_statistics);
-
-  connect (_action_quit, SIGNAL (triggered ()), SLOT (slotQuit ()));
-  connect (_action_fitness_statistics, SIGNAL (triggered ()), SLOT (slotFitnessStatistics ()));
 
   //
   // Toolbar setup
@@ -163,10 +156,13 @@ MainWindow::MainWindow (System::Controller* controller)
   //
   // Signal/slot setup
   //
+  connect (_action_initialize, SIGNAL (triggered ()), SLOT (slotInitialize ()));
+  connect (_action_reset, SIGNAL (triggered ()), SLOT (slotReset ()));
+  connect (_action_quit, SIGNAL (triggered ()), SLOT (slotQuit ()));
+
   connect (_content->_display_content, SIGNAL (activated (int)), SLOT (slotUpdateOutput ()));
   connect (_operator_display_tab, SIGNAL (currentChanged (int)), SLOT (slotActiveOperatorDisplayChanged ()));
-  connect (_action_initialize, SIGNAL (triggered ()), SLOT (slotInitialize ()));
-  connect (notifier, SIGNAL (signalControllerStep (GEP::System::ControllerStepNotification)),
+  connect (notifier, SIGNAL (signalControllerStepEnd (GEP::System::ControllerStepNotification)),
            SLOT (slotControllerStep (const GEP::System::ControllerStepNotification&)));
 
   slotUpdateOutput ();
@@ -304,35 +300,29 @@ void MainWindow::slotInitialize ()
 }
 
 /*
+ * Slot: Reset world
+ */
+void MainWindow::slotReset ()
+{
+  System::Notifier::getNotifier ()->notifyReset ();
+
+  _initial_fitness = 0.0;
+
+  _content->_step->clear ();
+  _content->_initial_fitness->clear ();
+  _content->_average_fitness->clear ();
+  _content->_fitness_gain->clear ();
+
+  slotUpdateOutput ();
+}
+
+/*
  * Slot: Application termination
  */
 void MainWindow::slotQuit ()
 {
   emit signalFinished ();
   close ();
-}
-
-/*
- * Slot: Display fitness statistics
- */
-void MainWindow::slotFitnessStatistics ()
-{
-  FitnessStatisticsDialog dialog (_controller, this);
-  dialog.exec ();
-}
-
-/*
- * Update output
- */
-void MainWindow::slotUpdateOutput ()
-{
-  _content->_step->setText (QString::number (_controller->getCurrentStep ()));
-  _content->_average_fitness->setText (QString::number (_controller->getCurrentAverageFitness (), 'f', 8));
-
-  _fitness_diagram->repaint ();
-
-  if (_world_display != 0)
-    _world_display->updateDisplay (_controller, static_cast<WorldDisplay::DisplayMode_t> (_content->_display_content->itemData (_content->_display_content->currentIndex ()).toInt ()));
 }
 
 /*
@@ -354,6 +344,31 @@ void MainWindow::slotActiveOperatorDisplayChanged ()
 void MainWindow::slotControllerStep (const GEP::System::ControllerStepNotification& notification)
 {
   _fitness_diagram->addPoint (0, QPointF (notification.getStep (), notification.getAverageFitness ()));
+
+  if (notification.getStep () == 0)
+    {
+      _initial_fitness = notification.getAverageFitness ();
+      _content->_initial_fitness->setText (QString::number (_initial_fitness, 'f', 8));
+    }
+
+  _content->_step->setText (QString::number (notification.getStep ()));
+
+  double fitness = notification.getAverageFitness ();
+  _content->_average_fitness->setText (QString::number (fitness, 'f', 8));
+  _content->_fitness_gain->setText (QString::number (qRound ((fitness / _initial_fitness) * 100.0 - 100.0)) + QString (" %"));
+
+  slotUpdateOutput ();
+}
+
+/*
+ * Update output
+ */
+void MainWindow::slotUpdateOutput ()
+{
+  _fitness_diagram->repaint ();
+
+  if (_world_display != 0)
+    _world_display->updateDisplay (_controller, static_cast<WorldDisplay::DisplayMode_t> (_content->_display_content->itemData (_content->_display_content->currentIndex ()).toInt ()));
 }
 
 }

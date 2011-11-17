@@ -19,7 +19,7 @@ namespace Scope {
 
 SequentialDiagram::Line::Line ()
   : _points  (),
-    _color   (Qt::red)
+    _color   (Qt::blue)
 {
 }
 
@@ -39,9 +39,9 @@ SequentialDiagram::SequentialDiagram (QWidget* parent)
 {
   if (_default_colors.isEmpty ())
     {
-      _default_colors.append (Qt::red);
-      _default_colors.append (Qt::green);
       _default_colors.append (Qt::blue);
+      _default_colors.append (Qt::green);
+      _default_colors.append (Qt::red);
       _default_colors.append (Qt::yellow);
       _default_colors.append (Qt::cyan);
     }
@@ -120,6 +120,12 @@ void SequentialDiagram::paintEvent (QPaintEvent* event)
 
           painter.setPen (line._color);
           painter.drawPolyline (polyline);
+
+          if (polyline.size () >= 10)
+            {
+              painter.setPen (QPen (line._color, 1.0, Qt::DotLine));
+              painter.drawLine (polyline.first (), polyline.last ());
+            }
         }
     }
 }
