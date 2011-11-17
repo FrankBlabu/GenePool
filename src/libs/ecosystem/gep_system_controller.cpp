@@ -12,6 +12,11 @@
 #include "GEPSystemWorld.h"
 
 #include <limits>
+#include <boost/bind.hpp>
+
+#include <QFuture>
+#include <QtConcurrentMap>
+#include <QtCore/QThread>
 
 namespace GEP {
 namespace System {
@@ -191,7 +196,6 @@ double SinglePopulationController::getFitness (const Individual& individual) con
   return pos.value ();
 }
 
-
 /*
  * Compute current population fitness
  */
@@ -207,15 +211,20 @@ void SinglePopulationController::updateFitness ()
   double minimum_raw_fitness = std::numeric_limits<double>::max ();
   double maximum_raw_fitness = -std::numeric_limits<double>::max ();
 
-  for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i)
+  QFuture<double> results = QtConcurrent::mapped (_population.begin (), _population.end (),
+                                                  boost::bind (&World::computeFitness, _world, _1));
+
+  int count = 0;
+  for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i, ++count)
     {
       const Individual& individual = *i;
-      double fitness = _world->computeFitness (individual);
+      double fitness = results.resultAt (count);
 
       raw_fitness.insert (individual.getId (), fitness);
       minimum_raw_fitness = qMin (minimum_raw_fitness, fitness);
       maximum_raw_fitness = qMax (maximum_raw_fitness, fitness);
     }
+
 
   switch (_world->getFitnessType ())
     {
