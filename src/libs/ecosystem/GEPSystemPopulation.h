@@ -27,7 +27,10 @@ public:
     void add (const Individual& individual);
 
     typedef QList<Individual>::const_iterator ConstIterator;
+    typedef QList<Individual>::iterator Iterator;
 
+    inline Iterator begin () { return _individuals.begin (); }
+    inline Iterator end () { return _individuals.end (); }
     inline ConstIterator begin () const { return _individuals.begin (); }
     inline ConstIterator end () const { return _individuals.end (); }
 

@@ -10,13 +10,15 @@
 #include "GEPSystemOperator.h"
 #include "GEPSystemIndividual.h"
 #include "GEPSystemPopulation.h"
-#include "GEPSystemRandomNumberGenerator.h"
 #include "GEPSystemDebug.h"
+
+#include <QtCore/QMutex>
 
 namespace GEP {
 namespace System {
 
 class Controller;
+class MutationNotification;
 
 /*
  * Base class for Mutation operators
@@ -45,7 +47,12 @@ public:
     virtual void compute (const Controller* controller, Population& population);
 
 private:
-    RandomNumberGenerator _random_number_generator;
+    void executeMutation (const Controller* controller,
+                          QList<MutationNotification>* notifications,
+                          Individual& individual);
+
+private:
+    QMutex _mutex;
     double _probability;
 };
 

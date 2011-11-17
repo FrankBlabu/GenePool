@@ -211,20 +211,23 @@ void SinglePopulationController::updateFitness ()
   double minimum_raw_fitness = std::numeric_limits<double>::max ();
   double maximum_raw_fitness = -std::numeric_limits<double>::max ();
 
-  QFuture<double> results = QtConcurrent::mapped (_population.begin (), _population.end (),
-                                                  boost::bind (&World::computeFitness, _world, _1));
+  QList<double> results = QtConcurrent::blockingMapped< QList<double> >
+      (_population.begin (), _population.end (), boost::bind (&World::computeFitness, _world, _1));
 
-  int count = 0;
-  for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i, ++count)
+  int index = 0;
+  for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i, ++index)
     {
       const Individual& individual = *i;
-      double fitness = results.resultAt (count);
+
+      Q_ASSERT (index < results.size ());
+      double fitness = results[index];
 
       raw_fitness.insert (individual.getId (), fitness);
       minimum_raw_fitness = qMin (minimum_raw_fitness, fitness);
       maximum_raw_fitness = qMax (maximum_raw_fitness, fitness);
     }
 
+  Q_ASSERT (index == _population.getSize ());
 
   switch (_world->getFitnessType ())
     {
