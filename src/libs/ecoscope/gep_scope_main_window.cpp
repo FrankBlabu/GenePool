@@ -1,5 +1,4 @@
-/*
- * gep_scope_main_window.cpp - Main window of the GenePool scope library
+/* * gep_scope_main_window.cpp - Main window of the GenePool scope library
  *
  * Frank Cieslok, Aug. 2011
  */
@@ -356,8 +355,6 @@ void MainWindow::slotControllerStep (const GEP::System::ControllerStepNotificati
   double fitness = notification.getAverageFitness ();
   _content->_average_fitness->setText (QString::number (fitness, 'f', 8));
   _content->_fitness_gain->setText (QString::number (qRound ((fitness / _initial_fitness) * 100.0 - 100.0)) + QString (" %"));
-
-  slotUpdateOutput ();
 }
 
 /*
