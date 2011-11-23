@@ -37,6 +37,13 @@ typedef QSharedPointer<SelectionOperator> SelectionOperatorPtr;
 
 /*
  * Roulette wheel selection operator
+ *
+ * This class implements roulette wheel based selection scheme. A selection
+ * probability is computed for each individual of the population based on its
+ * fitness and represented as a part of a roulette wheel. The higher the
+ * relative (normalized) fitness the more space this individual occupies
+ * on the roulette wheel. Afterwards, a roulette ball is rolled n-times
+ * to select the individuals of the new population.
  */
 class RouletteWheelSelectionOperator : public SelectionOperator
 {
@@ -47,6 +54,9 @@ public:
   virtual void compute (const Controller* controller, Population& population);
 
 private:
+  /*
+   * Class representing a single section of the roulette wheel
+   */
   struct WheelSegment
   {
     WheelSegment (const Object::Id& id, double fitness);

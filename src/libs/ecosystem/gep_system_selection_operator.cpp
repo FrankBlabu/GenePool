@@ -32,7 +32,12 @@ SelectionOperator::~SelectionOperator ()
 // CLASS GEP::System::RouletteWheelSelectionOperator::WheelSegment
 //#**************************************************************************
 
-/* Constructor */
+/*
+ * Constructor
+ *
+ * Contructs a single part of the roulette wheel for a single individual with
+ * relative (normalized) fitness
+ */
 RouletteWheelSelectionOperator::WheelSegment::WheelSegment (const Object::Id& id, double fitness)
   : _id      (id),
     _fitness (fitness)
@@ -61,7 +66,12 @@ RouletteWheelSelectionOperator::~RouletteWheelSelectionOperator ()
 {
 }
 
-/* Perform selection */
+/*
+ * Perform selection
+ *
+ * \param controller Controller controlling the current world
+ * \param population Population the selection is performed onto
+ */
 void RouletteWheelSelectionOperator::compute (const Controller* controller, Population& population)
 {
   SelectionNotificationList notifications;
@@ -88,6 +98,8 @@ void RouletteWheelSelectionOperator::compute (const Controller* controller, Popu
       segment._fitness /= fitness_sum;
     }
 
+  Q_ASSERT (!segments.isEmpty ());
+
   //
   // Step 2: Perform roulette wheel selection
   //
@@ -101,6 +113,7 @@ void RouletteWheelSelectionOperator::compute (const Controller* controller, Popu
       for (int i=0; i < segments.size () && !found; ++i)
         {
           const WheelSegment& segment = segments[i];
+
           if (n <= segment._fitness)
             {
               const Individual& individual = population[segment._id];
