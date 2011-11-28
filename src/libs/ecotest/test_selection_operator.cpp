@@ -7,37 +7,8 @@
 #include "TestMain.h"
 
 #include <GEPSystemSelectionOperator.h>
+#include <GEPSystemController.h>
 
-//#**************************************************************************
-// CLASS FitnessSortingComparator
-//#**************************************************************************
-
-/*
- * Comparator for fitness based sorting
- */
-class FitnessSortingComparator
-{
-public:
-  FitnessSortingComparator (GEP::System::FitnessOperatorPtr fitness_operator);
-
-  inline bool operator ()(const GEP::System::Individual* individual1, const GEP::System::Individual* individual2);
-
-private:
-  GEP::System::FitnessOperatorPtr _fitness_operator;
-};
-
-/* Constructor */
-FitnessSortingComparator::FitnessSortingComparator (GEP::System::FitnessOperatorPtr fitness_operator)
-  : _fitness_operator (fitness_operator)
-{
-}
-
-/* Comparison operator */
-inline bool FitnessSortingComparator::operator () (const GEP::System::Individual* individual1,
-                                                   const GEP::System::Individual* individual2)
-{
-  return _fitness_operator->compute (*individual1) > _fitness_operator->compute (*individual2);
-}
 
 //#**************************************************************************
 // CLASS TestMain
@@ -58,10 +29,12 @@ void TestMain::testSelectionOperator ()
         GEP::System::Population population = world.generatePopulation ();
 
         QSharedPointer<GEP::System::FitnessOperator> fitness_operator
-            (new GEP::System::LinearDynamicScaledFitnessOperator (&world, 1.0));
+            (new GEP::System::LinearDynamicScaledFitnessOperator (1.0));
 
-        fitness_operator->initialize (population);
-        GEP::System::RemainderStochasticSamplingSelectionOperator selection_operator (&world, fitness_operator);
+        TestWorld::FitnessMap fitness = world.computeFitnessMap (population);
+
+        fitness_operator->initialize (fitness);
+        GEP::System::RemainderStochasticSamplingSelectionOperator selection_operator;
 
         GEP::System::Population selected = population;
         selection_operator.compute (selected);

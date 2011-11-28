@@ -11,10 +11,11 @@
 #include <QtCore/QMap>
 #include <QtTest/QtTest>
 
+#include <GEPSystemController.h>
 #include <GEPSystemIndividual.h>
 #include <GEPSystemPopulation.h>
 #include <GEPSystemFitnessOperator.h>
-
+#include <GEPSystemWorld.h>
 
 /*
  * World information
@@ -31,9 +32,25 @@ public:
     virtual FitnessType_t getFitnessType () const;
     virtual double computeFitness (const GEP::System::Individual& individual) const;
 
+    typedef QMap<GEP::System::Object::Id, double> FitnessMap;
+    FitnessMap computeFitnessMap (const GEP::System::Population& population) const;
+
 private:
     int _population_size;
     int _individual_size;
+};
+
+/*
+ * Test controller
+ */
+class TestController : public GEP::System::SinglePopulationController
+{
+public:
+  TestController (GEP::System::World* world);
+  virtual ~TestController ();
+
+  typedef QMap<GEP::System::Object::Id, double> FitnessMap;
+  const FitnessMap& getFitnessMap () const;
 };
 
 /*

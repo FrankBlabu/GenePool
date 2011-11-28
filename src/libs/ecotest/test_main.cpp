@@ -69,10 +69,46 @@ double TestWorld::computeFitness (const GEP::System::Individual& individual) con
 {
   double fitness = 0.0;
 
-  for (int i=0; i < individual.getSize (); ++i)
+  for (int i=0; i < individual.getNumberOfGenes (); ++i)
     fitness += (i + 1) * individual[i];
 
-  return fmod (fitness, 100.0);
+  return fmod (fitness / 100.0, 1.0);
+}
+
+/* Compute fitness map for a population */
+TestWorld::FitnessMap TestWorld::computeFitnessMap (const GEP::System::Population& population) const
+{
+  FitnessMap fitness;
+
+  for (GEP::System::Population::ConstIterator i = population.begin (); i != population.end (); ++i)
+    {
+      const GEP::System::Individual& individual = *i;
+      fitness.insert (individual.getId (), computeFitness (individual));
+    }
+
+  return fitness;
+}
+
+
+//#**************************************************************************
+// CLASS TestController
+//#**************************************************************************
+
+/* Constructor */
+TestController::TestController (GEP::System::World* world)
+  : GEP::System::SinglePopulationController (world)
+{
+}
+
+/* Destructor */
+TestController::~TestController ()
+{
+}
+
+/* Return current fitness map */
+const TestController::FitnessMap& TestController::getFitnessMap () const
+{
+  return _fitness;
 }
 
 

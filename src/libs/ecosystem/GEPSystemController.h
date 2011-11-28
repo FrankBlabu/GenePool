@@ -88,7 +88,7 @@ public:
 private:
   void updateFitness ();
 
-private:
+protected:
   Population _population;
 
   int _current_step;
