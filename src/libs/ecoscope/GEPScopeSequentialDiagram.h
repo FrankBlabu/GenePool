@@ -21,8 +21,33 @@ namespace Scope {
 class SequentialDiagram : public QWidget
 {
 public:
+  class Properties
+  {
+  public:
+    Properties ();
+    Properties (const Properties& toCopy);
+
+    bool getShowTendency () const;
+    void setShowTendency (bool show);
+
+    const QColor& getLineColor () const;
+    void setLineColor (const QColor& line_color);
+
+    const QString& getLegendText () const;
+    void setLegendText (const QString& legend_text);
+
+  private:
+    bool _show_tendency;
+    QColor _line_color;
+    QString _legend_text;
+  };
+
+public:
     SequentialDiagram (QWidget* parent);
     virtual ~SequentialDiagram ();
+
+    Properties getProperties (int id) const;
+    void setProperties (int id, const Properties& properties);
 
     void clear ();
     void addPoint (int id, const QPointF& point);
@@ -38,17 +63,17 @@ private:
 
     public:
       QList<QPointF> _points;
-      QColor _color;
     };
 
     typedef QMap<int, Line> LineMap;
     LineMap _lines;
 
+    typedef QMap<int, Properties> PropertiesMap;
+    PropertiesMap _properties;
+
     typedef QPair<double, double> Range;
     Range _range_x;
     Range _range_y;
-
-    static QList<QColor> _default_colors;
 };
 
 }

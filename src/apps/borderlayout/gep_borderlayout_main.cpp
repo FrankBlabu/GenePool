@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
     QSharedPointer<GEP::System::CrossoverOperator> crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator ());
     QSharedPointer<GEP::System::MutationOperator> mutation_operator (new GEP::System::SwappingMutationOperator (0.5 * 1.0 / NUMBER_OF_AREAS));
     QSharedPointer<GEP::System::TerminationOperator> termination_operator (new GEP::System::FixedStepTerminationOperator (NUMBER_OF_STEPS));
+    QSharedPointer<GEP::System::TemperatureFunction> temperature_function (new GEP::System::QuotientTemperatureFunction ());
 
     GEP::System::SinglePopulationController controller (&world);
 
@@ -97,6 +98,7 @@ int main(int argc, char *argv[])
     controller.setCrossoverOperator (crossover_operator);
     controller.setMutationOperator (mutation_operator);
     controller.setTerminationOperator (termination_operator);
+    controller.setTemperatureFunction (temperature_function);
 
     //
     // Show main window and start computation

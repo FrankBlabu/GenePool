@@ -66,7 +66,8 @@ ControllerStepNotification::ControllerStepNotification ()
 /* Constructor */
 ControllerStepNotification::ControllerStepNotification (Controller* controller)
   : _step            (controller->getCurrentStep ()),
-    _average_fitness (controller->getCurrentAverageFitness ())
+    _average_fitness (controller->getCurrentAverageFitness ()),
+    _temperature     (controller->getTemperature ())
 {
 }
 

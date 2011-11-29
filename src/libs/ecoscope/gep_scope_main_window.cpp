@@ -68,21 +68,22 @@ MainWindowContent::~MainWindowContent ()
 /* Constructor */
 MainWindow::MainWindow (System::Controller* controller)
 : QMainWindow (),
-  _controller         (controller),
-  _content            (0),
-  _world_display      (0),
-  _fitness_diagram    (0),
-  _action_initialize  (new QAction (tr ("&Initialize"), this)),
-  _action_run         (new QAction (tr ("&Run"), this)),
-  _action_single_step (new QAction (tr ("&Step"), this)),
-  _action_reset       (new QAction (tr ("Reset"), this)),
-  _action_quit        (new QAction (tr ("&Quit"), this)),
-  _state_machine      (),
-  _state_initialized  (),
-  _state_running      (),
-  _state_step         (),
-  _state_finished     (),
-  _initial_fitness    (0.0)
+  _controller          (controller),
+  _content             (0),
+  _world_display       (0),
+  _fitness_diagram     (0),
+  _temperature_diagram (0),
+  _action_initialize   (new QAction (tr ("&Initialize"), this)),
+  _action_run          (new QAction (tr ("&Run"), this)),
+  _action_single_step  (new QAction (tr ("&Step"), this)),
+  _action_reset        (new QAction (tr ("Reset"), this)),
+  _action_quit         (new QAction (tr ("&Quit"), this)),
+  _state_machine       (),
+  _state_initialized   (),
+  _state_running       (),
+  _state_step          (),
+  _state_finished      (),
+  _initial_fitness     (0.0)
 {
   System::Notifier* notifier = System::Notifier::getNotifier ();
 
@@ -113,7 +114,20 @@ MainWindow::MainWindow (System::Controller* controller)
   _content = new MainWindowContent (this);
   setCentralWidget (_content);
 
-  _fitness_diagram = Tools::addWidgetToParent (new SequentialDiagram (_content->_diagram_frame));
+  _fitness_diagram = Tools::addWidgetToParent (new SequentialDiagram (_content->_fitness_frame));
+  _temperature_diagram = Tools::addWidgetToParent (new SequentialDiagram (_content->_temperature_frame));
+
+  SequentialDiagram::Properties fitness_properties;
+  fitness_properties.setShowTendency (true);
+  fitness_properties.setLineColor (Qt::blue);
+  fitness_properties.setLegendText (tr ("Fitness"));
+  _fitness_diagram->setProperties (0, fitness_properties);
+
+  SequentialDiagram::Properties temperature_properties;
+  temperature_properties.setShowTendency (false);
+  temperature_properties.setLineColor (Qt::red);
+  temperature_properties.setLegendText (tr ("Temperature"));
+  _temperature_diagram->setProperties (0, temperature_properties);
 
   _content->_display_content->addItem (tr ("Best"), WorldDisplay::DisplayMode::BEST);
   _content->_display_content->addItem (tr ("Worst"), WorldDisplay::DisplayMode::WORST);
@@ -219,6 +233,7 @@ void MainWindow::slotStateInitialized ()
   _action_reset->setEnabled (true);
 
   _fitness_diagram->clear ();
+  _temperature_diagram->clear ();
   _controller->initialize ();
 
   statusBar ()->showMessage (tr ("Ready"));
@@ -343,6 +358,7 @@ void MainWindow::slotActiveOperatorDisplayChanged ()
 void MainWindow::slotControllerStep (const GEP::System::ControllerStepNotification& notification)
 {
   _fitness_diagram->addPoint (0, QPointF (notification.getStep (), notification.getAverageFitness ()));
+  _temperature_diagram->addPoint (0, QPointF (notification.getStep (), notification.getTemperature ()));
 
   if (notification.getStep () == 0)
     {
@@ -363,6 +379,7 @@ void MainWindow::slotControllerStep (const GEP::System::ControllerStepNotificati
 void MainWindow::slotUpdateOutput ()
 {
   _fitness_diagram->repaint ();
+  _temperature_diagram->repaint ();
 
   if (_world_display != 0)
     _world_display->updateDisplay (_controller, static_cast<WorldDisplay::DisplayMode_t> (_content->_display_content->itemData (_content->_display_content->currentIndex ()).toInt ()));

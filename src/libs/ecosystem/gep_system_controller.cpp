@@ -32,7 +32,8 @@ Controller::Controller (World* world)
     _fitness_operator     (),
     _mutation_operator    (),
     _selection_operator   (),
-    _termination_operator ()
+    _termination_operator (),
+    _temperature_function ()
 {
 }
 
@@ -102,6 +103,32 @@ void Controller::setTerminationOperator (TerminationOperatorPtr termination_oper
   _termination_operator = termination_operator;
 }
 
+/* Get temperature function */
+TemperatureFunctionPtr Controller::getTemperatureFunction () const
+{
+  return _temperature_function;
+}
+
+/* Set temperature function */
+void Controller::setTemperatureFunction (TemperatureFunctionPtr temperature_function)
+{
+  _temperature_function = temperature_function;
+}
+
+/*
+ * Return system temperature
+ *
+ * \return Normalized system temperature in [0:1[
+ */
+double Controller::getTemperature () const
+{
+  Q_ASSERT (_termination_operator != 0);
+  Q_ASSERT (_temperature_function != 0);
+
+  return _temperature_function->getTemperature (getCurrentStep (), _termination_operator->getNumberOfSteps ());
+}
+
+
 /* Init controller for a new run */
 void Controller::initialize ()
 {
@@ -159,6 +186,7 @@ void SinglePopulationController::initialize ()
   Q_ASSERT (_crossover_operator != 0);
   Q_ASSERT (_mutation_operator != 0);
   Q_ASSERT (_termination_operator != 0);
+  Q_ASSERT (_temperature_function != 0);
 
   _population = _world->generatePopulation ();
   _current_step = 0;

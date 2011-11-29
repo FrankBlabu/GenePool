@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1402</width>
-    <height>731</height>
+    <width>1398</width>
+    <height>727</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,22 +23,19 @@
       <string>World</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <property name="margin">
-       <number>10</number>
-      </property>
       <item row="0" column="0">
-       <widget class="QWidget" name="_world_display_frame" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QFrame" name="_world_display_frame">
         <property name="minimumSize">
          <size>
           <width>400</width>
           <height>300</height>
          </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
         </property>
        </widget>
       </item>
@@ -62,8 +59,8 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>0</width>
-             <height>129</height>
+             <width>10</width>
+             <height>10</height>
             </size>
            </property>
           </spacer>
@@ -75,9 +72,9 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QGroupBox" name="_fitness_frame">
+    <widget class="QGroupBox" name="_status_frame">
      <property name="title">
-      <string>Fitness</string>
+      <string>Status</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="margin">
@@ -97,6 +94,37 @@
           <height>300</height>
          </size>
         </property>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QFrame" name="_fitness_frame">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QFrame" name="_temperature_frame">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="midLineWidth">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item row="0" column="1">

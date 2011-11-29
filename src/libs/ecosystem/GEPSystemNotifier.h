@@ -120,10 +120,12 @@ public:
 
   int getStep () const { return _step; }
   double getAverageFitness () const { return _average_fitness; }
+  double getTemperature () const { return _temperature; }
 
 private:
   int _step;
   double _average_fitness;
+  double _temperature;
 };
 
 /*

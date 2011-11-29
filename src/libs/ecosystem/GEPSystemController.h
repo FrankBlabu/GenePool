@@ -13,6 +13,7 @@
 #include "GEPSystemMutationOperator.h"
 #include "GEPSystemSelectionOperator.h"
 #include "GEPSystemTerminationOperator.h"
+#include "GEPSystemTemperatureFunction.h"
 
 namespace GEP {
 namespace System {
@@ -44,6 +45,9 @@ public:
   TerminationOperatorPtr getTerminationOperator () const;
   void setTerminationOperator (TerminationOperatorPtr termination_operator);
 
+  TemperatureFunctionPtr getTemperatureFunction () const;
+  void setTemperatureFunction (TemperatureFunctionPtr temperature_function);
+
   virtual double getCurrentAverageFitness () const = 0;
   virtual int getCurrentStep () const = 0;
   virtual int getNumberOfSteps () const = 0;
@@ -54,6 +58,8 @@ public:
   virtual const Population& getPopulation () const = 0;
   virtual double getFitness (const Individual& individual) const = 0;
 
+  double getTemperature () const;
+
 protected:
   World* _world;
 
@@ -62,6 +68,8 @@ protected:
   MutationOperatorPtr _mutation_operator;
   SelectionOperatorPtr _selection_operator;
   TerminationOperatorPtr _termination_operator;
+
+  TemperatureFunctionPtr _temperature_function;
 };
 
 

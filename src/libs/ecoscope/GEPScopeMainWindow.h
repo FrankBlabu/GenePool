@@ -72,6 +72,7 @@ private:
   MainWindowContent* _content;
   WorldDisplay* _world_display;
   SequentialDiagram* _fitness_diagram;
+  SequentialDiagram* _temperature_diagram;
 
   QTabWidget* _operator_display_tab;
 

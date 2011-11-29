@@ -98,6 +98,9 @@ SelectionOperatorDisplay::SelectionOperatorDisplay (System::Controller* controll
   header ()->setResizeMode (COLUMN_TIMES_SELECTED, QHeaderView::ResizeToContents);
   header ()->setResizeMode (COLUMN_NEW_IDS, QHeaderView::ResizeToContents);
 
+  setSortingEnabled (true);
+  sortByColumn (COLUMN_FITNESS, Qt::DescendingOrder);
+
   connect (notifier, SIGNAL (signalControllerStepStart (GEP::System::ControllerStepNotification)), SLOT (slotReset ()));
   connect (notifier, SIGNAL (signalReset ()), SLOT (slotReset ()));
   connect (notifier, SIGNAL (signalSelection (GEP::System::SelectionNotificationList)),

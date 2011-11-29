@@ -31,7 +31,8 @@ SOURCES += \
     gep_system_notifier.cpp \
     gep_system_random_number_generator.cpp \
     gep_system_controller_thread.cpp \
-    gep_system_init.cpp
+    gep_system_init.cpp \
+    gep_system_temperature_function.cpp
 
 HEADERS += \
     GEPSystemController.h \
@@ -51,7 +52,10 @@ HEADERS += \
     GEPSystemNotifier.h \
     GEPSystemRandomNumberGenerator.h \
     GEPSystemControllerThread.h \
-    GEPSystemInit.h
+    GEPSystemInit.h \
+    GEPSystemTemperatureFunction.h
+
+
 
 
 

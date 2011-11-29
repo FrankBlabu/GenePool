@@ -4,31 +4,89 @@
  * Frank Cieslok, Sep. 2011
  */
 
+#define GEP_DEBUG
+
 #include "GEPScopeSequentialDiagram.h"
+#include <GEPSystemDebug.h>
 
 #include <limits>
 
+#include <QtGui/QFontMetrics>
 #include <QtGui/QPainter>
 
 namespace GEP {
 namespace Scope {
 
 //#**************************************************************************
+// CLASS GEP::Scope::SequentialDiagram::Properties
+//#**************************************************************************
+
+/* Constructor */
+SequentialDiagram::Properties::Properties ()
+  : _show_tendency (false),
+    _line_color    (Qt::blue),
+    _legend_text   ()
+{
+}
+
+/* Copy constructor */
+SequentialDiagram::Properties::Properties (const Properties& toCopy)
+  : _show_tendency (toCopy._show_tendency),
+    _line_color    (toCopy._line_color),
+    _legend_text   (toCopy._legend_text)
+{
+}
+
+/* Get if the tendency line should be shown */
+bool SequentialDiagram::Properties::getShowTendency () const
+{
+  return _show_tendency;
+}
+
+/* Set if the tendency line should be shown */
+void SequentialDiagram::Properties::setShowTendency (bool show)
+{
+  _show_tendency = show;
+}
+
+/* Get line color */
+const QColor& SequentialDiagram::Properties::getLineColor () const
+{
+  return _line_color;
+}
+
+/* Set line color */
+void SequentialDiagram::Properties::setLineColor (const QColor& line_color)
+{
+  _line_color = line_color;
+}
+
+/* Get legend text */
+const QString& SequentialDiagram::Properties::getLegendText () const
+{
+  return _legend_text;
+}
+
+/* Set legend text */
+void SequentialDiagram::Properties::setLegendText (const QString& legend_text)
+{
+  _legend_text = legend_text;
+}
+
+
+//#**************************************************************************
 // CLASS GEP::Scope::SequentialDiagram::Line
 //#**************************************************************************
 
 SequentialDiagram::Line::Line ()
-  : _points  (),
-    _color   (Qt::blue)
+  : _points ()
 {
 }
+
 
 //#**************************************************************************
 // CLASS GEP::Scope::SequentialDiagram
 //#**************************************************************************
-
-/* Default line colors [STATIC] */
-QList<QColor> SequentialDiagram::_default_colors;
 
 /* Constructor */
 SequentialDiagram::SequentialDiagram (QWidget* parent)
@@ -37,19 +95,39 @@ SequentialDiagram::SequentialDiagram (QWidget* parent)
     _range_x (std::numeric_limits<double>::max (), -std::numeric_limits<double>::max ()),
     _range_y (std::numeric_limits<double>::max (), -std::numeric_limits<double>::max ())
 {
-  if (_default_colors.isEmpty ())
-    {
-      _default_colors.append (Qt::blue);
-      _default_colors.append (Qt::green);
-      _default_colors.append (Qt::red);
-      _default_colors.append (Qt::yellow);
-      _default_colors.append (Qt::cyan);
-    }
 }
 
 /* Destructor */
 SequentialDiagram::~SequentialDiagram ()
 {
+}
+
+/*
+ * Get properties for a line
+ *
+ * \param id Id of the line
+ * \return Properties of this line
+ */
+SequentialDiagram::Properties SequentialDiagram::getProperties (int id) const
+{
+  Properties properties;
+
+  PropertiesMap::ConstIterator pos = _properties.find (id);
+  if (pos != _properties.end ())
+    properties = pos.value ();
+
+  return properties;
+}
+
+/*
+ * Set properties for a line
+ *
+ * \param id         Id of the line
+ * \param properties Properties to be set
+ */
+void SequentialDiagram::setProperties (int id, const Properties& properties)
+{
+  _properties[id] = properties;
 }
 
 /*
@@ -74,7 +152,6 @@ void SequentialDiagram::addPoint (int id, const QPointF& point)
   if (_lines.find (id) == _lines.end ())
     {
       Line line;
-      line._color = _default_colors[id % _default_colors.size ()];
       _lines.insert (id, line);
     }
 
@@ -96,14 +173,26 @@ void SequentialDiagram::paintEvent (QPaintEvent* event)
 {
   QWidget::paintEvent (event);
 
+  //
+  // Setup painter and background
+  //
   QPainter painter (this);
   painter.fillRect (rect (), Qt::white);
 
+  //
+  // Compute value scaling
+  //
   double scale_x = rect ().width () / (_range_x.second - _range_x.first);
   double scale_y = rect ().height () / (_range_y.second - _range_y.first);
 
+  //
+  // Draw diagram lines
+  //
+  QStringList legend_texts;
+
   for (LineMap::const_iterator i = _lines.begin (); i != _lines.end (); ++i)
     {
+      int id = i.key ();
       const Line& line = i.value ();
 
       if (!line._points.isEmpty ())
@@ -118,15 +207,40 @@ void SequentialDiagram::paintEvent (QPaintEvent* event)
                                         height () - (point.y () - _range_y.first) * scale_y));
             }
 
-          painter.setPen (line._color);
+          Properties properties;
+
+          PropertiesMap::ConstIterator pos = _properties.find (id);
+          if (pos != _properties.end ())
+            properties = pos.value ();
+
+          if (!properties.getLegendText ().isEmpty ())
+            legend_texts.append (properties.getLegendText ());
+
+          painter.setPen (properties.getLineColor ());
           painter.drawPolyline (polyline);
 
-          if (polyline.size () >= 10)
+          if (properties.getShowTendency () && polyline.size () >= 10)
             {
-              painter.setPen (QPen (line._color, 1.0, Qt::DotLine));
+              painter.setPen (QPen (properties.getLineColor (), 1.0, Qt::DotLine));
               painter.drawLine (polyline.first (), polyline.last ());
             }
         }
+    }
+
+  //
+  // Draw diagram legend
+  //
+  int offset = 0;
+
+  for (int i=0; i < legend_texts.size (); ++i)
+    {
+      const QString& text = legend_texts[i];
+
+      QRect rect = fontMetrics ().boundingRect (text);
+      rect.moveTo (0, offset);
+
+      painter.drawText (rect, Qt::AlignLeft | Qt::AlignHCenter | Qt::TextSingleLine, text);
+      offset = rect.bottom ();
     }
 }
 
