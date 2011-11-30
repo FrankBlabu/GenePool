@@ -50,8 +50,10 @@ public:
   virtual void generateWorld ();
   virtual GEP::System::Population generatePopulation ();
 
-  virtual FitnessType_t getFitnessType () const;
-  virtual double computeFitness (const Individual& individual) const;
+  virtual int getNumberOfFitnessValues () const;
+  virtual FitnessType_t getFitnessType (int index) const;
+  virtual double getFitnessWeight (int index) const;
+  virtual double computeFitness (int index, const Individual& individual) const;
 
 private:
   double getDistance (int city1, int city2) const;

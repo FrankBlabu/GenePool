@@ -238,59 +238,75 @@ void SinglePopulationController::updateFitness ()
 {
   _fitness.clear ();
   _average_fitness = 0.0;
-
   //
   // Compute raw fitness
   //
-  FitnessMap raw_fitness;
-  double minimum_raw_fitness = std::numeric_limits<double>::max ();
-  double maximum_raw_fitness = -std::numeric_limits<double>::max ();
-
-  QList<double> results = QtConcurrent::blockingMapped< QList<double> >
-      (_population.begin (), _population.end (), boost::bind (&World::computeFitness, _world, _1));
-
-  int index = 0;
-  for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i, ++index)
+  for (int index=0; index < _world->getNumberOfFitnessValues (); ++index)
     {
-      const Individual& individual = *i;
+      FitnessMap raw_fitness;
+      double minimum_raw_fitness = std::numeric_limits<double>::max ();
+      double maximum_raw_fitness = -std::numeric_limits<double>::max ();
 
-      Q_ASSERT (index < results.size ());
-      double fitness = results[index];
+      QList<double> results = QtConcurrent::blockingMapped< QList<double> >
+          (_population.begin (), _population.end (), boost::bind (&World::computeFitness, _world, index, _1));
 
-      raw_fitness.insert (individual.getId (), fitness);
-      minimum_raw_fitness = qMin (minimum_raw_fitness, fitness);
-      maximum_raw_fitness = qMax (maximum_raw_fitness, fitness);
-    }
+      int count = 0;
+      for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i, ++count)
+        {
+          const Individual& individual = *i;
 
-  Q_ASSERT (index == _population.getSize ());
+          Q_ASSERT (index < results.size ());
+          double fitness = results[count];
 
-  switch (_world->getFitnessType ())
-    {
-    case World::FitnessType::HIGHER_IS_BETTER:
-      break;
+          raw_fitness.insert (individual.getId (), fitness);
+          minimum_raw_fitness = qMin (minimum_raw_fitness, fitness);
+          maximum_raw_fitness = qMax (maximum_raw_fitness, fitness);
+        }
 
-    case World::FitnessType::HIGHER_IS_WORSE:
-      {
-        double median = maximum_raw_fitness - minimum_raw_fitness;
+      Q_ASSERT (count == _population.getSize ());
 
-        for (FitnessMap::Iterator i = raw_fitness.begin (); i != raw_fitness.end (); ++i)
-          i.value () = median + (median - i.value ());
-      }
-      break;
-    }
+      switch (_world->getFitnessType (index))
+        {
+        case World::FitnessType::HIGHER_IS_BETTER:
+          break;
 
-  //
-  // Normalize raw fitness
-  //
-  for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i)
-    {
-      const Individual& individual = *i;
+        case World::FitnessType::HIGHER_IS_WORSE:
+          {
+            double median = maximum_raw_fitness - minimum_raw_fitness;
 
-      FitnessMap::ConstIterator pos = raw_fitness.find (individual.getId ());
-      Q_ASSERT (pos != raw_fitness.end ());
+            for (FitnessMap::Iterator i = raw_fitness.begin (); i != raw_fitness.end (); ++i)
+              i.value () = median + (median - i.value ());
+          }
+          break;
+        }
 
-      double fitness = (pos.value () - minimum_raw_fitness) / (maximum_raw_fitness - minimum_raw_fitness);
-      _fitness.insert (individual.getId (), fitness);
+      //
+      // Normalize raw fitness
+      //
+      for (Population::ConstIterator i = _population.begin (); i != _population.end (); ++i)
+        {
+          const Individual& individual = *i;
+
+          FitnessMap::ConstIterator pos = raw_fitness.find (individual.getId ());
+          Q_ASSERT (pos != raw_fitness.end ());
+
+          double fitness = (pos.value () - minimum_raw_fitness) / (maximum_raw_fitness - minimum_raw_fitness);
+
+          fitness /= _world->getFitnessWeight (index);
+
+          if (qFuzzyCompare (fitness, 1.0))
+            fitness = 1.0;
+          else if (qFuzzyIsNull (fitness))
+            fitness = 0.0;
+
+          Q_ASSERT (fitness >= 0.0);
+          Q_ASSERT (fitness <= 1.0);
+
+          if (i == 0)
+            _fitness.insert (individual.getId (), fitness);
+          else
+            _fitness[individual.getId ()] += fitness;
+        }
     }
 
   _fitness_operator->initialize (_fitness);
@@ -304,6 +320,9 @@ void SinglePopulationController::updateFitness ()
     }
 
   _average_fitness /= _population.getSize ();
+
+  Q_ASSERT (_average_fitness >= 0.0);
+  Q_ASSERT (_average_fitness <= 1.0);
 }
 
 }

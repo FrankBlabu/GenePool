@@ -112,15 +112,36 @@ const QPointF& World::operator[] (int index) const
   return _cities[index];
 }
 
-/* Get the directory type of the fitness value */
-World::FitnessType_t World::getFitnessType () const
+/* Get number of combineable fitness values */
+int World::getNumberOfFitnessValues () const
 {
+  return 1;
+}
+
+/* Get the directory type of the fitness value */
+World::FitnessType_t World::getFitnessType (int index) const
+{
+  Q_ASSERT (index == 0);
+  Q_UNUSED (index);
+
   return FitnessType::HIGHER_IS_WORSE;
 }
 
-/* Compute fitness of a single individual */
-double World::computeFitness (const Individual& individual) const
+/* Get weight of the given fitness component */
+double World::getFitnessWeight (int index) const
 {
+  Q_ASSERT (index == 0);
+  Q_UNUSED (index);
+
+  return 1.0;
+}
+
+/* Compute fitness of a single individual */
+double World::computeFitness (int index, const Individual& individual) const
+{
+  Q_ASSERT (index == 0);
+  Q_UNUSED (index);
+
   Q_ASSERT (!_cities.empty ());
 
   double distance = 0.0;

@@ -103,7 +103,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
 
         case GEP::Scope::WorldDisplay::DisplayMode::BEST:
           {
-            double fitness = _world->computeFitness (individual);
+            double fitness = _world->computeFitness (0, individual);
             if (fitness > range_fitness.second)
               {
                 _individuals.clear ();
@@ -115,7 +115,7 @@ void WorldDisplay::updateDisplay (const GEP::System::Controller* controller, Dis
 
         case GEP::Scope::WorldDisplay::DisplayMode::WORST:
           {
-            double fitness = _world->computeFitness (individual);
+            double fitness = _world->computeFitness (0, individual);
             if (fitness < range_fitness.first)
               {
                 _individuals.clear ();

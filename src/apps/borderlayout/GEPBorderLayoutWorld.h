@@ -88,8 +88,10 @@ public:
   virtual void generateWorld ();
   virtual GEP::System::Population generatePopulation ();
 
-  virtual FitnessType_t getFitnessType () const;
-  virtual double computeFitness (const Individual& individual) const;
+  virtual int getNumberOfFitnessValues () const;
+  virtual FitnessType_t getFitnessType (int index) const;
+  virtual double getFitnessWeight (int index) const;
+  virtual double computeFitness (int index, const Individual& individual) const;
 
   void layoutAreas (const System::Individual& individual, QList<Area>* areas) const;
 
@@ -113,6 +115,12 @@ private:
   // Areas
   //
   QList<Area> _areas;
+
+  //
+  // Constants
+  //
+  static const int FITNESS_INDEX_INTERSECTIONS    = 0;
+  static const int FITNESS_INDEX_CONNECTOR_LENGTH = 1;
 };
 
 QDebug operator<< (QDebug out, const World::Area& area);

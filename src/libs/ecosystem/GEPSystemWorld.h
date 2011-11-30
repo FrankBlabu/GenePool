@@ -28,8 +28,10 @@ public:
   struct FitnessType { enum Type_t { HIGHER_IS_BETTER, HIGHER_IS_WORSE }; };
   typedef FitnessType::Type_t FitnessType_t;
 
-  virtual FitnessType_t getFitnessType () const = 0;
-  virtual double computeFitness (const Individual& individual) const = 0;
+  virtual int getNumberOfFitnessValues () const = 0;
+  virtual FitnessType_t getFitnessType (int index) const = 0;
+  virtual double getFitnessWeight (int index) const = 0;
+  virtual double computeFitness (int index, const Individual& individual) const = 0;
 };
 
 

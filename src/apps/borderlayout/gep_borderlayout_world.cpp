@@ -400,40 +400,92 @@ void World::layoutAreas (const System::Individual& individual, QList<Area>* area
     }
 }
 
-/* Return type of fitness this world provides */
-World::FitnessType_t World::getFitnessType () const
+/* Return the number of partial fitness values */
+int World::getNumberOfFitnessValues () const
 {
+  return 2;
+}
+
+/* Return type of fitness this world provides */
+World::FitnessType_t World::getFitnessType (int index) const
+{
+  Q_ASSERT (index >= FITNESS_INDEX_INTERSECTIONS && index <= FITNESS_INDEX_CONNECTOR_LENGTH);
+  Q_UNUSED (index);
+
   return FitnessType::HIGHER_IS_WORSE;
 }
 
-/* Compute fitness of a single individual */
-double World::computeFitness (const Individual& individual) const
+/* Return weight factor for the given fitness index */
+double World::getFitnessWeight (int index) const
 {
+  double weight = 0.0;
+
+  Q_ASSERT (index >= FITNESS_INDEX_INTERSECTIONS && index <= FITNESS_INDEX_CONNECTOR_LENGTH);
+
+  switch (index)
+    {
+    case FITNESS_INDEX_INTERSECTIONS:
+      weight = 0.9;
+      break;
+
+    case FITNESS_INDEX_CONNECTOR_LENGTH:
+      weight = 0.1;
+      break;
+    }
+
+  return weight;
+}
+
+/* Compute fitness of a single individual */
+double World::computeFitness (int index, const Individual& individual) const
+{
+  double fitness = 1.0;
+
+  Q_ASSERT (index >= FITNESS_INDEX_INTERSECTIONS && index <= FITNESS_INDEX_CONNECTOR_LENGTH);
+
   QList<Area> areas (_areas);
   layoutAreas (individual, &areas);
 
-  //
-  // Criterion 1: Line crosses
-  //
-  int number_of_intersections = 0;
-
-  for (int i=0; i < areas.size (); ++i)
+  switch (index)
     {
-      const Area& area1 = areas[i];
-      for (int j=i+1; j < areas.size (); ++j)
-        {
-          const Area& area2 = areas[j];
+    //
+    // Criterion 1: Line crosses
+    //
+    case FITNESS_INDEX_INTERSECTIONS:
+      {
+        for (int i=0; i < areas.size (); ++i)
+          {
+            const Area& area1 = areas[i];
 
-          QLineF line1 (area1.getConnectorPoint (), area1.getPosition ());
-          QLineF line2 (area2.getConnectorPoint (), area2.getPosition ());
+            for (int j=i+1; j < areas.size (); ++j)
+              {
+                const Area& area2 = areas[j];
 
-          QPointF intersection_point;
-          if (line1.intersect (line2, &intersection_point) == QLineF::BoundedIntersection)
-            ++number_of_intersections;
-        }
+                QLineF line1 (area1.getConnectorPoint (), area1.getPosition ());
+                QLineF line2 (area2.getConnectorPoint (), area2.getPosition ());
+
+                QPointF intersection_point;
+                if (line1.intersect (line2, &intersection_point) == QLineF::BoundedIntersection)
+                  ++fitness;
+              }
+          }
+      }
+      break;
+
+    case FITNESS_INDEX_CONNECTOR_LENGTH:
+      {
+        for (int i=0; i < areas.size (); ++i)
+          {
+            const Area& area = areas[i];
+
+            QLineF line (area.getConnectorPoint (), area.getPosition ());
+            fitness += line.length ();
+          }
+      }
+      break;
     }
 
-  return number_of_intersections;
+  return fitness;
 }
 
 /*
