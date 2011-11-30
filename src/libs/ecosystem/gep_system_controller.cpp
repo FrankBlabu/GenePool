@@ -272,10 +272,13 @@ void SinglePopulationController::updateFitness ()
 
         case World::FitnessType::HIGHER_IS_WORSE:
           {
-            double median = maximum_raw_fitness - minimum_raw_fitness;
+            double median = minimum_raw_fitness + (maximum_raw_fitness - minimum_raw_fitness) / 2;
 
             for (FitnessMap::Iterator i = raw_fitness.begin (); i != raw_fitness.end (); ++i)
-              i.value () = median + (median - i.value ());
+              {
+                double fitness = i.value ();
+                i.value () = median + (median - fitness);
+              }
           }
           break;
         }
@@ -292,7 +295,7 @@ void SinglePopulationController::updateFitness ()
 
           double fitness = (pos.value () - minimum_raw_fitness) / (maximum_raw_fitness - minimum_raw_fitness);
 
-          fitness /= _world->getFitnessWeight (index);
+          fitness *= _world->getFitnessWeight (index);
 
           if (qFuzzyCompare (fitness, 1.0))
             fitness = 1.0;

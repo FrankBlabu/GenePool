@@ -99,7 +99,7 @@ double QuotientTemperatureFunction::computeTemperature (double percent) const
   Q_ASSERT (percent >= 0.0);
   Q_ASSERT (percent <= 1.0);
 
-  return 1.0 / percent;
+  return 1.0 * percent;
 }
 
 }

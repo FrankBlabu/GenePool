@@ -425,11 +425,11 @@ double World::getFitnessWeight (int index) const
   switch (index)
     {
     case FITNESS_INDEX_INTERSECTIONS:
-      weight = 0.9;
+      weight = 0.7;
       break;
 
     case FITNESS_INDEX_CONNECTOR_LENGTH:
-      weight = 0.1;
+      weight = 0.3;
       break;
     }
 
