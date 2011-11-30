@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
     QSharedPointer<GEP::System::FitnessOperator> fitness_operator (new GEP::System::LinearDynamicScaledFitnessOperator (5.0));
     //QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RemainderStochasticSamplingSelectionOperator ());
     QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::RouletteWheelSelectionOperator ());
+    //QSharedPointer<GEP::System::SelectionOperator> selection_operator (new GEP::System::TournamentSelectionOperator ());
     QSharedPointer<GEP::System::CrossoverOperator> crossover_operator (new GEP::System::PartiallyMatchedCrossoverOperator ());
     QSharedPointer<GEP::System::MutationOperator> mutation_operator (new GEP::System::SwappingMutationOperator (0.5 * 1.0 / NUMBER_OF_AREAS));
     QSharedPointer<GEP::System::TerminationOperator> termination_operator (new GEP::System::FixedStepTerminationOperator (NUMBER_OF_STEPS));

@@ -270,5 +270,62 @@ void RemainderStochasticSamplingSelectionOperator::compute (const Controller* co
   System::Notifier::getNotifier ()->notifySelection (notifications);
 }
 
+//#**************************************************************************
+// CLASS GEP::System::TournamentSelectionOperator
+//#**************************************************************************
+
+/* Constructor */
+TournamentSelectionOperator::TournamentSelectionOperator ()
+  : SelectionOperator ()
+{
+}
+
+/* Destructor */
+TournamentSelectionOperator::~TournamentSelectionOperator ()
+{
+}
+
+/* Perform selection */
+void TournamentSelectionOperator::compute (const Controller* controller, Population& population)
+{
+  SelectionNotificationList notifications;
+
+  Q_ASSERT (population.getSize () > 1);
+
+  //
+  // Perform tournament until the target population is completely filled
+  //
+  Population selected;
+
+  while (selected.getSize () < population.getSize ())
+    {
+      int index1 = static_cast<int> (floor (_random_number_generator.generate () * population.getSize ()));
+
+      Q_ASSERT (index1 >= 0);
+      Q_ASSERT (index1 < population.getSize ());
+
+      int index2 = index1;
+      while (index2 == index1)
+          index2 = static_cast<int> (floor (_random_number_generator.generate () * population.getSize ()));
+
+      Q_ASSERT (index2 >= 0);
+      Q_ASSERT (index2 < population.getSize ());
+
+      const Individual& candidate1 = population[index1];
+      const Individual& candidate2 = population[index2];
+
+      const Individual& individual = controller->getFitness (candidate1) > controller->getFitness (candidate2) ? candidate1 : candidate2;
+
+      Individual copied (individual);
+      copied.computeUniqueId ();
+      selected.add (copied);
+
+      notifications.append (SelectionNotification (IndividualInfo (individual, controller->getFitness (individual)),
+                                                   IndividualInfo (copied)));
+   }
+
+  System::Notifier::getNotifier ()->notifySelection (notifications);
+}
+
 }
 }

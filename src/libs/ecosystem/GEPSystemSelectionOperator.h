@@ -92,6 +92,21 @@ private:
   RandomNumberGenerator _random_number_generator;
 };
 
+/*
+ * Selection operator based on tournament selection
+ */
+class TournamentSelectionOperator : public SelectionOperator
+{
+public:
+  TournamentSelectionOperator ();
+  virtual ~TournamentSelectionOperator ();
+
+  virtual void compute (const Controller* controller, Population& population);
+
+private:
+  RandomNumberGenerator _random_number_generator;
+};
+
 }
 }
 
