@@ -78,6 +78,9 @@ double LinearTemperatureFunction::computeTemperature (double percent) const
 // CLASS GEP::System::QuotientTemperatureFunction
 //#**************************************************************************
 
+/* Temperature scaling */
+const double QuotientTemperatureFunction::SCALE = 5.0;
+
 /* Constructor */
 QuotientTemperatureFunction::QuotientTemperatureFunction ()
 {
@@ -99,7 +102,7 @@ double QuotientTemperatureFunction::computeTemperature (double percent) const
   Q_ASSERT (percent >= 0.0);
   Q_ASSERT (percent <= 1.0);
 
-  return 1.0 * percent;
+  return 1 / ((1.0 + percent) * SCALE);
 }
 
 }

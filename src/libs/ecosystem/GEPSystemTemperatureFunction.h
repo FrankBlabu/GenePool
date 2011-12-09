@@ -56,6 +56,9 @@ public:
 
 protected:
     virtual double computeTemperature (double percent) const;
+
+private:
+    static const double SCALE;
 };
 
 }
