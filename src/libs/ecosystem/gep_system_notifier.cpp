@@ -143,7 +143,7 @@ void Notifier::notifyMutation (const MutationNotificationList& notifications)
     emit signalMutation (notifications);
 }
 
-/* Notify that the individual focus changed */
+/* Notify that the individual focus has changed */
 void Notifier::notifyIndividualFocusChanged (const Object::Id& id)
 {
   if (_enabled)
