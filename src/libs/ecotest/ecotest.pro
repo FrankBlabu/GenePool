@@ -2,15 +2,24 @@
 # ecotest.pro - Makefile for test case library
 #
 
-QT += core testlib
+TARGET = ecoscope
+TEMPLATE = lib
 
-TARGET   = test_main
-TEMPLATE = app
-CONFIG   += thread console qtestlib
-CONFIG   -= app_bundle
+CONFIG += qt
+CONFIG += static
+CONFIG += thread
+CONFIG += testlib
 
-INCLUDEPATH += ../ecosystem
-INCLUDEPATH += ../ecoscope
+QT += core
+QT += gui
+QT += widgets
+
+DESTDIR = ..\..\lib
+
+INCLUDEPATH += .
+INCLUDEPATH += ..\ecosystem
+INCLUDEPATH += ..\ecoscope
+INCLUDEPATH += C:\Users\Frank\Applications\boost\boost_1_53_0
 
 SOURCES += test_main.cpp \
     test_random_number_generator.cpp \

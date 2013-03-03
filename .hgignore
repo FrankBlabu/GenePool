@@ -2,8 +2,10 @@ syntax: glob
 
 Makefile
 *.user
+*.user.*
 *~
 *.o
+*.lib
 *//moc*.cpp
 *//moc*.o
 *.orig
