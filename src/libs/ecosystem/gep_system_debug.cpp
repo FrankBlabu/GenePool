@@ -8,37 +8,6 @@
 #include "GEPSystemIndividual.h"
 #include "GEPSystemPopulation.h"
 
-#include <QtCore/QPointF>
-#include <QtCore/QSizeF>
-#include <QtCore/QRectF>
-
-/*
- * Print point
- */
-QDebug operator<< (QDebug out, const QPointF& point)
-{
-  out.nospace () << "(" << point.x () << ", " << point.y () << ")";
-  return out;
-}
-
-/*
- * Print size
- */
-QDebug operator<< (QDebug out, const QSizeF& size)
-{
-  out.nospace () << "(" << size.width () << ", " << size.height () << ")";
-  return out;
-}
-
-/*
- * Print rectangle
- */
-QDebug operator<< (QDebug out, const QRectF& rect)
-{
-  out.nospace () << "[" << rect.topLeft () << ", " << rect.bottomRight () << "]";
-  return out;
-}
-
 namespace GEP {
 namespace System {
 

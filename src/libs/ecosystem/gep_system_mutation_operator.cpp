@@ -14,7 +14,7 @@
 #include <math.h>
 #include <boost/bind.hpp>
 
-#include <QtConcurrentMap>
+#include <QtConcurrent>
 
 namespace GEP {
 namespace System {

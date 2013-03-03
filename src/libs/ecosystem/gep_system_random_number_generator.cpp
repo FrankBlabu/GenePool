@@ -10,7 +10,8 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_real.hpp>
-#include <sys/time.h>
+
+#include <QtCore/QTime>
 
 namespace GEP {
 namespace System {
@@ -37,10 +38,7 @@ RandomNumberGeneratorImpl::RandomNumberGeneratorImpl ()
  : _generator (),
    _die       (_generator, boost::uniform_real<> (0.0, 1.0))
 {
-  struct timeval tv;
-  gettimeofday (&tv, 0);
-
-  _generator.seed (static_cast<uint> (tv.tv_usec));
+  _generator.seed (static_cast<uint> (QTime::currentTime ().msec ()));
 }
 
 /* Generate new random number in interval [0:1[ */

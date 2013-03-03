@@ -15,7 +15,7 @@
 #include <boost/bind.hpp>
 
 #include <QFuture>
-#include <QtConcurrentMap>
+#include <QtConcurrent>
 #include <QtCore/QThread>
 
 namespace GEP {

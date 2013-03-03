@@ -4,14 +4,23 @@
 # Frank Cieslok, Aug. 2011
 #
 
+QT += core
 QT -= gui
+QT += concurrent
 
-TARGET   = ecosystem
+TARGET = ecosystem
 TEMPLATE = lib
-CONFIG  += sharedlib thread
+
+CONFIG += qt
+CONFIG += thread
+CONFIG += shared
+#CONFIG   += console
+#CONFIG   -= app_bundle
+
 DESTDIR = $$(HOME)/lib
 
-INCLUDEPATH += /local/applications/boost/include
+INCLUDEPATH += .
+INCLUDEPATH += C:\Users\Frank\Applications\boost\boost_1_53_0
 
 SOURCES += \
     gep_system_controller.cpp \
@@ -54,21 +63,3 @@ HEADERS += \
     GEPSystemControllerThread.h \
     GEPSystemInit.h \
     GEPSystemTemperatureFunction.h
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
