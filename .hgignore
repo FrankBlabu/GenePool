@@ -1,6 +1,7 @@
 syntax: glob
 
 Makefile
+obj
 *.user
 *.user.*
 *~
@@ -11,4 +12,9 @@ Makefile
 *.orig
 *.1.
 *-build
-obj
+*.exe
+*.manifest
+*.rc
+*.res
+*.ilk
+*.pdb

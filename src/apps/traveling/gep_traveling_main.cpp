@@ -8,7 +8,7 @@
 #include "GEPTravelingWorldDisplay.h"
 
 #include <QtGlobal>
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #include <GEPSystemController.h>
 #include <GEPSystemFitnessOperator.h>

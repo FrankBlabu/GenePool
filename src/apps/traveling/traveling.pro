@@ -4,11 +4,19 @@
 # Frank Cieslok, Aug. 2011
 #
 
-QT += core gui
-
-TARGET   = traveling
+TARGET = traveling
 TEMPLATE = app
-CONFIG  += thread
+
+CONFIG += qt
+CONFIG += thread
+
+QT += core
+QT += gui
+QT += widgets
+QT += concurrent
+
+DESTDIR = ..\..\lib
+
 INCLUDEPATH += ../../libs/ecosystem
 INCLUDEPATH += ../../libs/ecoscope
 
@@ -21,4 +29,4 @@ HEADERS += \
     GEPTravelingWorldDisplay.h \
     GEPTravelingWorld.h
 
-LIBS += -L$$(HOME)/lib -lecosystem -lecoscope
+LIBS += -L..\..\lib -lecosystem -lecoscope
