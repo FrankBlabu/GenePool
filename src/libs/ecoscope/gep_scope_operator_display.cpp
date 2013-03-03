@@ -13,9 +13,9 @@
 #include <GEPSystemNotifier.h>
 #include <GEPSystemDebug.h>
 
-#include <QtGui/QHeaderView>
-#include <QtGui/QItemDelegate>
 #include <QtGui/QPainter>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QItemDelegate>
 
 
 namespace GEP {

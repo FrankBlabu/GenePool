@@ -6,10 +6,20 @@
 
 TARGET   = ecoscope
 TEMPLATE = lib
-CONFIG  += sharedlib thread testlib
-INCLUDEPATH += ../ecosystem
 
-DESTDIR = $$(HOME)/lib
+CONFIG += qt
+CONFIG += static
+CONFIG += thread
+
+QT += core
+QT += gui
+QT += widgets
+
+DESTDIR = ..\..\lib
+
+INCLUDEPATH += .
+INCLUDEPATH += ..\ecosystem
+INCLUDEPATH += C:\Users\Frank\Applications\boost\boost_1_53_0
 
 SOURCES += \
     gep_scope_main_window.cpp \

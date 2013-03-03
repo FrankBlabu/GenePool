@@ -10,7 +10,7 @@
 #include <QtCore/QPair>
 #include <QtCore/QList>
 #include <QtCore/QMap>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace GEP {
 namespace Scope {

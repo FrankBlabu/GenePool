@@ -7,7 +7,7 @@
 #ifndef __GEP_SCOPE_TOOLS_H__
 #define __GEP_SCOPE_TOOLS_H__
 
-#include <QtGui/QBoxLayout>
+#include <QtWidgets/QBoxLayout>
 
 namespace GEP {
 namespace Scope {

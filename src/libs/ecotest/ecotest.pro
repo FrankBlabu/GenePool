@@ -2,7 +2,7 @@
 # ecotest.pro - Makefile for test case library
 #
 
-QT       += core testlib
+QT += core testlib
 
 TARGET   = test_main
 TEMPLATE = app

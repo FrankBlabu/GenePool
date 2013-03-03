@@ -9,8 +9,8 @@
 
 #include <QtCore/QStateMachine>
 #include <QtCore/QState>
-#include <QtGui/QAction>
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QMainWindow>
 
 #include <GEPSystemController.h>
 #include <GEPSystemNotifier.h>

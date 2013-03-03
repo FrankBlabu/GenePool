@@ -4,20 +4,18 @@
 # Frank Cieslok, Aug. 2011
 #
 
-QT += core
-QT -= gui
-QT += concurrent
-
 TARGET = ecosystem
 TEMPLATE = lib
 
 CONFIG += qt
 CONFIG += thread
-CONFIG += shared
-#CONFIG   += console
-#CONFIG   -= app_bundle
+CONFIG += static
 
-DESTDIR = $$(HOME)/lib
+QT += core
+QT -= gui
+QT += concurrent
+
+DESTDIR = ..\..\lib
 
 INCLUDEPATH += .
 INCLUDEPATH += C:\Users\Frank\Applications\boost\boost_1_53_0

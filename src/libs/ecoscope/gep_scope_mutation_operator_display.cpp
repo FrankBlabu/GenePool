@@ -10,7 +10,7 @@
 #include "GEPSystemNotifier.h"
 #include "GEPSystemWorld.h"
 
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QHeaderView>
 
 namespace GEP {
 namespace Scope {
@@ -84,10 +84,10 @@ MutationOperatorDisplay::MutationOperatorDisplay (System::Controller* controller
 
   setHeaderLabels (header_names);
 
-  header ()->setResizeMode (COLUMN_ID, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_INDIVIDUAL_BEFORE, QHeaderView::Stretch);
-  header ()->setResizeMode (COLUMN_FITNESS_BEFORE, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_INDIVIDUAL_AFTER, QHeaderView::Stretch);
+  header ()->setSectionResizeMode (COLUMN_ID, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_INDIVIDUAL_BEFORE, QHeaderView::Stretch);
+  header ()->setSectionResizeMode (COLUMN_FITNESS_BEFORE, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_INDIVIDUAL_AFTER, QHeaderView::Stretch);
 
   connect (notifier, SIGNAL (signalControllerStepStart (GEP::System::ControllerStepNotification)), SLOT (slotReset ()));
   connect (notifier, SIGNAL (signalReset ()), SLOT (slotReset ()));

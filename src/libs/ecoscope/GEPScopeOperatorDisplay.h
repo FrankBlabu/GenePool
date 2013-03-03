@@ -11,7 +11,7 @@
 #include <GEPSystemNotifier.h>
 
 #include <QtGui/QColor>
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QTreeWidget>
 
 namespace GEP {
 

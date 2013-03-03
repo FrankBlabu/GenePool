@@ -24,12 +24,12 @@
 
 #include <QtCore/QTime>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QMenu>
-#include <QtGui/QMenuBar>
-#include <QtGui/QProgressDialog>
-#include <QtGui/QTabWidget>
-#include <QtGui/QToolBar>
-#include <QtGui/QStatusBar>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QProgressDialog>
+#include <QtWidgets/QTabWidget>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QStatusBar>
 
 #include "ui_gep_scope_main_window.h"
 

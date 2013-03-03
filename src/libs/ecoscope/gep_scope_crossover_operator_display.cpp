@@ -10,7 +10,7 @@
 #include "GEPSystemNotifier.h"
 #include "GEPSystemWorld.h"
 
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QHeaderView>
 
 namespace GEP {
 namespace Scope {
@@ -92,14 +92,14 @@ CrossoverOperatorDisplay::CrossoverOperatorDisplay (System::Controller* controll
 
   setHeaderLabels (header_names);
 
-  header ()->setResizeMode (COLUMN_MATE1_ID, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_MATE1_INDIVIDUAL, QHeaderView::Stretch);
-  header ()->setResizeMode (COLUMN_MATE1_FITNESS, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_MATE2_ID, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_MATE2_INDIVIDUAL, QHeaderView::Stretch);
-  header ()->setResizeMode (COLUMN_MATE2_FITNESS, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_CROSSED1_INDIVIDUAL, QHeaderView::Stretch);
-  header ()->setResizeMode (COLUMN_CROSSED2_INDIVIDUAL, QHeaderView::Stretch);
+  header ()->setSectionResizeMode (COLUMN_MATE1_ID, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_MATE1_INDIVIDUAL, QHeaderView::Stretch);
+  header ()->setSectionResizeMode (COLUMN_MATE1_FITNESS, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_MATE2_ID, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_MATE2_INDIVIDUAL, QHeaderView::Stretch);
+  header ()->setSectionResizeMode (COLUMN_MATE2_FITNESS, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_CROSSED1_INDIVIDUAL, QHeaderView::Stretch);
+  header ()->setSectionResizeMode (COLUMN_CROSSED2_INDIVIDUAL, QHeaderView::Stretch);
 
   connect (notifier, SIGNAL (signalControllerStepStart (GEP::System::ControllerStepNotification)), SLOT (slotReset ()));
   connect (notifier, SIGNAL (signalReset ()), SLOT (slotReset ()));

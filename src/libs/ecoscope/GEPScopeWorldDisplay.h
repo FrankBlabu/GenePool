@@ -8,7 +8,7 @@
 #define __GEP_SCOPE_WORLD_DISPLAY_H__
 
 #include <GEPSystemObject.h>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace GEP {
 

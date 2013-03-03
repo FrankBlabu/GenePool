@@ -13,7 +13,7 @@
 #include "GEPSystemWorld.h"
 #include "GEPSystemDebug.h"
 
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QHeaderView>
 
 namespace GEP {
 namespace Scope {
@@ -92,11 +92,11 @@ SelectionOperatorDisplay::SelectionOperatorDisplay (System::Controller* controll
 
   setHeaderLabels (header_names);
 
-  header ()->setResizeMode (COLUMN_ID, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_INDIVIDUAL, QHeaderView::Stretch);
-  header ()->setResizeMode (COLUMN_FITNESS, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_TIMES_SELECTED, QHeaderView::ResizeToContents);
-  header ()->setResizeMode (COLUMN_NEW_IDS, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_ID, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_INDIVIDUAL, QHeaderView::Stretch);
+  header ()->setSectionResizeMode (COLUMN_FITNESS, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_TIMES_SELECTED, QHeaderView::ResizeToContents);
+  header ()->setSectionResizeMode (COLUMN_NEW_IDS, QHeaderView::ResizeToContents);
 
   setSortingEnabled (true);
   sortByColumn (COLUMN_FITNESS, Qt::DescendingOrder);
